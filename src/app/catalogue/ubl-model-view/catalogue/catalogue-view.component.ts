@@ -22,7 +22,7 @@ import { CallStatus } from "../../../common/call-status";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
-import {copy, isLogisticsService} from '../../../common/utils';
+import {copy, isLogisticsService, selectPreferredNameForSolrCategory, sortSolrCategories} from '../../../common/utils';
 import { UserService } from "../../../user-mgmt/user.service";
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { CataloguePaginationResponse } from '../../model/publish/catalogue-pagination-response';
@@ -31,7 +31,7 @@ import { selectDescription, selectName } from '../../../common/utils';
 import { ItemProperty } from '../../model/publish/item-property';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { CATALOGUE_LINE_SORT_OPTIONS } from '../../model/constants';
+import {CATALOGUE_LINE_SORT_OPTIONS, CATALOGUE_LINE_STATUS, NON_PUBLIC_FIELD_ID} from '../../model/constants';
 import { Catalogue } from '../../model/publish/catalogue';
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { TranslateService } from '@ngx-translate/core';
@@ -61,10 +61,10 @@ export class CatalogueViewComponent implements OnInit {
     // available catalogue lines with respect to the selected category
     catalogueLinesWRTTypes: any = [];
     // catalogue lines which are available to the user after search operation
-    catalogueLinesArray: any = [];
+    catalogueLinesArray: CatalogueLine[] = [];
 
-    // categories
-    categoryNames: any = [];
+    // categories of the catalogue lines retrieved from indexing-service
+    categoriesInSolrFormat: any = [];
     selectedCategory = "All";
 
     // necessary info for pagination
@@ -97,6 +97,7 @@ export class CatalogueViewComponent implements OnInit {
     cataloguesIds: string[] = [];
     catalogueUuids: string[] = [];
 
+    productStatus = "All";
     sortOption = null;
     catalogueText: string = "";
     getCatalogueStatus = new CallStatus();
@@ -123,14 +124,16 @@ export class CatalogueViewComponent implements OnInit {
     private deleteCatalogueModal: DeleteExportCatalogueModalComponent;
 
     CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
+    CATALOGUE_LINE_STATUS = CATALOGUE_LINE_STATUS;
 
-    private searchText: string = "";
+    public searchText: string = "";
 
     encodeURIComponent = encodeURIComponent;
+    selectPreferredNameForSolrCategory = selectPreferredNameForSolrCategory;
 
     constructor(private cookieService: CookieService,
         private publishService: PublishService,
-        private appComponent: AppComponent,
+        public appComponent: AppComponent,
         private catalogueService: CatalogueService,
         private categoryService: CategoryService,
         public networkCompanyListService: NetworkCompanyListService,
@@ -167,15 +170,15 @@ export class CatalogueViewComponent implements OnInit {
             this.selectedCatalogue = this.catalogueUuid;
             this.catalogueLinesWRTTypes = [];
             this.catalogueLinesArray = [];
-            this.categoryNames = [];
+            this.categoriesInSolrFormat = [];
             this.selectedCategory = "All";
+            this.productStatus = "All";
             this.collectionSize = 0;
             this.page = 1;
             this.pageSize = 10;
             this.addCatalogue = false;
             this.whiteBlackListPanelVisible = this.searchRef && this.whiteBlackListService.catalogueId != null;
             this.catalogueLineView = {};
-            this.catalogueService.setEditMode(false);
             this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
             this.initDataRetrieval();
             for (let i = 0; i < this.pageSize; i++) {
@@ -273,20 +276,12 @@ export class CatalogueViewComponent implements OnInit {
         this.requestCatalogue();
     }
 
-    search = (text$: Observable<string>) =>
-        text$.pipe(
-            debounceTime(200),
-            distinctUntilChanged(),
-            switchMap(term => {
-                this.requestCatalogue();
-                return [];
-            })
-        );
-
     requestCatalogue(): void {
         const userId = this.cookieService.get("user_id");
         // check whether the user chose a category to filter the catalogue lines
         let categoryName = this.selectedCategory == "All" ? null : this.selectedCategory;
+        // do not need to pass a request param for 'All' option of status
+        let productStatus = this.productStatus == "All" ? null : this.productStatus;
         // get selected catalogue id
         let catalogueId = this.catalogueUuid;
         if (catalogueId !== 'all') {
@@ -306,14 +301,18 @@ export class CatalogueViewComponent implements OnInit {
 
         this.getCatalogueStatus.submit();
         Promise.all([
-            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueId),
+            this.catalogueService.getCatalogueResponse(userId, categoryName, this.searchText, this.pageSize, (this.page - 1) * this.pageSize, this.sortOption, catalogueId, productStatus),
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
-                this.catalogueResponse = catalogueResponse;
-                this.settings = settings;
-                this.updateView();
-                this.getCatalogueStatus.callback(null, true);
+                this.categoryService.getCategories(catalogueResponse.categoryUris).then(categories => {
+                    this.catalogueResponse = catalogueResponse;
+                    this.settings = settings;
+                    this.updateView(categories.result);
+                    this.getCatalogueStatus.callback(null, true);
+                }).catch(error => {
+                    this.getCatalogueStatus.error("Failed to get catalogue", error);
+                })
             },
                 error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -330,9 +329,9 @@ export class CatalogueViewComponent implements OnInit {
     }
 
     // called when the catalogue pagination response is retrieved to update the view
-    private updateView(): void {
+    private updateView(categoriesInSolrFormat = null): void {
         let len = this.catalogueResponse.catalogueLines.length;
-        this.categoryNames = this.catalogueResponse.categoryNames;
+        this.categoriesInSolrFormat = sortSolrCategories(categoriesInSolrFormat);
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;
@@ -481,7 +480,7 @@ export class CatalogueViewComponent implements OnInit {
             catalogIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.catalogueDocumentReference.id];
             lineIds = [this.productOfferingDetails.selectedProduct.goodsItem.item.manufacturersItemIdentification.id]
         }
-        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(response => {
+        this.catalogueService.offerCatalogsOrLines(catalogIds,lineIds,this.productOfferingDetails.vatNumber,this.productOfferingDetails.description).then(() => {
             this.callStatus.callback(this.translate.instant("Offered the product details to specified companies successfully"));
         }).catch(error => {
             this.callStatus.error(this.translate.instant("Failed to offer your products"),error);
@@ -545,9 +544,9 @@ export class CatalogueViewComponent implements OnInit {
                     this.ngOnInit();
 
                 })
-                .catch(err => {
+                .catch(() => {
                 })
-        }).catch(err => {
+        }).catch(() => {
         });
     }
 
@@ -565,56 +564,46 @@ export class CatalogueViewComponent implements OnInit {
 
     redirectToEdit(catalogueLine) {
         this.catalogueService.editCatalogueLine(catalogueLine);
-        this.publishService.publishMode = 'edit';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("edit");
         this.categoryService.resetSelectedCategories();
-        // if(this.catlogueId == "all"){
         this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
             .then(res => {
                 if (isLogisticsService(catalogueLine))
-                    this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: res.id, pg: "single" } });
+                    this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: res.id} });
                 else
-                    this.router.navigate(['catalogue/publish'], { queryParams: { cat: res.id, pg: "single" } });
+                    this.router.navigate(['catalogue/publish-single'], { queryParams: { cat: res.id } });
             })
-            .catch(error => {
+            .catch(() => {
                 if (isLogisticsService(catalogueLine))
-                    this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default', pg: "single" } });
+                    this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default' } });
                 else
-                    this.router.navigate(['catalogue/publish'], { queryParams: { cat: 'default', pg: "single" } });
-            });;
-
-        // }else{
-        //     if(isLogisticsService(catalogueLine))
-        //         this.router.navigate(['catalogue/publish-logistic'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-        //     else
-        //         this.router.navigate(['catalogue/publish'], {queryParams: {cat:this.catlogueId, pg: "single"}});
-        // }
+                    this.router.navigate(['catalogue/publish-single'], { queryParams: { cat: 'default' } });
+            });
     }
 
     redirectToCopy(catalogueLine) {
         this.catalogueService.editCatalogueLine(catalogueLine);
-        this.publishService.publishMode = 'copy';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("copy");
         this.categoryService.resetSelectedCategories();
         if (this.catalogueUuid == "all") {
             this.catalogueService.getCatalogueFromUuid(catalogueLine.goodsItem.item.catalogueDocumentReference.id)
                 .then(res => {
                     if (isLogisticsService(catalogueLine))
-                        this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: res.id, pg: "single" } });
+                        this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: res.id} });
                     else
-                        this.router.navigate(['catalogue/publish'], { queryParams: { cat: res.id, pg: "single" } });
+                        this.router.navigate(['catalogue/publish-single'], { queryParams: { cat: res.id } });
                 })
-                .catch(error => {
+                .catch(() => {
                     if (isLogisticsService(catalogueLine))
-                        this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default', pg: "single" } });
+                        this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: 'default' } });
                     else
-                        this.router.navigate(['catalogue/publish'], { queryParams: { cat: 'default', pg: "single" } });
-                });;
+                        this.router.navigate(['catalogue/publish-single'], { queryParams: { cat: 'default' } });
+                });
         } else {
             if (isLogisticsService(catalogueLine))
-                this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: this.catalogueUuid, pg: "single" } });
+                this.router.navigate(['catalogue/publish-logistic'], { queryParams: { cat: this.catalogueUuid } });
             else
-                this.router.navigate(['catalogue/publish'], { queryParams: { cat: this.catalogueUuid, pg: "single" } });
+                this.router.navigate(['catalogue/publish-single'], { queryParams: { cat: this.catalogueUuid} });
         }
 
     }
@@ -633,11 +622,11 @@ export class CatalogueViewComponent implements OnInit {
                 }
 
                 this.catalogueService.deleteCatalogueLine(catalogue_uuid, catalogueLine.id)
-                    .then(res => {
+                    .then(() => {
                         this.requestCatalogue();
                         status.callback("Catalogue line deleted", true);
                     })
-                    .catch(error => {
+                    .catch(() => {
                         status.error("Error while deleting catalogue line");
                     });
             }
@@ -652,16 +641,20 @@ export class CatalogueViewComponent implements OnInit {
         this.deleteCatalogueModal.open('export');
     }
 
+    onChangeProductStatus(): void {
+        this.deleteCatalogueModal.open('product-status');
+    }
+
     onUploadImage(): void {
         this.deleteCatalogueModal.open('upload-image');
     }
 
     navigateToThePublishPage() {
-        this.router.navigate(['/catalogue/categorysearch']);
+        this.router.navigate(['/catalogue/publish-single']);
     }
 
     navigateToBulkUploadPage() {
-        this.router.navigate(["/catalogue/publish"], { queryParams: { pg: 'bulk', productType: 'product' } });
+        this.router.navigate(["/catalogue/publish-bulk"]);
     }
 
     initDataRetrieval() {
@@ -682,8 +675,12 @@ export class CatalogueViewComponent implements OnInit {
             // once the ids are available, get the actual data
             this.requestCatalogue();
             this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
-        }).catch((error) => {
+        }).catch(() => {
             this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
         });
+    }
+
+    isPricePublicInformation(catLine:CatalogueLine){
+        return !(catLine.nonPublicInformation && catLine.nonPublicInformation.findIndex(value => value.id === NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) !== -1);
     }
 }

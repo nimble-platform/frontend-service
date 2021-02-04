@@ -62,7 +62,11 @@
         <strong class="col-2 col-form-label"><span [innerHTML]="'Country:' | translate"></span>
         </strong>
         <div class="col-10">
-            <input type="text" class="form-control" name="country" formControlName="country" [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States">
+            <address-country [disabledFlag]="disabledFlag" [requiredFlag]="requiredFlag" [countryISOCode]="addressForm.controls.country.value" (onCountryISOCodeChange)="onCountryChanged($event)"></address-country>
         </div>
     </div>
+</div>
+<!-- Address map -->
+<div *ngIf="mapView" class="w-100">
+    <address-map [coordinate]="coordinate" (coordinateChange)="onCoordinateChange($event)" [disabled]="disabledFlag" [addressString]="addressString"></address-map>
 </div>

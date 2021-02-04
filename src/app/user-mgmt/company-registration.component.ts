@@ -30,7 +30,6 @@ import { CallStatus } from '../common/call-status';
 import { Address } from './model/address';
 import { TranslateService } from '@ngx-translate/core';
 import {
-    getCountryByISO,
     getFileExtension,
     getArrayOfTextObject,
     createTextObjectFromArray,
@@ -40,6 +39,8 @@ import { ALLOWED_EXTENSIONS } from '../common/constants';
 import { createTextObject, selectValueOfTextObject } from '../common/utils';
 import { LANGUAGES, DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 import {SelectedTerms} from './selected-terms';
+import {CountryUtil} from '../common/country-util';
+import {AddressMapService} from '../common/address-map.service';
 
 @Component({
     selector: 'company-registration',
@@ -86,6 +87,7 @@ export class CompanyRegistrationComponent implements OnInit {
         private cookieService: CookieService,
         private modalService: NgbModal,
         private router: Router,
+        private addressMapService:AddressMapService,
         private translate: TranslateService,
         private userService: UserService) {
     }
@@ -157,6 +159,14 @@ export class CompanyRegistrationComponent implements OnInit {
 
     skipVAT() {
         this.vatSkipped = true;
+        this.onAddressMapSizeChanged();
+    }
+
+    /**
+     * When the address map becomes visible, we need to let address map component know about this change using AddressMap Service so that it can set the map dimensions properly.
+     * */
+    onAddressMapSizeChanged(){
+        this.addressMapService.addressMapSizeChanged.next();
     }
 
     backToVAT() {
@@ -187,8 +197,9 @@ export class CompanyRegistrationComponent implements OnInit {
                     }
                     this.registrationForm.controls['vatNumber'].setValue(this.vat);
                     if (response.CountryCode)
-                        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", getCountryByISO(response.CountryCode)));
+                        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", CountryUtil.getCountryByISO(response.CountryCode)));
                     this.vatValidated = true;
+                    this.onAddressMapSizeChanged();
                 } else {
                     setTimeout(function() {
                         alert("The VAT is invalid.");

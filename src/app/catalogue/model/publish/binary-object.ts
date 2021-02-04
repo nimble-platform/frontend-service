@@ -19,8 +19,5 @@ export class BinaryObject {
         public fileName: string,
         public uri: string,
         public languageID: string,
-
-        // for demo
-        public objectMetadata: string,
     ) { }
 }

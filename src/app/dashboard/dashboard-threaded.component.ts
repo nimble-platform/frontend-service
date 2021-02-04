@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AppComponent } from "../app.component";
 import { CookieService } from "ng2-cookies";
 import { BPEService } from "../bpe/bpe.service";
@@ -33,7 +33,7 @@ import {NetworkCompanyListService} from '../user-mgmt/network-company-list.servi
     templateUrl: "./dashboard-threaded.component.html",
     styleUrls: ["./dashboard-threaded.component.css"]
 })
-export class DashboardThreadedComponent implements OnInit {
+export class DashboardThreadedComponent implements OnInit, OnDestroy {
 
     user: DashboardUser;
     selectedTab: string;
@@ -91,11 +91,11 @@ export class DashboardThreadedComponent implements OnInit {
 
     onChangeTab(event: any, id: any): void {
         event.preventDefault();
-        this.selectedTab = id;
         // the user should be logged in to switch between the dashboard tabs
         if(!this.cookieService.get("user_id") && this.selectedTab != TABS.SALES && this.selectedTab != TABS.PURCHASES && this.selectedTab != TABS.PROJECTS){
             this.appComponent.checkLogin("/user-mgmt/login");
         }
+        this.router.navigate(['dashboard'], { queryParams: {tab: id} });
     }
 
     onCloseWelcomeTab(event: any): void {
@@ -174,6 +174,7 @@ export class DashboardThreadedComponent implements OnInit {
                 upped === TABS.FAVOURITE ||
                 upped == TABS.COMPARE ||
                 upped == TABS.PROJECTS ||
+                upped === TABS.DEMANDS ||
                 upped == TABS.PERFORMANCE ||
                 upped == TABS.FRAME_CONTRACTS ||
                 upped == TABS.UNSHIPPED_ORDERS ||

@@ -41,6 +41,8 @@ export class CatalogueLinePanelComponent {
     @Input() settings: CompanySettings;
     @Input() presentationMode: string;
     @Input() offeringProduct:boolean = false;
+    // whether the line panel is used in the publishing page
+    @Input() linePanelInPublishingPage:boolean = false;
 
     // check whether catalogue-line-panel should be displayed
     @Input() show = false;
@@ -68,14 +70,13 @@ export class CatalogueLinePanelComponent {
 
     redirectToEdit() {
         this.catalogueService.editCatalogueLine(this.catalogueLine);
-        this.publishService.publishMode = 'edit';
-        this.publishService.publishingStarted = false;
+        this.publishService.resetData("edit");
         this.categoryService.resetSelectedCategories();
 
         if (isLogisticsService(this.catalogueLine))
-            this.router.navigate(['catalogue/publish-logistic'], { queryParams: { pg: "single" } });
+            this.router.navigate(['catalogue/publish-logistic']);
         else
-            this.router.navigate(['catalogue/publish'], { queryParams: { pg: "single" } });
+            this.router.navigate(['catalogue/publish-single']);
     }
 
     offerProduct(){
@@ -84,5 +85,12 @@ export class CatalogueLinePanelComponent {
 
     deleteCatalogueLine(): void {
         this.catalogueLineDeleted.next(null);
+    }
+
+    onLinePanelClicked(){
+        if(!this.linePanelInPublishingPage){
+            this.show = false;
+            this.showChange.emit(false)
+        }
     }
 }

@@ -25,6 +25,7 @@ export const VALIDATION_ERROR_MAX = 'max';
 export const VALIDATION_INVALID_PERIOD = 'invalid_period';
 export const VALIDATION_INVALID_SPACE = 'invalid_space';
 export const VALIDATION_REQUIRED = 'required';
+export const VALIDATION_INVALID_COUNTRY = 'invalid_country';
 const VALIDATION_ERROR_PREFIX = 'validation_error_';
 const FORM_FIELD_PREFIX = 'form_field_';
 
@@ -147,6 +148,9 @@ export class ValidationService {
                 }
                 case VALIDATION_INVALID_SPACE: {
                     return this.translateService.instant(VALIDATION_ERROR_PREFIX + VALIDATION_INVALID_SPACE);
+                }
+                case VALIDATION_INVALID_COUNTRY: {
+                    return this.translateService.instant('Invalid country');
                 }
             }
         }

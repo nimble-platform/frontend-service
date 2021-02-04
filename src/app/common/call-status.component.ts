@@ -52,7 +52,7 @@ export class CallStatusComponent implements OnInit {
 
     handleClick(event) {
         // if the call is still active, ignore click
-        if (this.callStatus.fb_submitted == true) {
+        if (!this.callStatus || this.callStatus.fb_submitted == true) {
             return;
         }
 

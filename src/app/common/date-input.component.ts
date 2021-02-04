@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { dateToString } from './utils';
 import { ChildFormBase } from './validation/child-form-base';
 import { FormControl, ValidatorFn, Validators } from '@angular/forms';
@@ -24,7 +24,7 @@ const FIELD_NAME_DATE_VALUE = 'date';
     selector: "date-input",
     templateUrl: "./date-input.component.html",
 })
-export class DateInputComponent extends ChildFormBase implements OnInit {
+export class DateInputComponent extends ChildFormBase implements OnInit, OnDestroy {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;

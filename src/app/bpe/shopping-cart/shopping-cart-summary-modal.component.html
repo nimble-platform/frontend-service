@@ -21,32 +21,7 @@
     </div>
     <div class="modal-body">
         <div class="container-fluid">
-            <table class="table table-striped">
-                <tr>
-                    <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
-                    <th><span [innerHTML]="'Product Id' | translate"></span></th>
-                    <th><span [innerHTML]="'Quantity' | translate"></span></th>
-                    <th><span [innerHTML]="'Net Price' | translate"></span></th>
-                    <th *ngIf="config.vatEnabled" [innerHTML]="'VAT' | translate"><span></span></th>
-                    <th *ngIf="config.vatEnabled" [innerHTML]="'Gross Total' | translate"><span></span></th>
-                </tr>
-                <tr *ngFor="let negotiationModelWrapper of negotiationModelWrappers">
-                    <th scope="row"><span>{{negotiationModelWrapper.catalogueLine.goodsItem.item.name[0].value }}</span></th>
-                    <td><span>{{negotiationModelWrapper.catalogueLine.goodsItem.item.manufacturersItemIdentification.id}}</span></td>
-                    <td><span>{{negotiationModelWrapper.rfq.requestForQuotationLine[negotiationModelWrapper.lineIndex].lineItem.quantity | quantityTranslatePipe}}</span></td>
-                    <td><span>{{negotiationModelWrapper.rfqTotalPriceString | translate}}</span></td>
-                    <td *ngIf="config.vatEnabled"><span>{{negotiationModelWrapper.rfqVatTotalString | translate}}</span></td>
-                    <td *ngIf="config.vatEnabled"><span>{{negotiationModelWrapper.rfqGrossTotalString | translate}}</span></td>
-                </tr>
-                <tr>
-                    <th scope="row"><span>Total </span></th>
-                    <td><span></span></td>
-                    <td><span></span></td>
-                    <td><span>{{getTotalPriceString() | translate}}</span></td>
-                    <td *ngIf="config.vatEnabled"><span>{{getVatTotalString() | translate}}</span></td>
-                    <td *ngIf="config.vatEnabled"><span>{{getGrossTotalString() | translate}}</span></td>
-                </tr>
-            </table>
+            <purchase-order [negotiationModelWrappers]="negotiationModelWrappers"></purchase-order>
         </div>
     </div>
     <div class="modal-footer">

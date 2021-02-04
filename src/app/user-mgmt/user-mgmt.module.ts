@@ -46,6 +46,8 @@ import { AgentsComponent } from './agents.component';
 import { CompanyTermsAndConditions } from './company-settings/company-terms-and-conditions';
 import { EditTradingTermModalComponent } from './company-settings/edit-trading-term-modal.component';
 import {CompanyNetworkSettingsComponent} from './company-settings/company-network-settings.component';
+import {CompanyPaymentSettingsComponent} from './company-settings/company-payment-settings.component';
+import {AddressCountryComponent} from './subforms/address-country.component';
 
 @NgModule({
     imports: [
@@ -64,6 +66,7 @@ import {CompanyNetworkSettingsComponent} from './company-settings/company-networ
         UserFormComponent,
         CredentialsFormComponent,
         AddressSubForm,
+        AddressCountryComponent,
         DeliveryTermsSubForm,
         CompanySettingsComponent,
         CompanyDescriptionSettingsComponent,
@@ -81,7 +84,8 @@ import {CompanyNetworkSettingsComponent} from './company-settings/company-networ
         CompanyRatingComponent,
         UserProfileComponent,
         ForgotPasswordComponent,
-        AgentsComponent
+        AgentsComponent,
+        CompanyPaymentSettingsComponent
     ],
     exports: [
         LoginComponent,

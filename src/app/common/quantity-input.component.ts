@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { Quantity } from "../catalogue/model/publish/quantity";
 import { UnitService } from "./unit-service";
 import { isCustomProperty, quantityToString } from "./utils";
@@ -34,7 +34,7 @@ const FIELD_NAME_QUANTITY_UNIT = 'quantity_unit';
     templateUrl: "./quantity-input.component.html",
     styleUrls: ["./quantity-input.component.css"],
 })
-export class QuantityInputComponent extends ChildFormBase implements OnInit {
+export class QuantityInputComponent extends ChildFormBase implements OnInit, OnDestroy {
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;

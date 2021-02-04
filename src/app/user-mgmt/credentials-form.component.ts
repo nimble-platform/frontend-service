@@ -26,6 +26,7 @@ import { CategoryService } from '../catalogue/category/category.service';
 import * as constants from "../common/constants";
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
+import {DemandService} from '../demand/demand-service';
 //declare var jsSHA: any;
 
 @Component({
@@ -54,6 +55,7 @@ export class CredentialsFormComponent implements OnInit {
         private credentialsService: CredentialsService,
         private cookieService: CookieService,
         private appComponent: AppComponent,
+        private demandService: DemandService,
         private categoryService: CategoryService,
         private translate: TranslateService,
         private route: ActivatedRoute,
@@ -110,7 +112,8 @@ export class CredentialsFormComponent implements OnInit {
                 this.cookieService.set("user_fullname", res.firstname + " " + res.lastname);
                 this.cookieService.set("user_email", res.email);
                 this.cookieService.set("bearer_token", res.accessToken);
-
+                // get demand last seen response for the user
+                this.demandService.getDemandLastSeenResponse();
                 // Setting cookie path to root to facilitate the iframe base login
                 if (myGlobals.config.showChat) {
                     this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');

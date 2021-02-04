@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { ChildFormBase } from './validation/child-form-base';
 import { FormControl, ValidatorFn, Validators } from '@angular/forms';
 import { ValidationService } from './validation/validators';
@@ -24,7 +24,7 @@ const FIELD_NAME_NUMBER = 'number';
     templateUrl: "./plain-amount-input.component.html",
     styleUrls: ["./plain-amount-input.component.css"],
 })
-export class PlainAmountInputComponent extends ChildFormBase implements OnInit {
+export class PlainAmountInputComponent extends ChildFormBase implements OnInit , OnDestroy{
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;

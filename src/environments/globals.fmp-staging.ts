@@ -76,6 +76,24 @@ export const config = {
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
+    circularEconomy: {
+        certificateGroup: 'Circular Economy (Environment / Sustainability)',
+        companyCertificates: [
+            'ISO 14001 Environmental Management System',
+            'ISO 14006 Eco Design',
+            'ISO 50001 Energy Efficiency',
+            'Sustainability Report',
+            'Corporate Carbon Footprint'
+        ],
+        productCertificates: [
+            'PEFC Certificate',
+            'FSC Certificate',
+            'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
+            'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
+            'Free of Hazardous Substances'
+        ],
+        indexField: "circularEconomyCertificates"
+    },
     "contractForCatalogueEnabled":false,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": true,
@@ -87,10 +105,13 @@ export const config = {
     ],
     "defaultSearchIndex": "Category",
     "delegationEnabled": false,
+    "demandsEnabled": true,
     "displayCategoryCounts":false,
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": true,
     "hideLogAnalytics": true,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": true,
@@ -99,6 +120,7 @@ export const config = {
         "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590<br/><br/><b>FEVAMA-Wood and Furniture Business Federation of Valencian Community</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34 96 121 16 00<br/>Fax: +34 96 121 19 31<br/>E-Mail: <a href='mailto:fevama@fevama.es'>fevama@fevama.es</a><br/>E-Mail: <a href='http://fevama.es'>http://fevama.es</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>AIDIMME</b><br/>Technological Park, Benjamin Franklin, 13<br/>46980 Paterna, Valencia, Spain<br/>Phone: +34 961366070<br/>Fax: +34961366185<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>Internet: <a href='http://www.aidimme.es' target='_blank'>http://www.aidimme.es</a><br/>CIF: ESG 46261590</td></tr></table>",
         "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590<br/><br/><b>FEVAMA-Federación Empresarial de la Madera y Mueble de la Comunidad Valenciana</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34 96 121 16 00<br/>Fax: +34 96 121 19 31<br/>E-Mail: <a href='mailto:fevama@fevama.es'>fevama@fevama.es</a><br/>E-Mail: <a href='http://fevama.es'>http://fevama.es</a></td><td class='w-50 p-0 pl-3'><u>Proveedor de plataforma</u><br/><b>AIDIMME</b><br/>Parque Tecnológico, Calle Benjamín Franklin, 13 <br/>46980 Paterna, Valencia, España<br/>Teléfono: +34 961366070<br/>Fax: +34961366185<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>Internet: <a href='http://www.aidimme.es' target='_blank'>http://www.aidimme.es</a><br/>CIF: ESG 46261590</td></tr></table>"
     },
+    "invitationToPlatformEnabled": false,
     "kibanaConfig": {
         "companyDashboards": [
             {
@@ -151,6 +173,7 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": false,
+    "nonPublicInformationFunctionalityEnabled": false,
     "paymentMeans": [
         "Credit Card",
         "ACH Transfer",
@@ -206,6 +229,7 @@ export const config = {
             "src": "./assets/tos.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": true,
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":false,
@@ -376,14 +400,16 @@ export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
+export const product_price_hidden = "priceHidden";
+export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
-export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.origin"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates", "applicableCountries", "customizable"];
+export const product_filter_comp = [ "manufacturer.brandName", "manufacturer.origin","manufacturer.circularEconomyCertificates"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
-export const party_filter_main = ["activitySectors", "origin", "certificateType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates"];
+export const party_filter_main = ["activitySectors", "origin", "circularEconomyCertificates"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
@@ -401,8 +427,8 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
-export const product_nonfilter_data_type = ["string","double","price"]
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_deliveryTime","_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass","baseQuantity","items_package","_deliveryTime"];
+export const product_nonfilter_data_type = ["string","double","price","deliveryPeriod"]
 export const product_configurable = [];
 export const product_default = {};
 export const facet_min = 1;
@@ -427,3 +453,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

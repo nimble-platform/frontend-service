@@ -65,11 +65,11 @@
             <hr>
 
             <!-- Delivery Period -->
-            <div class="order-group">
+            <div class="order-group" *ngIf="termsSelectBoxValue == 'frame_contract' || productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)">
                 <label class="order-label">
                     <span [innerHTML]="'Delivery Period' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
+                <span *ngIf="termsSelectBoxValue == 'product_defaults' && productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)" class="order-value">
                     {{ productWrapper.getDeliveryPeriod() | quantityTranslatePipe }}
                 </span>
                 <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
@@ -78,11 +78,11 @@
             </div>
 
             <!-- Warranty Period -->
-            <div class="order-group">
+            <div class="order-group" *ngIf="termsSelectBoxValue == 'frame_contract' || productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)">
                 <label class="order-label">
                     <span [innerHTML]="'Warranty' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value">
+                <span *ngIf="termsSelectBoxValue == 'product_defaults' && productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)" class="order-value">
                     {{ productWrapper.getWarrantyPeriod() | quantityTranslatePipe }}
                 </span>
                 <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value">
@@ -91,11 +91,11 @@
             </div>
 
             <!-- Incoterms -->
-            <div class="order-group">
+            <div class="order-group" *ngIf="termsSelectBoxValue == 'frame_contract' || productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)">
                 <label class="order-label">
                     <span [innerHTML]="'Incoterms' | translate"></span>
                 </label>
-                <span *ngIf="termsSelectBoxValue == 'product_defaults'" class="order-value" [innerHTML]="productWrapper.getIncoterms() | translate">
+                <span *ngIf="termsSelectBoxValue == 'product_defaults'  && productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)" class="order-value" [innerHTML]="productWrapper.getIncoterms() | translate">
                 </span>
                 <span *ngIf="termsSelectBoxValue == 'frame_contract'" class="order-value" [innerHTML]="frameContractQuotationWrapper.incotermsString|translate">
                 </span>
@@ -149,7 +149,8 @@
                     <span [innerHTML]="'Quantity:' | translate"></span>
                 </label>
                 <span class="order-qty-input">
-                    <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="quantityValueFormControl" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)" class="form-control form-control-sm w-75 px-1" [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()" [step]="priceWrapper.itemPrice.price.baseQuantity.value || 1" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="" />
+                    <input type="number" (keypress)="onOrderQuantityKeyPressed($event)" [formControl]="quantityValueFormControl" [ngModel]="orderQuantity" (ngModelChange)="onOrderQuantityChange($event)" class="form-control form-control-sm w-75 px-1" [disabled]="!initCheckGetProductStatus.isComplete() || !initCheckGetFrameContractStatus.isComplete()"
+                           [step]="priceWrapper.itemPrice.price.baseQuantity.value && productWrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) ? priceWrapper.itemPrice.price.baseQuantity.value : 1" [ngbTooltip]="getValidationErrorMessage(quantityValueFormControl)" [placement]="'auto'" title="" />
                     <span *ngIf="getQuantityUnit() !== ''" class="ml-2">{{ getQuantityUnit() | translate }}</span>
                 </span>
             </div>

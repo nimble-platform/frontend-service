@@ -14,26 +14,37 @@
    limitations under the License.
  */
 
-import {Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import { CallStatus } from "../../common/call-status";
 import { DEFAULT_LANGUAGE } from "../model/constants";
 import { CategoryService } from "../category/category.service";
 import { CatalogueService } from "../catalogue.service";
 import { CookieService } from "ng2-cookies";
-import { Category } from '../model/category/category';
-import { ProductPublishComponent } from './product-publish.component';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import {ProductPublishStep} from './product-publish-step';
+import {selectPreferredName} from '../../common/utils';
+import {Subject} from 'rxjs';
+import {Location} from '@angular/common';
+import {AppComponent} from '../../app.component';
+import {PublishService} from '../publish-and-aip.service';
 
 @Component({
     selector: "bulk-publish",
     templateUrl: "./bulk-publish.component.html",
     styleUrls: ["./bulk-publish.component.css"]
 })
-export class BulkPublishComponent implements OnInit, OnChanges {
-    @Input() selectCategories: Category[];
-    @Input() catalogueIds: string[];
-    @Input() catalogueUuids: string[];
+export class BulkPublishComponent implements OnInit, OnChanges, OnDestroy {
+    catalogueIds: string[];
+    catalogueUuids: string[];
+
+    publishStatus: CallStatus = new CallStatus();
+    productCategoryRetrievalStatus: CallStatus = new CallStatus();
+    productCatalogueRetrievalStatus: CallStatus = new CallStatus();
+    ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    // check whether changing publish-mode to 'create' is necessary or not
+    changePublishModeCreate: boolean = false;
 
     // identifier of the catalogue two which the images will be added. For now, it's not configurable but set to 'default'
     dropdownCatalogueId = 'default';
@@ -47,9 +58,16 @@ export class BulkPublishComponent implements OnInit, OnChanges {
     showCategoryWarning = false;
     showCatalogueUploadWarning = false;
 
-    publishStatus: CallStatus;
+    selectPreferredName = selectPreferredName;
+
+    private dialogBox = true;
+
     catalogueIdCallStatus: CallStatus;
     uploadPublishStatus: CallStatus[] = [];
+    // the current step in single/bulk upload publishing
+    public publishingStep:ProductPublishStep = "Category";
+    // whether the categories are selected for the publishing
+    public categorySelectedForPublishing:boolean = false;
 
     @ViewChild('template') uploadTemplateElement: ElementRef;
 
@@ -57,7 +75,11 @@ export class BulkPublishComponent implements OnInit, OnChanges {
         private catalogueService: CatalogueService,
         private router: Router,
         private cookieService: CookieService,
-        private translate: TranslateService) {
+        private translate: TranslateService,
+        private route: ActivatedRoute,
+        private location: Location,
+        public publishStateService: PublishService,
+        private appComponent: AppComponent) {
     }
 
     ngOnInit(): void {
@@ -65,6 +87,71 @@ export class BulkPublishComponent implements OnInit, OnChanges {
         this.catalogueIdCallStatus = new CallStatus();
         this.uploadPublishStatus = [];
 
+        this.dialogBox = true;
+        // TODO: asych calls like below should have proper chain.
+        // E.g. the below line is expected to be called upon a change in the query params.
+        this.getCatalogueIdsForParty();
+
+        this.publishStateService.publishingStarted = true;
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    canDeactivate(): boolean | Promise<boolean>{
+        if (this.changePublishModeCreate) {
+            this.publishStateService.resetData();
+        }
+        if (this.dialogBox) {
+            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
+                if(result){
+                    this.publishStateService.resetData();
+                }
+                return result;
+            });
+        } else{
+            this.dialogBox = true;
+            return true;
+        }
+    }
+
+    // methods to handle categories
+    isProductCategoriesLoading(): boolean {
+        return this.productCategoryRetrievalStatus.fb_submitted;
+    }
+    // the end of methods to handle categories
+
+    /*
+     * Event Handlers
+     */
+
+    /*
+     * Other Stuff
+     */
+    public getCatalogueIdsForParty() {
+        this.productCatalogueRetrievalStatus.submit();
+        this.catalogueService.getCatalogueIdsUUidsForParty().then((catalogueIds) => {
+            var idList = [];
+            var uuidList = [];
+
+            for (var obj in catalogueIds) {
+                idList.push(catalogueIds[obj][0]);
+                uuidList.push(catalogueIds[obj][1]);
+            }
+
+            this.catalogueIds = idList;
+            this.catalogueUuids = uuidList;
+            this.productCatalogueRetrievalStatus.callback("Successfully loaded catalogueId list", true);
+        }).catch(() => {
+            this.productCatalogueRetrievalStatus.error('Failed to get product catalogues');
+        });
+
+    }
+
+    isLoading(): boolean {
+        return (this.publishStatus.fb_submitted || this.isProductCategoriesLoading());
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -95,7 +182,7 @@ export class BulkPublishComponent implements OnInit, OnChanges {
 
     downloadTemplate() {
         // first check whether there is at leasta one selected category
-        if (this.selectCategories.length == 0) {
+        if (this.categoryService.selectedCategories.length == 0) {
             this.showCategoryWarning = true;
             return;
         }
@@ -160,7 +247,7 @@ export class BulkPublishComponent implements OnInit, OnChanges {
                     }
                     catalogueService.uploadTemplate(userId, file, uploadMode, catalogueId).then(res => {
                         self.uploadPublishStatus[i].callback("Uploaded " + file.name + " successfully");
-                        ProductPublishComponent.dialogBox = false;
+                            this.dialogBox = false;
                         self.resetEventWhenUploadCompletes(++callbackCount, self.selectedFileList.length, errorCount, event);
                     },
                     error => {
@@ -245,4 +332,39 @@ export class BulkPublishComponent implements OnInit, OnChanges {
         }
         return catalogueIdValid;
     }
+
+    // methods to handle guided publishing
+    onPreviousStep(){
+        switch (this.publishingStep) {
+            case 'Category':
+                break;
+            case 'BulkUpload':
+                this.publishingStep = "Category";
+                break;
+        }
+    }
+
+    onNextStep(){
+        if (this.publishingStep === 'Category') {
+            this.publishingStep = "BulkUpload";
+            this.onCategorySelectionCompleted();
+        }
+    }
+
+    onStepChanged(step:ProductPublishStep){
+        // handle the case where the publishing step is Category
+        if(this.publishingStep == "Category"){
+            this.onCategorySelectionCompleted();
+        }
+        // set the current publishing step
+        this.publishingStep = step;
+    }
+
+    private onCategorySelectionCompleted(){
+        // the category selection is completed, so the product has some categories
+        this.categorySelectedForPublishing = true;
+        // add the selected categories to the recent categories list of company
+        this.categoryService.addRecentCategories(this.categoryService.selectedCategories);
+    }
+    // the end of methods to handle guided publishing
 }

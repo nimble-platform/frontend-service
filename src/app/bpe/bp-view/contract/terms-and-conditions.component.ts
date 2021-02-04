@@ -14,16 +14,18 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { CallStatus } from "../../../common/call-status";
 import { BPEService } from "../../bpe.service";
 import { Clause } from '../../../catalogue/model/publish/clause';
 import { UserService } from '../../../user-mgmt/user.service';
-import { COUNTRY_NAMES } from '../../../common/utils';
 import { UnitService } from '../../../common/unit-service';
 import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from '../../../common/constants';
 import { TradingTerm } from '../../../catalogue/model/publish/trading-term';
 import {TranslateService} from '@ngx-translate/core';
+import {NegotiationClauseService} from '../negotiation/negotiation-clause-service';
+import {Subject} from 'rxjs';
+import {CountryUtil} from '../../../common/country-util';
 
 
 @Component({
@@ -31,7 +33,7 @@ import {TranslateService} from '@ngx-translate/core';
     templateUrl: "./terms-and-conditions.component.html",
     styleUrls: ["./terms-and-conditions.component.css"]
 })
-export class TermsAndConditionsComponent implements OnInit {
+export class TermsAndConditionsComponent implements OnInit, OnDestroy {
 
     // Inputs
     @Input() sellerPartyId: string;
@@ -39,6 +41,9 @@ export class TermsAndConditionsComponent implements OnInit {
     @Input() readOnly: boolean = false;
     @Input() enableComparisonWithOtherTerms: boolean = true; // if true, original and current terms are compared and differences are highlighted
     @Input() documentType: string; // "order", "rfq", "quotation";
+    @Input() showActionButton: boolean = false; // if true, an update/view button displayed next to the clause name
+    @Input() actionButtonClass:string = "col-2";
+    @Input() componentIndex:number = 0; // keeps the order of item included in the negotiation
     _originalTermAndConditionClauses: Clause[] = null; // original terms and conditions of the object
     _termsAndConditions: Clause[] = []; // updated terms and conditions of the object
 
@@ -67,16 +72,32 @@ export class TermsAndConditionsComponent implements OnInit {
     // options
     @Input() availableIncoTerms: string[] = [];
     @Input() availablePaymentTerms: string[] = [];
-    COUNTRY_NAMES = COUNTRY_NAMES;
+    COUNTRY_JSON = CountryUtil.COUNTRY_JSON;
+
+    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(public bpeService: BPEService,
                 public userService: UserService,
                 public translateService: TranslateService,
-                public unitService: UnitService) {
+                public unitService: UnitService,
+                public negotiationClauseService:NegotiationClauseService) {
 
     }
 
     ngOnInit(): void {
+        this.negotiationClauseService.onClauseCollapsed.takeUntil(this.ngUnsubscribe).subscribe(componentClauseId => {
+            if(this._termsAndConditions){
+                let separatorIndex = componentClauseId.indexOf("-");
+                let componentIndex = Number.parseInt(componentClauseId.substring(0,separatorIndex));
+                if(this.componentIndex == componentIndex){
+                    let clauseId = this.getClauseIdWithoutOrder(componentClauseId.substring(separatorIndex+1));
+                    let index = this._termsAndConditions.findIndex(clause => this.getClauseIdWithoutOrder(clause.id) === clauseId);
+                    if (index != -1)
+                        this.collapseClause(index);
+                }
+
+            }
+        });
         let array = new Uint32Array(1);
         window.crypto.getRandomValues(array);
         this.randomComponentId = "" + array[0];
@@ -100,6 +121,11 @@ export class TermsAndConditionsComponent implements OnInit {
                 this.callStatus.error("Error while fething terms and conditions", error);
             });
         }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     setSectionText(index: number) {
@@ -153,8 +179,6 @@ export class TermsAndConditionsComponent implements OnInit {
 
             for (let tradingTerm of clause.tradingTerms) {
                 if (tradingTerm.id == id) {
-                    let defaultValue = this.getDefaultValue(tradingTerm);
-
                     let defaultTradingTerm = this.originalTradingTerms.get(id);
 
                     if (tradingTerm.value.valueQualifier == "STRING") {
@@ -172,7 +196,7 @@ export class TermsAndConditionsComponent implements OnInit {
                     if (elements && elements.length > 0) {
                         for (let i = 0; i < elements.length; i++) {
                             let element: HTMLElement = <HTMLElement>elements[i];
-                            element.innerText = defaultValue;
+                            element.innerText =  this.getDefaultValue(tradingTerm);
 
                             this.setElementColor(element, id);
                         }
@@ -207,6 +231,9 @@ export class TermsAndConditionsComponent implements OnInit {
                     tradingTerm.value.valueQuantity[0].value = Number(value);
                 } else if (tradingTerm.value.valueQualifier == "CODE") {
                     tradingTerm.value.valueCode[0].value = value;
+                    if(tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'){
+                        value = CountryUtil.getCountryByISO(value);
+                    }
                 }
 
                 let elements = document.getElementsByClassName(this.generateClassForParameter(id));
@@ -301,6 +328,9 @@ export class TermsAndConditionsComponent implements OnInit {
             defaultValue = tradingTerm.value.valueDecimal[0];
         } else if (tradingTerm.value.valueQualifier == "CODE") {
             defaultValue = tradingTerm.value.valueCode[0].value;
+            if(tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'){
+                defaultValue = CountryUtil.getCountryByISO(tradingTerm.value.valueCode[0].value);
+            }
         }
 
         // if there is no default value, return its id
@@ -511,5 +541,19 @@ export class TermsAndConditionsComponent implements OnInit {
         } else {
             element.style.color = 'red';
         }
+    }
+
+    public collapseClause(index:number){
+        this.showSection[index] = !this.showSection[index];
+        this.setSectionText(index);
+    }
+
+    public emitCollapseClause(index:number){
+        this.negotiationClauseService.onClauseCollapsed.next(this.componentIndex + "-" +this._termsAndConditions[index].id)
+    }
+
+    private getClauseIdWithoutOrder(clauseId:string){
+        let separatorIndex = clauseId.indexOf("_");
+        return clauseId.substring(separatorIndex+1)
     }
 }

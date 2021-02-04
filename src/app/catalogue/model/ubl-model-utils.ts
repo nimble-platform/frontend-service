@@ -115,9 +115,13 @@ export class UBLModelUtils {
     }
 
     public static createCommodityClassification(category: Category): CommodityClassification {
-        const code: Code = new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
+        const code: Code = this.createCodeFromCategory(category);
         const commodityClassification = new CommodityClassification(code, null, null, "");
         return commodityClassification;
+    }
+
+    public static createCodeFromCategory(category: Category): Code {
+        return new Code(category.id, selectPreferredName(category), category.categoryUri, category.taxonomyId, null);
     }
 
     public static createItemLocationQuantity(amount: string): ItemLocationQuantity {
@@ -630,7 +634,7 @@ export class UBLModelUtils {
         ublAddress.postalZone = userMgmtAddress.postalCode;
         ublAddress.buildingNumber = userMgmtAddress.buildingNumber;
         ublAddress.streetName = userMgmtAddress.streetName;
-        ublAddress.country.name.value = userMgmtAddress.country;
+        ublAddress.country.identificationCode.value = userMgmtAddress.country;
     }
 
     public static createCountry(): Country {
@@ -1055,7 +1059,7 @@ export class UBLModelUtils {
     }
 
     private static isNotEmptyCountry(country: Country) {
-        return country && country.name && this.isNotEmptyString(country.name.value);
+        return country && country.identificationCode && this.isNotEmptyString(country.identificationCode.value);
     }
 
     public static areNotesOrFilesAttachedToDocument(document: RequestForQuotation | Quotation) {

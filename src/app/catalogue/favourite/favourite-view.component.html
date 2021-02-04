@@ -21,12 +21,15 @@
 
 <div *ngIf="itemTypeResponse && hasFavourite == true">
     <div>
-        <div class="input-group form-group" style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
-            <input class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="searchFavourite" [placeholder]="'Search ...' | translate">
+        <div class="input-group form-group"
+             style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
+            <input class="form-control col-3" type="text" [(ngModel)]="searchText" [ngbTypeahead]="searchFavourite"
+                   [placeholder]="'Search ...' | translate">
 
             <label class="space-left space-right"><strong></strong>
             </label>
-            <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory" (change)="requestCatalogue()">
+            <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory"
+                    (change)="requestCatalogue()">
                 <option value="All">All</option>
                 <option *ngFor="let type of cat_levels[0]" [value]=type.id>{{type.preferredName}}</option>
             </select>
@@ -34,49 +37,66 @@
             <label class="space-right"><strong></strong>
             </label>
             <select class="custom-select col-3 space-right" [(ngModel)]="sortOption" (change)="requestCatalogue()">
-                <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span [innerHTML]="option.value | translate"></span></option>
+                <option *ngFor="let option of CATALOGUE_LINE_SORT_OPTIONS" [value]="option.name"><span
+                        [innerHTML]="option.value | translate"></span></option>
             </select>
         </div>
 
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="10" [boundaryLinks]="true" (pageChange)="onRegisteredCompaniesPageChange($event)"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="10"
+                            [boundaryLinks]="true"
+                            (pageChange)="onRegisteredCompaniesPageChange($event)"></ngb-pagination>
         </div>
 
         <div *ngFor="let catLine of catalogueLinesArray; let i = index" class="space-before">
             <div class="card pointer">
                 <div class="card-body">
-                    <div class="row" *ngIf="!catalogueLineView[catLine.localName]" (click)="viewCatalogueLine(catLine,i); $event.stopPropagation();">
+                    <div class="row" *ngIf="!catalogueLineView[catLine.localName]"
+                         (click)="viewCatalogueLine(catLine); $event.stopPropagation();">
                         <div class="col-2">
                             <div style="text-align:center">
-                                <img src="{{imageMap[catLine.uri]}}" class="thumb" style="max-height: 5rem;max-width: 100%;" onerror="this.src='assets/empty_img.png';" />
+                                <img src="{{imageMap[catLine.uri]}}" class="thumb"
+                                     style="max-height: 5rem;max-width: 100%;"
+                                     onerror="this.src='assets/empty_img.png';"/>
                             </div>
                         </div>
                         <div class="col-10 d-flex justify-content-between">
                             <div class="col-8">
                                 <p class="all-break">
                                     <strong>{{ getMultilingualLabel(catLine[product_name]) }}
-                                        <a class="text-std" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}" (click)="onOpenCatalogueLine($event)" target="_blank">
+                                        <a class="text-std" [routerLink]="['/product-details']"
+                                           [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}"
+                                           (click)="onOpenCatalogueLine($event)" target="_blank">
                                             <i class="fas fa-external-link-alt btn-light"></i>
                                         </a>
                                     </strong>
                                 </p>
                                 <p *ngIf="catLine[product_description] != null">{{getMultilingualLabel(catLine[product_description])}}</p>
                                 <!-- <p *ngIf="catLine.requiredItemLocationQuantity.price.priceAmount.value != null" class="all-break">{{catLine.requiredItemLocationQuantity.price.priceAmount.value+" "+catLine.requiredItemLocationQuantity.price.priceAmount.currencyID}}</p> -->
-                                <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])" class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
-                                <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])" class="all-break"><span [innerHTML]="'Price: Upon request' | translate"></span></p>
+                                <p *ngIf="catLine[product_price] && !checkEmpty(catLine[product_price])"
+                                   class="all-break">{{roundToTwoDecimals(catLine[product_price][getCurrency(catLine[product_price])])}} {{getCurrency(catLine[product_price])}}</p>
+                                <p *ngIf="!catLine[product_price] || checkEmpty(catLine[product_price])"
+                                   class="all-break"><span [innerHTML]="'Price: Upon request' | translate"></span></p>
                             </div>
                             <div class="col-2">
 
-                                <button type="button" class="btn btn-danger space-after col" [disabled]="getDeleteStatus(i).isLoading()" (click)="removeFavourite(catLine, i); $event.stopPropagation();">
+                                <button type="button" class="btn btn-danger space-after col"
+                                        [disabled]="getDeleteStatus(i).isLoading()"
+                                        (click)="removeFavourite(catLine, i); $event.stopPropagation();">
                                     <span [innerHTML]="'Remove' | translate"></span>
                                 </button>
 
-                                <button *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(catLine.classificationUri)" class="btn btn-primary col space-after" (click)="onAddToCart(catLine,i); $event.stopPropagation();" [disabled]="isAddCartDisabled(i, catLine)">
+                                <button *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(catLine.classificationUri)"
+                                        class="btn btn-primary col space-after"
+                                        (click)="onAddToCart(catLine,i); $event.stopPropagation();"
+                                        [disabled]="isAddCartDisabled(i, catLine)">
                                     <span class="fas fa-shopping-cart mr-1"></span>
                                     <span [innerHTML]="'Add to Cart' | translate"></span>
                                 </button>
 
-                                <a href="#" role="button" class="btn btn-primary col" [routerLink]="['/product-details']" [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
+                                <a href="#" role="button" class="btn btn-primary col"
+                                   [routerLink]="['/product-details']"
+                                   [queryParams]="{catalogueId: catLine.catalogueId, id: catLine.manufactuerItemId}">
                                     <span [innerHTML]="'Negotiate' | translate"></span>
                                 </a>
                                 <call-status [callStatus]="getDeleteStatus(i)"></call-status>
@@ -85,14 +105,18 @@
                         </div>
                     </div>
                     <div *ngIf="catalogueLineView[catLine.localName]">
-                        <catalogue-line-panel [catalogueLine]="catLineList[catLine.localName]" [settings]="comapanyList[catLine.localName]" [presentationMode]="''" [(show)]="catalogueLineView[catLine.localName]">
+                        <catalogue-line-panel [catalogueLine]="catLineList[catLine.localName]"
+                                              [settings]="comapanyList[catLine.localName]" [presentationMode]="''"
+                                              [(show)]="catalogueLineView[catLine.localName]">
                         </catalogue-line-panel>
                     </div>
                 </div>
             </div>
         </div>
         <div *ngIf="catalogueLinesArray.length > 0" class="pagination justify-content-center space-before">
-            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="10" [boundaryLinks]="true" (pageChange)="onRegisteredCompaniesPageChange($event)"></ngb-pagination>
+            <ngb-pagination [(collectionSize)]="collectionSize" [(pageSize)]="pageSize" [(page)]="page" [maxSize]="10"
+                            [boundaryLinks]="true"
+                            (pageChange)="onRegisteredCompaniesPageChange($event)"></ngb-pagination>
         </div>
     </div>
 </div>
@@ -100,7 +124,8 @@
 <div class="jumbotron" *ngIf="itemTypeResponse && hasFavourite == false">
     <h3><span [innerHTML]="'No Favourite products / service.' | translate"></span></h3>
     <h5>
-        <span (click)="navigateToTheSearchPage()" class="pointer"><span [innerHTML]="'Search for Products / Services' | translate"></span></span>
+        <span (click)="navigateToTheSearchPage()" class="pointer"><span
+                [innerHTML]="'Search for Products / Services' | translate"></span></span>
         <i class="fa fa-plus-circle pointer" (click)="navigateToTheSearchPage()"></i>
     </h5>
 </div>

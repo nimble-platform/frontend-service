@@ -1,0 +1,91 @@
+<call-status [callStatus]="initCallStatus"></call-status>
+<div *ngIf="!isPaymentSuccessful && initCallStatus.isAllSuccessful()">
+    <h2>{{'Checkout'|translate}}</h2>
+    <div class="row space-before" *ngIf="formGroup">
+        <div class="col-6">
+            <!--    Billing Information-->
+            <form class="theme-form" [formGroup]="formGroup">
+                <h4>{{'Billing Details'|translate}}</h4>
+                <div class="form-group row">
+                    <strong class="col-2 col-form-label"><span [innerHTML]="'Name:' | translate"></span>
+                    </strong>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="name" formControlName="name"
+                               [placeholder]="'Name'" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <strong class="col-2 col-form-label"><span [innerHTML]="'Email:' | translate"></span>
+                    </strong>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="email" formControlName="email"
+                               required placeholder="Email">
+                    </div>
+                </div>
+                <address-form [group]="formGroup.controls['address']"></address-form>
+            </form>
+        </div>
+        <!-- Order Summary -->
+        <div class="col-6">
+            <h4>{{'Order Summary'|translate}}</h4>
+            <table class="table table-striped bordered border-info">
+                <tr>
+                    <th><span [innerHTML]="'Ordered Product' | translate"></span></th>
+                    <th><span [innerHTML]="'Quantity' | translate"></span></th>
+                    <th><span [innerHTML]="(config.vatEnabled ? 'Gross Total' :'Net Price') | translate"></span></th>
+                </tr>
+                <ng-container *ngIf="priceWrappers">
+                    <tr *ngFor="let priceWrapper of priceWrappers;let i=index">
+                        <th scope="row"><span>{{priceWrapper.item.name[0].value }}</span></th>
+                        <td><span>{{priceWrapper.orderedQuantity | quantityTranslatePipe}}</span></td>
+                        <td>
+                            <span>{{config.vatEnabled ? priceWrapper.grossTotalString : priceWrapper.totalPriceString}}</span>
+                        </td>
+                    </tr>
+                </ng-container>
+                <tr>
+                    <th scope="row"><span>{{'Total' | translate}}</span></th>
+                    <td><span></span></td>
+                    <td><span>{{getGrossTotalString() | translate}}</span></td>
+                </tr>
+            </table>
+
+            <!--    Card information-->
+            <div class="card-info">
+                <h4>{{'Card Information'|translate}}</h4>
+                <div class="stripe-card-div">
+                    <ngx-stripe-card
+                            [options]="cardOptions"
+                            [elementsOptions]="elementsOptions"
+                            (change)="onCardInformationChanged($event)"
+                    ></ngx-stripe-card>
+                </div>
+                <div #cardErrors class="d-flex justify-content-center stripe-card-error">
+
+                </div>
+            </div>
+            <!--    Pay Button-->
+            <div class="space-before d-flex justify-content-center flex-column">
+                <call-status [callStatus]="paymentCallStatus"></call-status>
+                <button *ngIf="!paymentCallStatus.isLoading()" class="btn btn-primary"
+                        [disabled]="formGroup.invalid || !isCardInformationCompleted"
+                        (click)="confirmCardPayment()">
+                    {{'Pay'|translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isPaymentSuccessful" class="successful-payment">
+    <div>
+        <i class="fa fa-check successful-payment-icon" aria-hidden="true">
+        </i>
+        {{'Payment Successfully Received !'|translate}}
+    </div>
+    <div class="d-flex justify-content-center space-before">
+        <button class="btn btn-primary action" (click)="onNavigateDashboard()">
+            <span [innerHTML]="'Continue to dashboard' | translate"></span>
+        </button>
+    </div>
+</div>

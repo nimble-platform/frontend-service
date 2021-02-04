@@ -15,13 +15,15 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Address } from '../model/address';
-import { validateCountry, getCountrySuggestions } from '../../common/utils';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import {CountryUtil} from '../../common/country-util';
+import {Coordinate} from '../../catalogue/model/publish/coordinate';
+import {addressToString} from '../utils';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
     moduleId: module.id,
@@ -31,35 +33,60 @@ import { TranslateService } from '@ngx-translate/core';
 })
 
 
-export class AddressSubForm {
+export class AddressSubForm implements OnInit,OnDestroy{
 
     @Input('group')
     public addressForm: FormGroup;
     @Input() disabledFlag: boolean = false;
     @Input() requiredFlag: boolean = true;
+    @Input() mapView: boolean = false;
+    // location coordinate used in the address map
+    coordinate:Coordinate;
+    // address as string
+    addressString:string;
 
+    ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
-        private translate: TranslateService
     ) {
+    }
+
+    ngOnInit(): void {
+        // set coordinate using the form data
+        this.coordinate = new Coordinate(this.addressForm.controls.locationLongitude.value,this.addressForm.controls.locationLatitude.value);
+        // subscribe to the address form changes for the map view
+        if(this.mapView){
+            this.onAddressFormChanges();
+        }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    /**
+     * Sets the address value as string when the address form is changed
+     * */
+    onAddressFormChanges(){
+        this.addressForm.valueChanges.takeUntil(this.ngUnsubscribe).pipe(debounceTime(500)).subscribe(value => {
+            this.addressString = addressToString(value);
+        })
     }
 
     getSuggestions = (text$: Observable<string>) =>
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
-    public static get(addressForm): Address {
-        return {
-            streetName: addressForm.controls.streetName.value,
-            buildingNumber: addressForm.controls.buildingNumber.value,
-            cityName: addressForm.controls.cityName.value,
-            postalCode: addressForm.controls.postalCode.value,
-            region: addressForm.controls.region.value,
-            country: addressForm.controls.country.value
-        };
+    public onCoordinateChange(coordinate:Coordinate){
+        // update form data
+        this.addressForm.controls.locationLatitude.setValue(coordinate.latitude);
+        this.addressForm.controls.locationLongitude.setValue(coordinate.longitude);
+        this.addressForm.updateValueAndValidity();
+        this.addressForm.markAsDirty();
     }
 
     public static update(addressForm: FormGroup, address: Address): FormGroup {
@@ -70,6 +97,8 @@ export class AddressSubForm {
             addressForm.controls.region.setValue(address.region || "");
             addressForm.controls.postalCode.setValue(address.postalCode || "");
             addressForm.controls.country.setValue(address.country || "");
+            addressForm.controls.locationLatitude.setValue(address.locationLatitude || null);
+            addressForm.controls.locationLongitude.setValue(address.locationLongitude || null);
         }
         return addressForm;
     }
@@ -82,7 +111,16 @@ export class AddressSubForm {
             cityName: formDef,
             postalCode: formDef,
             region: formDef,
-            country: ['', [validateCountry]]
+            country: ['', [CountryUtil.validateCountryISOCode]],
+            locationLatitude: [null],
+            locationLongitude: [null]
         });
     }
+
+    onCountryChanged(event) {
+        // update the country form control
+        this.addressForm.controls.country.setValue(event);
+        this.addressForm.markAsDirty();
+    }
+
 }

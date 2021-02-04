@@ -27,8 +27,8 @@
                 <span [innerHTML]="'Remove' | translate"></span>
 
             </button>
-            <select *ngIf="languageEnabled && presentationMode == 'edit'" [(ngModel)]="file.languageID" class="form-control language-select" type="text" name="{{file.languageID}}">
-                <option *ngFor='let language of languages' [value]="language" [selected]="language === file.languageID">{{language}}</option>
+            <select *ngIf="languageEnabled && presentationMode == 'edit'" [(ngModel)]="file.languageID" class="form-control language-select" type="text" name="{{file.languageID}}" (change)="onLanguageIdSelected()">
+                <option *ngFor='let language of getLanguagesForFile(file.languageID)' [value]="language" [selected]="language === file.languageID">{{language}}</option>
             </select>
         </div>
         <div class="d-flex">
@@ -39,8 +39,8 @@
                     {{ placeholder }}
                 </label>
             </div>
-            <select *ngIf="languageEnabled && multiple" class="form-control language-select" [(ngModel)]="selectedLanguage">
-                <option *ngFor='let language of languages' [value]="language">{{language}}</option>
+            <select *ngIf="languageEnabled && multiple && languages.length !== binaryObjects.length" class="form-control language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageIdSelected()">
+                <option *ngFor='let language of getLanguagesForFile(selectedLanguage)' [value]="language">{{language}}</option>
             </select>
         </div>
 

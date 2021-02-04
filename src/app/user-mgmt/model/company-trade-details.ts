@@ -19,6 +19,7 @@ export class CompanyTradeDetails {
     constructor(
         public deliveryTerms: DeliveryTerms[],
         public paymentMeans: PaymentMeans[],
-        public ppapCompatibilityLevel: number
+        public ppapCompatibilityLevel: number,
+        public stripeAccountId:string
     ) { }
 }

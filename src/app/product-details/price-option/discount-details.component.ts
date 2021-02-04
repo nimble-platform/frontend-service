@@ -15,13 +15,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PriceOption } from '../../catalogue/model/publish/price-option';
 import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
-import { PRICE_OPTIONS } from '../../catalogue/model/constants';
+import { PRICE_OPTIONS, NON_PUBLIC_FIELD_ID } from '../../catalogue/model/constants';
 import { Quantity } from '../../catalogue/model/publish/quantity';
 import { PaymentMeans } from '../../catalogue/model/publish/payment-means';
 import { Address } from '../../catalogue/model/publish/address';
 import { Period } from '../../catalogue/model/publish/period';
 import { CompanyNegotiationSettings } from '../../user-mgmt/model/company-negotiation-settings';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
+import {NonPublicInformation} from '../../catalogue/model/publish/non-public-information';
+import {config} from '../../globals';
 const DISCOUNT_DETAILS_INPUT = 'discount_details';
 @Component({
     selector: "discount-details",
@@ -39,6 +41,8 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
 
     object = Object;
 
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled;
     constructor() {
         super(DISCOUNT_DETAILS_INPUT);
     }
@@ -89,4 +93,18 @@ export class DiscountDetailsComponent extends EmptyFormBase implements OnInit {
         this.discountUnits = [].concat([this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.currencyID, "%"]);
     }
 
+    onNonPublicClicked(fieldId, checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = fieldId;
+            this.catalogueLine.nonPublicInformation.push(nonPublicInformation);
+        } else{
+            const index = this.catalogueLine.nonPublicInformation.findIndex(value => value.id === fieldId);
+            this.catalogueLine.nonPublicInformation.splice(index,1);
+        }
+    }
+
+    isNonPublicChecked(fieldId){
+        return this.catalogueLine.nonPublicInformation.findIndex(value => value.id === fieldId) !== -1;
+    }
 }

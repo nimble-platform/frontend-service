@@ -14,13 +14,7 @@
    limitations under the License.
  -->
 
-<div *ngIf="isLogistics">
-    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Logistics Service' | translate"></span></p>
-</div>
-<div *ngIf="!isLogistics">
-    <p class="pb-3 nimble-title"><span [innerHTML]="'Publish Product / Service' | translate"></span></p>
-</div>
-<p><span [innerHTML]="'All published products / services must belong to at least one category, which will describe the product / service and help customers find your offering.' | translate"></span></p>
+<p *ngIf="titleTranslationKey"><span [innerHTML]="titleTranslationKey | translate"></span></p>
 <div class="form-group row d-flex">
     <div class="col-12 inline">
         <form #categorySearch="ngForm" (ngSubmit)="onSearchCategory()" novalidate>
@@ -53,7 +47,7 @@
 </div>
 <div *ngIf="pathToSelectedCategories">
     <span *ngFor="let parentCat of pathToSelectedCategories.parents;let l=last">
-        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code,$event)">{{selectPreferredName(parentCat)}}</span>
+        <span class="btn-link pointer" [ngClass]="{'disabled text-muted': getCategoryDetailsStatus.isDisplayed()}" (click)="scrollToDiv(parentCat.code)">{{selectPreferredName(parentCat)}}</span>
         <span *ngIf="!l">
             >>
         </span>
@@ -168,17 +162,8 @@
 
                         <call-status [callStatus]="getCategoriesStatus"></call-status>
 
-                        <!-- Logistic Service Categories -->
-                        <div *ngIf="isLogistics">
-                            <!--<h4 class="p-2">Logistics Categories</h4>-->
-                            <ng-container *ngIf="logisticsCategory && !getCategoriesStatus.isDisplayed()">
-                                <category-tree [category]="logisticsCategory" [border]="false" [parentCategories]="parentCategories" [numberOfSteps]="parentCategories ? parentCategories.parents.length-1 : 0" (detailsEvent)="getCategoryDetails($event,false)" [selectedCategory]="selectedCategory" [selectedCategories]="categoryService.selectedCategories" [scrollToDivId]="scrollToDivId" [selectedPath]="pathToSelectedCategories" [loadingStatus]="getCategoryDetailsStatus.isDisplayed()"></category-tree>
-                            </ng-container>
-                            <div *ngIf="!logisticsCategory && !getCategoriesStatus.isDisplayed()" class="py-2 d-flex" style="padding-left:1rem"><span [innerHTML]="'No available category' | translate"></span></div>
-                        </div>
-
                         <!-- Product Categories -->
-                        <div *ngIf="!isLogistics">
+                        <div>
                             <!--<h4 class="p-2">Product Categories</h4>-->
                             <ng-container *ngIf="rootCategories && !getCategoriesStatus.isDisplayed()">
                                 <div *ngFor="let rootCategory of rootCategories">
@@ -300,16 +285,9 @@
             <div class="d-flex flex-wrap">
                 <div *ngFor="let selectedCategory of categoryService.selectedCategories" class="bordered d-flex align-items-center mx-1 my-1" title="{{selectedCategory.taxonomyId}}">
                     <small class="p-0">{{selectPreferredName(selectedCategory)}}</small>
-                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="categoryService.removeSelectedCategory(selectedCategory)"></i>
+                    <i class="fa fa-times-circle pl-1 text-red" placement="right" (click)="removeSelectedCategory(selectedCategory)"></i>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-3 align-self-center">
-        <button class="btn btn-primary w-100 inline" [disabled]="categoryService.selectedCategories.length === 0" (click)="navigateToPublishingPage()">
-            <span>
-                <span [innerHTML]="'Continue With Selected Categories' | translate"></span>
-            </span>
-        </button>
     </div>
 </div>

@@ -135,19 +135,16 @@
             <div class="line"></div>
         </div>
         <div class="action-description">
-            <div class="half-column w-75">
+            <div class="half-column">
                 <p class="title-par">{{'Do you have a specific need?' | translate }}</p>
                 <p>{{'State your interest in products and/or services so that B2BMarket users can provide a solution.' | translate }}</p>
-<!--                <div class="btn btn-outline-primary disabled">{{'Publish Your Demand' | translate}}</div>-->
+                <div class="btn btn-outline-primary" (click)="onPublishDemandClicked()">{{'Publish Your Demand' | translate}}</div>
             </div>
-<!--            <div class="half-column">-->
-<!--                <p class="title-par">Can you address customer's demands?</p>-->
-<!--                <p>See all demands on B2BMarket and respond them.</p>-->
-<!--&lt;!&ndash;                <div class="btn btn-outline-secondary disable">{{'See Demands' | translate}}</div>&ndash;&gt;-->
-<!--            </div>-->
-        </div>
-        <div class="alert-danger alert w-50 text-center mr-auto ml-auto w-75">
-            {{'Demand\'s panel is coming soon!' | translate}}
+            <div class="half-column">
+                <p class="title-par">{{'Can you address customers demands?'|translate}}</p>
+                <p>{{'See all demands on B2BMarket and respond them.'|translate}}</p>
+                <div class="btn btn-outline-primary" (click)="onSearchDemandClicked()">{{'See Demands' | translate}}</div>
+            </div>
         </div>
     </div>
 

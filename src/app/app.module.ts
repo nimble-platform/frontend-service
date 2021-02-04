@@ -21,7 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -61,7 +61,12 @@ import { ValidationService } from './common/validation/validators';
 import {ContractService} from './bpe/bp-view/contract-service';
 import {WhiteBlackListService} from './catalogue/white-black-list.service';
 import {NetworkCompanyListService} from './user-mgmt/network-company-list.service';
+import {DemandPublishService} from './demand/demand-publish-service';
+import {DemandService} from './demand/demand-service';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {AddressMapService} from './common/address-map.service';
 
+import {PaymentService} from './bpe/payment/payment-service';
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -101,7 +106,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         CategoryService,
         PublishingPropertyService,
         PublishService,
+        DemandPublishService,
+        DemandService,
         WhiteBlackListService,
+        PaymentService,
         NetworkCompanyListService,
         ExplorativeSearchService,
         SimpleSearchService,
@@ -110,6 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         UserService,
         CredentialsService,
         UnitService,
+        AddressMapService,
         PrecedingBPDataService,
         TnTService,
         AnalyticsService,
@@ -119,7 +128,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ShoppingCartDataService,
         CollaborationService,
         ValidationService,
-        AgentService
+        AgentService,
+        DatePipe
     ],
     bootstrap: [
         AppComponent

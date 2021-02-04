@@ -12,9 +12,12 @@
    limitations under the License.
  */
 
+import {Facet} from './facet';
+
 export class Filter {
     constructor(
         public isCollapsed: boolean = true, // whether the filter is collapsed or not (when it is collapsed, no facets are displayed)
-        public facets: any = [] // facets included in the filter
-    ) { }
+        public facets: Facet[] = [] // facets included in the filter
+    ) {
+    }
 }

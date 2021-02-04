@@ -25,12 +25,8 @@ import {AmountUI} from '../catalogue/model/ui/amount-ui';
 /**
  * Wrapper around a price and a quantity, contains convenience methods to get the total price,
  * price per item and their string representations.
- *
- * This class can also be substituted for a Quantity.
  */
 export class PriceWrapper {
-    /** hjid field from Quantity class */
-        //hjid: string = null;
 
     itemPrice: ItemPriceWrapper;
 
@@ -72,7 +68,7 @@ export class PriceWrapper {
         let amountUI = new AmountUI();
 
         const amount = this.price.priceAmount;
-        const qty = this.price.baseQuantity
+        const qty = this.price.baseQuantity;
 
         if (!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
             return amountUI;
@@ -86,7 +82,7 @@ export class PriceWrapper {
 
     get pricePerItemString(): string {
         const amount = this.price.priceAmount;
-        const qty = this.price.baseQuantity
+        const qty = this.price.baseQuantity;
 
         if (!amount.value || amount.value == 0 || !this.isOrderedQuantityValid()) {
             return 'On demand';
@@ -130,24 +126,4 @@ export class PriceWrapper {
     private isOrderedQuantityValid(): boolean {
         return !isNaN(this.orderedQuantity.value) && !!this.orderedQuantity.value;
     }
-
-    /**
-     * Getters/Setters for quantity
-     */
-
-    /*get value(): number {
-        return this.totalPrice;
-    }
-
-    set value(value: number) {
-        this.totalPrice = value;
-    }
-
-    get unitCode(): string {
-        return this.currency;
-    }
-
-    set unitCode(unitCode: string) {
-        this.currency = unitCode;
-*/
 }

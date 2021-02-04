@@ -12,16 +12,19 @@
    limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { PriceOption } from '../../catalogue/model/publish/price-option';
 import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
 import { PRICE_OPTIONS } from '../../catalogue/model/constants';
+import {EmptyFormBase} from '../../common/validation/empty-form-base';
+
+const PRICE_OPTION_FIELD_NAME = 'price_option';
 
 @Component({
     selector: "price-option-view",
     templateUrl: "./price-option-view-component.html"
 })
-export class PriceOptionViewComponent {
+export class PriceOptionViewComponent  extends EmptyFormBase implements OnInit, OnDestroy{
     @Input() catalogueLine: CatalogueLine;
     @Input() priceOption: PriceOption;
 
@@ -33,4 +36,15 @@ export class PriceOptionViewComponent {
     @Input() readonly: boolean = false;
 
     priceOptions = PRICE_OPTIONS;
+
+    constructor() {
+        super(PRICE_OPTION_FIELD_NAME);
+    }
+    ngOnInit() {
+        this.initViewFormAndAddToParentForm();
+    }
+
+    ngOnDestroy(): void {
+        this.removeViewFormFromParentForm();
+    }
 }

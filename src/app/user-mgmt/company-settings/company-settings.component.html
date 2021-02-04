@@ -81,6 +81,11 @@
                     <span [innerHTML]="'Catalogue Categories' | translate"></span>
                 </a>
             </li>
+            <li *ngIf="viewMode=='full' && config.enableStripePayment" class="nav-item">
+                <a href id="PAYMENT" class="nav-link" [ngClass]="{ active: selectedTab === 'PAYMENT'}" (click)="onSelectTab($event,'PAYMENT')">
+                    <span [innerHTML]="'Payment' | translate"></span>
+                </a>
+            </li>
             <li *ngIf="viewMode=='full' && config.networkEnabled" class="nav-item">
                 <a href id="NETWORK" class="nav-link" [ngClass]="{ active: selectedTab === 'NETWORK'}" (click)="onSelectTab($event,'NETWORK')">
                     <span [innerHTML]="'Network' | translate"></span>
@@ -135,6 +140,12 @@
     <div *ngIf="settings && selectedTab == 'CATEGORIES'">
         <company-categories-settings [settings]="settings">
         </company-categories-settings>
+    </div>
+
+    <!-- Payment -->
+    <div *ngIf="settings && selectedTab == 'PAYMENT'">
+        <company-payment-settings [companySettings]="settings">
+        </company-payment-settings>
     </div>
 
     <!-- Company Network-->

@@ -32,6 +32,7 @@ import { CollaborationModule } from '../catalogue/collaboration/collaboration.mo
 import { CollaborationGroupsTabComponent } from './groups/collaboration-groups-tab.component';
 import { ProjectTimeline } from './groups/project-timeline.component';
 import { ProcessInstanceGroupsTabComponent } from './groups/process-instance-groups-tab.component';
+import {DemandModule} from '../demand/demand.module';
 
 @NgModule({
     imports: [
@@ -45,6 +46,7 @@ import { ProcessInstanceGroupsTabComponent } from './groups/process-instance-gro
         AnalyticsModule,
         CollaborationModule,
         BPEModule,
+        DemandModule,
         NgbModule.forRoot()
     ],
     declarations: [

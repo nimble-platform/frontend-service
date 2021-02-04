@@ -69,6 +69,12 @@ import { NegotiationResponseItemComponent } from './bp-view/negotiation/negotiat
 import { OrderItemComponent } from './bp-view/order/order-item.component';
 import { CommonCartTermsComponent } from './shopping-cart/common-cart-terms.component';
 import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart-summary-modal.component';
+import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.component';
+import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause-service';
+import {StripeComponent} from './payment/stripe.component';
+import {NgxStripeModule} from 'ngx-stripe';
+import {UserMgmtModule} from '../user-mgmt/user-mgmt.module';
+import {stripe_publishable_key} from '../globals';
 
 @NgModule({
     imports: [
@@ -80,7 +86,9 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart
         BPERoutingModule,
         CatalogueModule,
         ProductDetailsModule,
-        NgbModule.forRoot()
+        NgbModule.forRoot(),
+        NgxStripeModule.forRoot(stripe_publishable_key),
+        UserMgmtModule
     ],
     declarations: [
         BPConfigureComponent,
@@ -103,6 +111,7 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart
         NegotiationRequestInputComponent,
         NegotiationRequestItemComponent,
         NegotiationResponseComponent,
+        StripeComponent,
         NegotiationResponseItemComponent,
         TransportExecutionPlanComponent,
         TransportNegotiationRequestComponent,
@@ -117,6 +126,7 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
+        PurchaseOrderComponent,
         ShipmentInputComponent,
         ThreadSummaryComponent,
         ThreadEventComponent,
@@ -140,6 +150,8 @@ import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart
         PpapClauseComponent,
         ThreadSummaryComponent
     ],
-    providers: []
+    providers: [
+        NegotiationClauseService
+    ]
 })
 export class BPEModule { }

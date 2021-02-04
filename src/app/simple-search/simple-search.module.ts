@@ -29,6 +29,7 @@ import { BPEModule } from '../bpe/bpe.module';
 import { SimpleSearchComponent } from './simple-search.component';
 import { SimpleSearchFormComponent } from './simple-search-form.component';
 import { SearchNavigationGuardService } from './search-navigation-guard.service';
+import {SearchMapComponent} from './search-map.component';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { SearchNavigationGuardService } from './search-navigation-guard.service'
     ],
     declarations: [
         SimpleSearchComponent,
-        SimpleSearchFormComponent
+        SimpleSearchFormComponent,
+        SearchMapComponent
     ],
     exports: [
         SimpleSearchComponent,

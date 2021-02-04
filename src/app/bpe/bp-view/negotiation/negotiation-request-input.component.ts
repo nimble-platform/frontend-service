@@ -14,14 +14,13 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Input, Output, OnChanges } from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UnitService } from "../../../common/unit-service";
 import { ChildFormBase } from '../../../common/validation/child-form-base';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl} from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
-import { periodValidator, stepValidator, ValidationService } from '../../../common/validation/validators';
-import { FIELD_NAME_QUANTITY_VALUE } from '../../../common/constants';
+import { periodValidator, ValidationService } from '../../../common/validation/validators';
 import { PeriodRange } from '../../../user-mgmt/model/period-range';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_VALUE = 'quantity_value';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT = 'quantity_unit';
@@ -30,15 +29,11 @@ const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_UNIT = 'quantity_unit';
     templateUrl: "./negotiation-request-input.component.html",
     styleUrls: ["./negotiation-request-input.component.css"],
 })
-export class NegotiationRequestInputComponent extends ChildFormBase implements OnInit {
+export class NegotiationRequestInputComponent extends ChildFormBase implements OnInit , OnDestroy{
 
     @Input() label: string;
     @Input() description: string;
 
-    // see https://blog.angulartraining.com/tutorial-create-your-own-two-way-data-binding-in-angular-46487650ea82 for this trick
-    // private cbModelValue: boolean;
-    // @Output() cbModelChange = new EventEmitter<boolean>();
-    // @Input() cbDisabled: boolean = false;
     @Input() disabled: boolean = false;
     // Variable showing that the input should be in warning mode
     @Input() warning = false;
@@ -73,16 +68,6 @@ export class NegotiationRequestInputComponent extends ChildFormBase implements O
         private validationService: ValidationService) {
         super();
     }
-
-    // @Input()
-    // get cbModel(): boolean {
-    //     return this.cbModelValue;
-    // }
-    //
-    // set cbModel(cbModel: boolean) {
-    //     this.cbModelValue = cbModel;
-    //     this.cbModelChange.emit(cbModel);
-    // }
 
     @Input()
     get text(): string {

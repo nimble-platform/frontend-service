@@ -12,27 +12,22 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { CookieService } from 'ng2-cookies';
-import { CatalogueService } from "../catalogue.service";
-import { SimpleSearchService } from '../../simple-search/simple-search.service';
-import { CallStatus } from "../../common/call-status";
-import { ActivatedRoute, Params, Router } from "@angular/router";
-import { CategoryService } from "../category/category.service";
-import { isTransportService } from "../../common/utils";
-import { UserService } from "../../user-mgmt/user.service";
-import { CompanySettings } from "../../user-mgmt/model/company-settings";
-import { Item } from '../model/publish/item';
-import { selectDescription, selectName, selectNameFromLabelObject, copy, roundToTwoDecimals } from '../../common/utils';
-import { ItemProperty } from '../model/publish/item-property';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { CATALOGUE_LINE_SORT_OPTIONS, FAVOURITE_LINEITEM_PUT_OPTIONS } from '../model/constants';
-import { CatalogueLine } from "../model/publish/catalogue-line";
-import { filter } from "rxjs/operator/filter";
+import {Component, OnInit} from '@angular/core';
+import {CookieService} from 'ng2-cookies';
+import {CatalogueService} from '../catalogue.service';
+import {SimpleSearchService} from '../../simple-search/simple-search.service';
+import {CallStatus} from '../../common/call-status';
+import {CategoryService} from '../category/category.service';
+import {UserService} from '../../user-mgmt/user.service';
+import {CompanySettings} from '../../user-mgmt/model/company-settings';
+import {Item} from '../model/publish/item';
+import {copy, roundToTwoDecimals, selectName, selectNameFromLabelObject} from '../../common/utils';
+import {ItemProperty} from '../model/publish/item-property';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Observable} from 'rxjs/Observable';
+import {CATALOGUE_LINE_SORT_OPTIONS, FAVOURITE_LINEITEM_PUT_OPTIONS} from '../model/constants';
 import * as myGlobals from '../../globals';
-import { Search } from '../../simple-search/model/search';
-import { TranslateService } from '@ngx-translate/core';
+import {Search} from '../../simple-search/model/search';
 
 @Component({
     selector: 'compare-view',
@@ -43,7 +38,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class CompareViewComponent implements OnInit {
 
-    catalogueResponse: Array<CatalogueLine>;
     itemTypeResponse: any = [];
     itemTypeResponse_first: any = [];
     settings: CompanySettings;
@@ -65,12 +59,10 @@ export class CompareViewComponent implements OnInit {
     // check whether catalogue-line-panel should be displayed for a specific catalogue line
     catalogueLineView = {};
     catalogueLineView_first = {};
-    searchIndex = "Name";
+    searchIndex = 'Name';
 
     sortOption = null;
     model = new Search('');
-    facetQuery: any;
-    catLine1: any;
     searchFavouriteCallStatus: CallStatus = new CallStatus();
 
     getCatalogueStatus = new CallStatus();
@@ -80,21 +72,17 @@ export class CompareViewComponent implements OnInit {
     imageMap_first: any = {};
     facetObj: any;
     temp: any;
-    hari = false;
-    selectedCategory = "All";
-    searchText: string = "";
-    searchText_first: string = "";
+    selectedCategory = 'All';
+    searchText: string = '';
+    searchText_first: string = '';
     status = 1;
     hasFavourite = false;
     hasFavourite_first = false;
-    indexItem = 0;
     favouriteIdList = [];
     showDetails = false;
     showDetails_first = false;
     getMultilingualLabel = selectNameFromLabelObject;
 
-    CATALOGUE_LINE_SORT_OPTIONS = CATALOGUE_LINE_SORT_OPTIONS;
-    FAVOURITE_LINEITEM_PUT_OPTIONS = FAVOURITE_LINEITEM_PUT_OPTIONS;
     product_filter_mappings = myGlobals.product_filter_mappings;
     item_manufacturer_id = myGlobals.item_manufacturer_id;
     party_facet_field_list = myGlobals.party_facet_field_list;
@@ -107,7 +95,7 @@ export class CompareViewComponent implements OnInit {
     roundToTwoDecimals = roundToTwoDecimals;
     cat_level = -2;
     cat_levels = [];
-    cat = "";
+    cat = '';
     comapanyList = {};
     comapanyList_first = {};
     catLineList = {};
@@ -115,40 +103,34 @@ export class CompareViewComponent implements OnInit {
     selectedCurrency: any = myGlobals.config.standardCurrency;
     initial = true;
     firstSearch = false;
-    secondeSearch = false;
     manufacturerIdCountMap: any;
     favouriteItemIds: string[] = [];
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
 
 
-
     constructor(private cookieService: CookieService,
-        private simpleSearchService: SimpleSearchService,
-        private catalogueService: CatalogueService,
-        private categoryService: CategoryService,
-        private userService: UserService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private translate: TranslateService) {
+                private simpleSearchService: SimpleSearchService,
+                private catalogueService: CatalogueService,
+                private categoryService: CategoryService,
+                private userService: UserService) {
     }
 
     ngOnInit() {
-        this.catalogueService.setEditMode(false);
         this.hasFavourite = false;
         this.hasFavourite_first = false;
         for (let i = 0; i < this.pageSize; i++) {
             this.deleteStatuses.push(new CallStatus());
         }
 
-        let userId = this.cookieService.get("user_id");
+        let userId = this.cookieService.get('user_id');
         this.callStatus.submit();
         this.userService.getPerson(userId)
             .then(person => {
-                this.callStatus.callback("Successfully loaded user profile", true);
+                this.callStatus.callback('Successfully loaded user profile', true);
                 this.favouriteItemIds = person.favouriteProductID;
             })
             .catch(error => {
-                this.callStatus.error("Invalid credentials", error);
+                this.callStatus.error('Invalid credentials', error);
             });
     }
 
@@ -156,22 +138,20 @@ export class CompareViewComponent implements OnInit {
         return selectName(ip);
     }
 
-    selectDescription(item: Item) {
-        return selectDescription(item);
-    }
-
-
     checkEmpty(obj: any): boolean {
         return (Object.keys(obj).length === 0);
     }
 
     getCurrency(price: any): string {
-        if (price[this.selectedCurrency])
+        if (price[this.selectedCurrency]) {
             return this.selectedCurrency;
-        if (this.selectedCurrency != myGlobals.config.standardCurrency && price[myGlobals.config.standardCurrency])
+        }
+        if (this.selectedCurrency != myGlobals.config.standardCurrency && price[myGlobals.config.standardCurrency]) {
             return myGlobals.config.standardCurrency;
-        if (this.selectedCurrency != "EUR" && price["EUR"])
-            return "EUR";
+        }
+        if (this.selectedCurrency != 'EUR' && price['EUR']) {
+            return 'EUR';
+        }
         return Object.keys(price)[0];
     }
 
@@ -180,13 +160,13 @@ export class CompareViewComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ("{LANG}_" + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
             )
         );
 
-    searchFavouriteSearch_first(selectedItemEvent=null) {
+    searchFavouriteSearch_first(selectedItemEvent = null) {
         // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
-        if(selectedItemEvent){
+        if (selectedItemEvent) {
             this.searchText_first = selectedItemEvent.item;
         }
         this.catalogueLinesArray_first = [];
@@ -200,13 +180,13 @@ export class CompareViewComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ("{LANG}_" + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
             )
         );
 
-    searchFavouriteSearch(selectedItemEvent=null) {
+    searchFavouriteSearch(selectedItemEvent = null) {
         // selectedItemEvent is the event emitted when a product/company is selected from the suggestion list
-        if(selectedItemEvent){
+        if (selectedItemEvent) {
             this.searchText = selectedItemEvent.item;
         }
         this.catalogueLinesArray = [];
@@ -219,46 +199,27 @@ export class CompareViewComponent implements OnInit {
         let term = termText != null ? termText : this.searchText;
         this.getCatalogueStatus.submit();
         this.initial = true;
-        const userId = this.cookieService.get("user_id");
+        const userId = this.cookieService.get('user_id');
         // check whether the user chose a category to filter the catalogue lines
         this.sortOption = this.sortOption == null ? CATALOGUE_LINE_SORT_OPTIONS[0].name : this.sortOption;
-        let categoryURI = this.selectedCategory == "All" ? null : this.selectedCategory;
+        let categoryURI = this.selectedCategory == 'All' ? null : this.selectedCategory;
         this.userService.getPerson(userId)
             .then((person) => {
                 this.favouriteIdList = person.favouriteProductID;
                 this.collectionSize = person.favouriteProductID.length;
-                let query = "";
 
-                let length = this.favouriteIdList.length;
-
-                if (categoryURI != null && categoryURI != undefined) {
+                if (categoryURI != null) {
                     this.initial = false;
-                    query = 'commodityClassficationUri:("' + categoryURI.toString() + '") AND '
-                    if (term == null || term == "") {
-                        query = query + "("
-                    }
                 }
 
-                if (term != null && term != "") {
+                if (term != null && term != '') {
                     this.initial = false;
-                    // let querySettings = {
-                    // 	"fields": [("{LANG}_"+this.product_name)],
-                    // 	"boosting": true,
-                    // 	"boostingFactors": {
-                    // 		// "STANDARD": 4,
-                    // 		// "commodityClassficationUri": 16,
-                    // 		"{LANG}_label": 64
-                    // 		// "{LANG}_desc": -1
-                    // 	  }
-                    //   };
-                    let queryRes = this.simpleSearchService.buildQueryString(term.toString(), myGlobals.query_settings, true, false);
-                    query = queryRes.queryStr;
                 }
                 this.getCall(term.toString());
                 this.getCatalogueStatus.callback(null);
             })
             .catch(error => {
-                this.getCatalogueStatus.error("Failed to get catalogue", error);
+                this.getCatalogueStatus.error('Failed to get catalogue', error);
             });
     }
 
@@ -285,12 +246,12 @@ export class CompareViewComponent implements OnInit {
 
     private sortCatLevels() {
         for (var i = 0; i < this.cat_levels.length; i++) {
-            this.cat_levels[i].sort(function(a, b) {
+            this.cat_levels[i].sort(function (a, b) {
                 var a_c: string = a.name;
                 var b_c: string = b.name;
                 return a_c.localeCompare(b_c);
             });
-            this.cat_levels[i].sort(function(a, b) {
+            this.cat_levels[i].sort(function (a, b) {
                 return b.count - a.count;
             });
         }
@@ -299,8 +260,9 @@ export class CompareViewComponent implements OnInit {
 
     private getCatLevel(name: string): number {
         var level = -2;
-        if (name != "")
+        if (name != '') {
             level = -1;
+        }
         for (var j = 0; j < this.cat_levels.length; j++) {
             for (var i = 0; i < this.cat_levels[j].length; i++) {
                 var comp = this.cat_levels[j][i].name;
@@ -313,13 +275,14 @@ export class CompareViewComponent implements OnInit {
     }
 
     private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
+        var taxonomy = 'eClass';
+        if (this.config.standardTaxonomy.localeCompare('All') != 0 && this.config.standardTaxonomy.localeCompare('eClass') != 0) {
             taxonomy = this.config.standardTaxonomy;
         }
-        var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
+        var taxonomyPrefix = '';
+        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix) {
             taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+        }
 
         // retrieve the labels for the category uris included in the categoryCounts field
         let categoryUris: string[] = [];
@@ -331,11 +294,11 @@ export class CompareViewComponent implements OnInit {
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
 
         let split_idx: any = -1;
-        let name: any = "";
-        if (taxonomyPrefix != "") {
+        let name: any = '';
+        if (taxonomyPrefix != '') {
             // ToDo: Remove manual distinction after search update
             // ================================================================================
-            if (taxonomy == "eClass") {
+            if (taxonomy == 'eClass') {
                 this.cat_levels = [[], [], [], []];
                 for (let categoryCount of categoryCounts) {
                     let facet_inner = categoryCount.label;
@@ -343,16 +306,33 @@ export class CompareViewComponent implements OnInit {
                     if (facet_inner.startsWith(taxonomyPrefix)) {
                         var eclass_idx = categoryDisplayInfo[facet_inner].code;
                         if (eclass_idx % 1000000 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                        else if (eclass_idx % 10000 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                        else if (eclass_idx % 100 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                        else {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
+                            this.cat_levels[0].push({
+                                'name': facet_inner,
+                                'id': facet_inner,
+                                'count': count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
+                            });
+                        } else if (eclass_idx % 10000 == 0) {
+                            this.cat_levels[0].push({
+                                'name': facet_inner,
+                                'id': facet_inner,
+                                'count': count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
+                            });
+                        } else if (eclass_idx % 100 == 0) {
+                            this.cat_levels[0].push({
+                                'name': facet_inner,
+                                'id': facet_inner,
+                                'count': count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
+                            });
+                        } else {
+                            this.cat_levels[0].push({
+                                'name': facet_inner,
+                                'id': facet_inner,
+                                'count': count,
+                                'preferredName': selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label)
+                            });
                         }
                     }
                 }
@@ -360,28 +340,32 @@ export class CompareViewComponent implements OnInit {
             }
             // ================================================================================
             // if (this.cat == "") {
-            else if (this.cat == "") {
+            else if (this.cat == '') {
                 this.cat_levels = [];
                 var lvl = [];
                 for (let categoryCount of categoryCounts) {
                     var count = categoryCount.count;
                     var ontology = categoryCount.label;
                     if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
-                        split_idx = ontology.lastIndexOf("#");
+                        split_idx = ontology.lastIndexOf('#');
                         name = ontology.substr(split_idx + 1);
                         if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
                             if (ontology.startsWith(taxonomyPrefix)) {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label) });
+                                lvl.push({
+                                    'name': ontology,
+                                    'id': ontology,
+                                    'count': count,
+                                    'preferredName': selectNameFromLabelObject(categoryDisplayInfo[ontology].label)
+                                });
                             } else {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": ontology });
+                                lvl.push({'name': ontology, 'id': ontology, 'count': count, 'preferredName': ontology});
                             }
                         }
                     }
                 }
                 this.cat_levels.push(lvl);
                 this.sortCatLevels();
-            }
-            else {
+            } else {
                 var catLevels = [];
                 this.cat_levels = [];
                 for (var i = 0; i < catLevels.length; i++) {
@@ -394,13 +378,18 @@ export class CompareViewComponent implements OnInit {
                             var ontology = categoryCount.label;
 
                             if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-                                split_idx = uri.lastIndexOf("#");
+                                split_idx = uri.lastIndexOf('#');
                                 name = uri.substr(split_idx + 1);
                                 if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
                                     if (ontology.startsWith(taxonomyPrefix)) {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label) });
+                                        lvl.push({
+                                            'name': uri,
+                                            'id': uri,
+                                            'count': count,
+                                            'preferredName': selectNameFromLabelObject(categoryDisplayInfo[uri].label)
+                                        });
                                     } else {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": name });
+                                        lvl.push({'name': uri, 'id': uri, 'count': count, 'preferredName': name});
                                     }
                                 }
                             }
@@ -421,12 +410,11 @@ export class CompareViewComponent implements OnInit {
         this.simpleSearchService.getFields()
             .then(res => {
                 let fieldLabels: string[] = this.getFieldNames(res);
-                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, "score desc", "", this.sortOption, this.searchIndex)
+                this.simpleSearchService.get(q, Object.keys(fieldLabels), [], this.page, 10, 'score desc', '', this.sortOption, this.searchIndex)
                     .then(res => {
                         if (res.result.length == 0) {
-                            this.searchFavouriteCallStatus.callback("Search done.", true);
-                        }
-                        else {
+                            this.searchFavouriteCallStatus.callback('Search done.', true);
+                        } else {
                             this.facetObj = [];
                             this.temp = [];
                             this.manufacturerIdCountMap = new Map();
@@ -443,8 +431,6 @@ export class CompareViewComponent implements OnInit {
                                     for (let manufacturerEntry of facetEntries) {
                                         this.manufacturerIdCountMap.set(manufacturerEntry.label, manufacturerEntry.count);
                                     }
-                                    //getting the manufacturer ids list
-                                    let manufacturerIds = Array.from(this.manufacturerIdCountMap.keys());
 
                                     this.temp = res.result;
                                     for (let doc in this.temp) {
@@ -478,16 +464,16 @@ export class CompareViewComponent implements OnInit {
                             }
 
                             this.fetchImages(res.result);
-                            this.searchFavouriteCallStatus.callback("Search done.", true);
+                            this.searchFavouriteCallStatus.callback('Search done.', true);
                         }
 
                     })
                     .catch(error => {
-                        this.searchFavouriteCallStatus.error("Error while running search.", error);
+                        this.searchFavouriteCallStatus.error('Error while running search.', error);
                     });
             })
             .catch(error => {
-                this.searchFavouriteCallStatus.error("Error while running search.", error);
+                this.searchFavouriteCallStatus.error('Error while running search.', error);
             });
     }
 
@@ -513,11 +499,11 @@ export class CompareViewComponent implements OnInit {
                     for (let image of images) {
                         for (let productUri in imageMap_first) {
                             if (imageMap_first[productUri] == image.uri) {
-                                this.imageMap_first[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+                                this.imageMap_first[productUri] = 'data:' + image.mimeCode + ';base64,' + image.value
                             }
                         }
                     }
-                }, error => {
+                }, () => {
                 });
             }
         } else {
@@ -540,11 +526,11 @@ export class CompareViewComponent implements OnInit {
                     for (let image of images) {
                         for (let productUri in imageMap) {
                             if (imageMap[productUri] == image.uri) {
-                                this.imageMap[productUri] = "data:" + image.mimeCode + ";base64," + image.value
+                                this.imageMap[productUri] = 'data:' + image.mimeCode + ';base64,' + image.value
                             }
                         }
                     }
-                }, error => {
+                }, () => {
                 });
             }
         }
@@ -553,8 +539,9 @@ export class CompareViewComponent implements OnInit {
 
     getName(name: string, prefix?: string) {
         // if it is a ubl property, then get its label from the ublProperties
-        if (prefix)
-            name = prefix + "." + name;
+        if (prefix) {
+            name = prefix + '.' + name;
+        }
         for (let ublProperty of this.ublProperties) {
             if (name == ublProperty.localName) {
                 return selectNameFromLabelObject(ublProperty.label);
@@ -601,37 +588,11 @@ export class CompareViewComponent implements OnInit {
         e.stopImmediatePropagation();
     }
 
-    removeFavourite(catalogueLine, i: number, status?: number): void {
-        this.status = status != null ? status : this.status;
-        const statuss = this.getDeleteStatus(i);
-        statuss.submit();
-
-        this.userService.putUserFavourite([catalogueLine.localName + ""], FAVOURITE_LINEITEM_PUT_OPTIONS[0].value)
-            .then(res => {
-                this.requestCatalogue();
-                statuss.callback("Catalogue line removed", true);
-
-            })
-            .catch(error => {
-                statuss.error("Error while removing catalogue line");
-            });
-    }
-
     getDeleteStatus(index: number): CallStatus {
         return this.deleteStatuses[index % this.pageSize];
     }
 
-    onRegisteredCompaniesPageChange(newPage): void {
-        if (newPage) {
-            this.requestCatalogue();
-        }
-    }
-
-    navigateToTheSearchPage() {
-        this.router.navigate(['/simple-search']);
-    }
-
-    viewCatalogueLine(cat: any, index: number) {
+    viewCatalogueLine(cat: any) {
         this.catalogueService.getCatalogueLineByHjid(cat.localName).then(res => {
             this.catLineList[cat.localName] = res;
             this.userService.getSettingsForProduct(res).then(res2 => {
@@ -643,7 +604,7 @@ export class CompareViewComponent implements OnInit {
         });
     }
 
-    viewCatalogueLine_first(cat: any, index: number) {
+    viewCatalogueLine_first(cat: any) {
         this.catalogueService.getCatalogueLineByHjid(cat.localName).then(res => {
             this.catLineList_first[cat.localName] = res;
             this.userService.getSettingsForProduct(res).then(res2 => {
@@ -656,9 +617,7 @@ export class CompareViewComponent implements OnInit {
     }
 
     findPrefItem(itemId: any): boolean {
-        let found = false;
-        found = (this.favouriteItemIds.indexOf(itemId.toString()) !== -1) ? true : false;
-        return found;
+        return this.favouriteItemIds.indexOf(itemId.toString()) !== -1;
     }
 
     removeFavorites(hjid: any) {
@@ -666,17 +625,16 @@ export class CompareViewComponent implements OnInit {
             let itemidList = [];
             itemidList.push(hjid.toString());
             this.addFavoriteCategoryStatus.submit();
-            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
-                const prefCats_tmp = [];
+            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(() => {
                 var index = this.favouriteItemIds.indexOf(hjid.toString());
                 if (index !== -1) {
                     this.favouriteItemIds.splice(index, 1);
                 }
                 this.findPrefItem(hjid);
-                this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+                this.addFavoriteCategoryStatus.callback('Category removed from favorites', true);
             })
                 .catch(error => {
-                    this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+                    this.addFavoriteCategoryStatus.error('Error while removing category from favorites', error);
                 });
         }
     }
@@ -686,17 +644,16 @@ export class CompareViewComponent implements OnInit {
             let itemidList = [];
             itemidList.push(hjid.toString());
             this.addFavoriteCategoryStatus.submit();
-            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(res => {
-                const prefCats_tmp = [];
+            this.userService.putUserFavourite(itemidList, FAVOURITE_LINEITEM_PUT_OPTIONS[0].value).then(() => {
                 var index = this.favouriteItemIds.indexOf(hjid.toString());
                 if (index == -1) {
                     this.favouriteItemIds.push(hjid.toString());
                 }
                 this.findPrefItem(hjid);
-                this.addFavoriteCategoryStatus.callback("Category removed from favorites", true);
+                this.addFavoriteCategoryStatus.callback('Category removed from favorites', true);
             })
                 .catch(error => {
-                    this.addFavoriteCategoryStatus.error("Error while removing category from favorites", error);
+                    this.addFavoriteCategoryStatus.error('Error while removing category from favorites', error);
                 });
         }
     }

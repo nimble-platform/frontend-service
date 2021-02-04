@@ -112,17 +112,23 @@
         </div>
         <!-- Properties with multiple values to select from -->
         <div class="d-flex flex-column">
-            <div *ngFor="let property of wrapper.getPropertiesWithListOfValues()" class="my-1">
+            <div *ngFor="let property of wrapper.getPublicPropertiesWithListOfValues()" class="my-1">
                 <strong>{{selectName(property)}}: </strong>
-                <span *ngFor="let val of getValuesAsString(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
+                <span *ngFor="let val of getPropertyValuesAsStrings(property); let i = index" class="btn-group-toggle" data-toggle="buttons">
                     <button type="button" class="btn btn-outline-primary no-y-padding" (click)="onTogglePropertyValue(property, i)" [disabled]="isDisabled()" [ngClass]="{ 'active': isPropertyValueSelected(property, i) }">
                         {{val}}
                     </button>
                 </span>
             </div>
         </div>
+        <!-- Product id or Product part number-->
         <div class="col-12 pr-0 space-before">
-            <small class="float-right">ID: {{productId}}</small>
+            <small class="float-right">
+                <span *ngIf="!productPartNumberProperty">ID: {{productId}}</span>
+                <span *ngIf="productPartNumberProperty" style="font-size: 120%">
+                    {{ wrapper.getPropertyName(productPartNumberProperty) }}: {{ getPropertyValuesAsStrings(productPartNumberProperty).join(", ") }}
+                </span>
+            </small>
         </div>
     </div>
 </div>

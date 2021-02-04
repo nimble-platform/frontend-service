@@ -44,6 +44,7 @@ import { UserService } from '../user-mgmt/user.service';
 import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
 import { ValidationService } from '../common/validation/validators';
 import { FormGroup } from '@angular/forms';
+import {AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI} from '../common/constants';
 
 @Component({
     selector: 'product-details-overview',
@@ -60,6 +61,8 @@ export class ProductDetailsOverviewComponent implements OnInit {
     @Input() inShoppingBasket: boolean;
     @Input() isNegotiateOrderButtonDisabled: boolean = false;
     @Input() shoppingCartItemForm: FormGroup;
+    // whether the product details overview is used in publishing page
+    @Input() overviewInProductPublishing:boolean = false;
     // flag to adjust the name of the negotiate or order button,
     // true means the there are some negotiated terms and a negotiation process should be started. otherwise an order process is started
     @Input() isNegotiatingAnyTerm: boolean;
@@ -79,7 +82,9 @@ export class ProductDetailsOverviewComponent implements OnInit {
 
     classificationNames = [];
     productId = "";
+    productPartNumberProperty:ItemProperty = null;
     selectPreferredValue = selectPreferredValue;
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
     catalogueId = "";
     catalogueName = "";
     debug = myGlobals.debug;
@@ -122,16 +127,28 @@ export class ProductDetailsOverviewComponent implements OnInit {
             // do not show Add to Cart button for logistics services
             this.showAddToCartButton = this.showAddToCartButton && !isLogisticsService(this.wrapper.line);
         }
+        // set product part number
+        this.setProductPartNumberProperty();
         /*
             Cache FurnitureOntology categories. Then, use cached categories to get correct category label according
             to the default language of the browser.
          */
-        this.getClassificationNamesStatus.submit();
-        let classifications = this.getClassifications();
-        if (classifications.length > 0) {
-            for (let classification of this.wrapper.item.commodityClassification) {
-                this.categoryUris.push(classification.itemClassificationCode.uri);
+        // if the overview is shown in the product publishing page, we will make use of the selected categories from the category service
+        // otherwise, use the commodity classifications available in the item
+        if(this.overviewInProductPublishing){
+            for(let category of this.categoryService.selectedCategories){
+                this.categoryUris.push(category.categoryUri);
             }
+        } else{
+            let classifications = this.getClassifications();
+            if(classifications.length > 0){
+                for (let classification of this.wrapper.item.commodityClassification) {
+                    this.categoryUris.push(classification.itemClassificationCode.uri);
+                }
+            }
+        }
+        if (this.categoryUris.length > 0) {
+            this.getClassificationNamesStatus.submit();
             this.classificationNames = [];
             let manPartyId = UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
             let userId = this.cookieService.get('user_id');
@@ -354,10 +371,6 @@ export class ProductDetailsOverviewComponent implements OnInit {
         return this.readonly || this.associatedProductsRetrievalCallStatus.isLoading();
     }
 
-    getValuesAsString(property: ItemProperty): string[] {
-        return getPropertyValuesAsStrings(property);
-    }
-
     openCompTab() {
         this.compStatus.emit(true);
     }
@@ -378,5 +391,10 @@ export class ProductDetailsOverviewComponent implements OnInit {
         else if (index >= length) {
             return 0;
         }
+    }
+
+    private setProductPartNumberProperty(){
+        const properties = this.wrapper.getAllUniqueProperties();
+        this.productPartNumberProperty = properties.find(property => property.uri === AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI);
     }
 }

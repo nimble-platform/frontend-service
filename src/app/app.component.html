@@ -53,6 +53,11 @@
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
                 </a>
             </li>
+            <li *ngIf="config.demandsEnabled" class="nav-item" routerLinkActive="active">
+                <a class="nav-link" routerLink="/demand">
+                    <i class="far fa-star"></i> <span [innerHTML]="'Demands' | translate"></span>
+                </a>
+            </li>
         </ul>
         <ul *ngIf="isLoggedIn" class="nav navbar-nav mr-auto">
             <li class="nav-item" *ngIf="checkRoles('comp_req') || checkRoles('wait_comp')" routerLinkActive="active">
@@ -69,14 +74,14 @@
                         <i class="fa fa-shopping-cart dd-icon"></i> <span [innerHTML]="'Product / Service' | translate"></span>
                         <div class="publish-menu dropdown-menu">
                             <a class="dropdown-item pointer text-left"
-                                [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'single'}">
+                                [routerLink]="['/catalogue/publish-single']" [queryParams]="{pageRef: 'menu'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-minus mr-3"></i>
                                     <span>{{'Single Item' | translate}}</span>
                                 </div>
                             </a>
                             <a class="dropdown-item pointer text-left"
-                               [routerLink]="['/catalogue/categorysearch']" [queryParams]="{pageRef: 'menu', productType: 'product', pg: 'bulk'}">
+                               [routerLink]="['/catalogue/publish-bulk']" [queryParams]="{pageRef: 'menu'}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-align-justify mr-3"></i>
                                     <span>{{'Multiple Items' | translate}}</span>
@@ -84,14 +89,24 @@
                             </a>
                         </div>
                     </a>
-                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" [queryParams]="{pageRef: 'single', productType: 'transportation'}" routerLinkActive="active">
+                    <a *ngIf="enableLogisticServicePublishing" class="dropdown-item" [routerLink]="['/catalogue/publish-logistic']" routerLinkActive="active">
                         <i class="fa fa-truck dd-icon"></i> <span [innerHTML]="'Logistics Service' | translate"></span>
+                    </a>
+                    <a *ngIf="config.demandsEnabled" class="dropdown-item" [routerLink]="['/demand/publish']" routerLinkActive="active">
+                        <i class="far fa-star"></i> <span [innerHTML]="'Demand' | translate"></span>
                     </a>
                 </div>
             </li>
             <li class="nav-item" routerLinkActive="active">
                 <a class="nav-link" routerLink="/simple-search">
                     <i class="fa fa-search"></i> <span [innerHTML]="'Search' | translate"></span>
+                </a>
+            </li>
+            <li *ngIf="config.demandsEnabled" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                <a class="nav-link" routerLink="/demand">
+                    <i class="far fa-star"></i> <span [innerHTML]="'Demands' | translate"></span>
+                    <!-- New Demands Count -->
+                    <span *ngIf="demandService.demandLastSeenResponse && demandService.demandLastSeenResponse.newDemandCount > 0" class="badge badge-pill badge-danger ml-1">{{demandService.demandLastSeenResponse.newDemandCount}}</span>
                 </a>
             </li>
             <li class="nav-item" *ngIf="checkRoles('reg_comp')" routerLinkActive="active">
@@ -190,6 +205,9 @@
                     </a>
                     <a *ngIf="checkRoles('pm')" class="dropdown-item" routerLink="/analytics/platform" routerLinkActive="active">
                         <i class="fa fa-chart-area dd-icon"></i> <span [innerHTML]="'Platform Analytics' | translate"></span>
+                    </a>
+                    <a *ngIf="isLoggedIn && config.invitationToPlatformEnabled" class="dropdown-item" [href]="getInvitationMailTo()">
+                        <i class="fas fa-user-plus dd-icon"></i> <span [innerHTML]="'Invite to Platform' | translate"></span>
                     </a>
                 </div>
             </li>

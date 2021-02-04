@@ -20,6 +20,7 @@ import { ItemLocationQuantity } from "./item-location-quantity";
 import { Period } from "./period";
 import { PriceOption } from "./price-option";
 import {Quantity} from './quantity';
+import {NonPublicInformation} from './non-public-information';
 
 export class CatalogueLine {
     constructor(
@@ -33,6 +34,8 @@ export class CatalogueLine {
         public priceOption: PriceOption[] = null,
         public goodsItem: GoodsItem,
         public minimumOrderQuantity:Quantity = new Quantity(),
-        public priceHidden:boolean = false
+        public priceHidden:boolean = false,
+        public productStatusType:string = "PUBLISHED",
+        public nonPublicInformation:NonPublicInformation[] = []
     ) { }
 }

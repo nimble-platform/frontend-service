@@ -23,3 +23,13 @@
 .regular-font-size {
     font-size: 1rem;
 }
+
+.object-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.category-list-label {
+    display: flex;
+    align-items: center;
+}

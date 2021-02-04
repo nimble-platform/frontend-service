@@ -14,14 +14,15 @@
    limitations under the License.
  */
 
-import { CanDeactivate } from "@angular/router";
-import { Injectable } from "@angular/core";
-import { ProductPublishComponent } from "./publish/product-publish.component";
+import {CanDeactivate} from '@angular/router';
+import {Injectable} from '@angular/core';
+import {SinglePublishComponent} from './publish/single-publish.component';
+import {BulkPublishComponent} from './publish/bulk-publish.component';
 
 @Injectable()
-export class PublishDeactivateGuardService implements CanDeactivate<ProductPublishComponent> {
+export class PublishDeactivateGuardService implements CanDeactivate<SinglePublishComponent | BulkPublishComponent> {
 
-    canDeactivate(component: ProductPublishComponent): boolean | Promise<boolean>{
+    canDeactivate(component: SinglePublishComponent | BulkPublishComponent): boolean | Promise<boolean> {
         return component.canDeactivate();
     }
 }

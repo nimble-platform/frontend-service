@@ -15,6 +15,7 @@
  */
 
 import { Country } from "./country";
+import {Coordinate} from './coordinate';
 
 export class Address {
     constructor(
@@ -24,5 +25,6 @@ export class Address {
         public buildingNumber: string = '',
         public streetName: string = '',
         public country: Country = new Country(),
+        public coordinate: Coordinate = new Coordinate()
     ) { }
 }

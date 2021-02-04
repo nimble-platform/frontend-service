@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { LANGUAGES } from '../catalogue/model/constants';
 import { TranslateService } from '@ngx-translate/core';
 import { ChildFormBase } from './validation/child-form-base';
@@ -23,13 +23,13 @@ import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { spaceValidator, ValidationService } from './validation/validators';
 import {sanitizeLink} from './utils';
 
-const TEXT_INPUT_FIELD_NAME = 'text';
+export const TEXT_INPUT_FIELD_NAME = 'text';
 @Component({
     selector: "text-input",
     templateUrl: "./text-input.component.html",
     styleUrls: ["./text-input.component.css"],
 })
-export class TextInputComponent extends ChildFormBase implements OnInit {
+export class TextInputComponent extends ChildFormBase implements OnInit , OnDestroy{
 
     @Input() visible: boolean = true;
     @Input() disabled: boolean = false;

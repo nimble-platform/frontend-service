@@ -27,6 +27,7 @@ export class Category {
         public properties: Property[],
         public keywords: string[],
         public taxonomyId: string,
-        public categoryUri: string
+        public categoryUri: string,
+        public rootCategoryUri: string
     ) { }
 }

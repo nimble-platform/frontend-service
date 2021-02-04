@@ -16,6 +16,9 @@ export class Certificate {
     constructor(
         public id: string,
         public name: string,
-        public type: string
+        public type: string,
+        public description: string,
+        public hasFile: boolean,
+        public uri: string
     ) { }
 }

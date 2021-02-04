@@ -19,8 +19,7 @@ import { BPDataService } from "../bp-data-service";
 import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
 import { Shipment } from "../../../catalogue/model/publish/shipment";
 import { LineItem } from "../../../catalogue/model/publish/line-item";
-import { copy, selectPreferredValue } from '../../../common/utils';
-import { TranslateService } from '@ngx-translate/core';
+import { selectPreferredValue } from '../../../common/utils';
 import { GoodsItem } from '../../../catalogue/model/publish/goods-item';
 import { Text } from '../../../catalogue/model/publish/text';
 import {EmptyFormBase} from '../../../common/validation/empty-form-base';
@@ -47,8 +46,7 @@ export class TransportServiceDetailsComponent extends EmptyFormBase implements O
     selectPreferredValue = selectPreferredValue;
 
     disableAddProductButton: boolean = false;
-    constructor(private bpDataService: BPDataService,
-        private translate: TranslateService) {
+    constructor(private bpDataService: BPDataService) {
         super(TRANSPORT_SERVICE_DETAILS_FIELD_NAME);
     }
 

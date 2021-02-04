@@ -27,12 +27,17 @@
             </ng-container>
         </select>
     </div>
-    <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,false)">
-        <span [innerHTML]="'Add discount' | translate"></span>
-    </button>
-    <button class="btn btn-outline-primary btn-sm space-left" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,true)">
-        <span [innerHTML]="'Add charge' | translate"></span>
-    </button>
+    <div class="col-5">
+        <button class="btn btn-outline-primary btn-sm" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,false)">
+            <span [innerHTML]="'Add discount' | translate"></span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm space-left" (click)="addPriceOption(priceOptions[priceOptionSelect.value].typeID,true)">
+            <span [innerHTML]="'Add charge' | translate"></span>
+        </button>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)">
+    </div>
 </div>
 
 <!-- quantity related options -->
@@ -141,7 +146,7 @@
         <div class="card-body">
             <div *ngFor="let priceOption of (catalogueLine.priceOption | priceOptionPipe : priceOptions.DELIVERY_LOCATION.typeID); let i = index;">
                 <div class="row price-option-row">
-                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [discountUnits]="discountUnits" [readonly]="readonly" [priceOption]="priceOption.option">
+                    <price-option-view class="col-11" [catalogueLine]="catalogueLine" [discountUnits]="discountUnits" [readonly]="readonly" [priceOption]="priceOption.option" [parentForm]="formGroup" [componentIndex]="i">
                     </price-option-view>
                     <div class="col-1" *ngIf="!readonly">
                         <button class="btn btn-danger btn-sm" (click)="removePriceOption(priceOption.index)">

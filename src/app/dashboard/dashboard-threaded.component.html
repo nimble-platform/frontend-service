@@ -61,6 +61,9 @@
                     <a href id="PROJECTS" *ngIf="config.projectsEnabled && this.appComponent.checkRoles('projects')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PROJECTS}" (click)="onChangeTab($event,'PROJECTS')"><span [innerHTML]="'Projects' | translate"></span></a>
                 </li>
                 <li class="nav-item">
+                    <a href id="DEMANDS" *ngIf="config.demandsEnabled" [ngClass]="{'nav-link': true, active: selectedTab === TABS.DEMANDS}" (click)="onChangeTab($event,'DEMANDS')"><span [innerHTML]="'Demands' | translate"></span></a>
+                </li>
+                <li class="nav-item">
                     <a href id="FRAME_CONTRACTS" *ngIf="config.frameContractTabEnabled && this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.FRAME_CONTRACTS}" (click)="onChangeTab($event,'FRAME_CONTRACTS')"><span [innerHTML]="'Frame Contracts' | translate"></span></a>
                 </li>
                 <li class="nav-item">
@@ -122,7 +125,7 @@
 
                 <div *ngIf="this.appComponent.checkRoles('sales')" class="col-6">
                     <p><span [innerHTML]="'If you are looking to' | translate"></span> <b><span [innerHTML]="'sell' | translate"></span></b> <span [innerHTML]="'Products / Services Click Here' | translate"></span> </p>
-                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/categorysearch" role="button"><span [innerHTML]="'Publish a Product / Service' | translate"></span></a>
+                    <a *ngIf="this.appComponent.checkRoles('catalogue')" class="btn btn-primary btn-lg" href="#/catalogue/publish-single" role="button"><span [innerHTML]="'Publish a Product / Service' | translate"></span></a>
                     <p *ngIf="!this.appComponent.checkRoles('catalogue')"><span [innerHTML]="'Please refer to the company manager or a legal representative to get permission to publish products / services in the Platform' | translate :{platformName:config.platformNameInMail}"></span>.</p>
                 </div>
 
@@ -137,6 +140,13 @@
     <div *ngIf="selectedTab === TABS.SALES || selectedTab === TABS.PURCHASES || selectedTab === TABS.PROJECTS">
         <collaboration-groups-tab class="row" (onViewUpdatedEvent)="getTabCounters()" [instance]="instance" [selectedTab]="selectedTab">
         </collaboration-groups-tab>
+    </div>
+
+    <!-- Demands tab -->
+    <div *ngIf="selectedTab === TABS.DEMANDS" class="row">
+        <div class="col-12">
+            <demand-list [companyDemands]="true"></demand-list>
+        </div>
     </div>
 
     <!-- Catalogue tab -->

@@ -24,12 +24,17 @@ import { DocumentReference } from "../model/publish/document-reference";
 import { Attachment } from "../model/publish/attachment";
 import { BinaryObject } from "../model/publish/binary-object";
 import { UBLModelUtils } from "../model/ubl-model-utils";
-import { COUNTRY_NAMES, getCountrySuggestions, validateCountrySimple } from "../../common/utils";
 import { Country } from "../model/publish/country";
 import { Text } from "../model/publish/text";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { TranslateService } from '@ngx-translate/core';
+import {config} from '../../globals';
+import {CountryUtil} from '../../common/country-util';
+import {Code} from '../model/publish/code';
+import {ProductWrapper} from '../../common/product-wrapper';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import { NON_PUBLIC_FIELD_ID } from "../model/constants";
 
 @Component({
     selector: "product-certificates-tab",
@@ -39,16 +44,25 @@ import { TranslateService } from '@ngx-translate/core';
 export class ProductCertificatesTabComponent implements OnInit {
 
     @Input() catalogueLine: CatalogueLine;
-    @Input() disabled: boolean
+    @Input() wrapper: ProductWrapper;
+    @Input() disabled: boolean;
 
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
+    private CERTIFICATE_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES,NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES]
+    nonPublicInformationFunctionalityEnabled = config.nonPublicInformationFunctionalityEnabled;
     addCertForm: FormGroup;
     countryFormControl: FormControl;
-    certificateFilesProvided = false;
     config = myGlobals.config;
     selectedFiles: BinaryObject[] = [];
     selectedCountries: string[] = [];
     updateMode: 'add' | 'edit';
+
+    arbitraryCertificates: Certificate[];
+    circularEconomyCertificates: Certificate[];
+    certificateFilesProvided = false;
     editedCertificate: Certificate;
+    // group of the certificate being added or edited
+    certificateGroup: 'arbitrary' | 'circularEconomy';
 
     constructor(private _fb: FormBuilder,
         private modalService: NgbModal,
@@ -56,12 +70,15 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     ngOnInit() {
-        // nothing for now
+        this.updateCertificateLists();
     }
 
-    onEdit(popup, i: number) {
+    onEdit(popup, i: number, certificateGroup: 'arbitrary' | 'circularEconomy') {
         this.updateMode = 'edit';
-        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[i];
+        this.certificateGroup = certificateGroup;
+        let certificate = certificateGroup == 'arbitrary' ? this.arbitraryCertificates[i]: this.circularEconomyCertificates[i];
+        const index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[index];
         this.certificateFilesProvided = true;
         this.addCertForm = this._fb.group({
             name: [this.editedCertificate.certificateTypeCode.name],
@@ -76,18 +93,21 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.countryFormControl = new FormControl('');
         this.selectedCountries = [];
         for (let country of this.editedCertificate.country) {
-            this.selectedCountries.push(country.name.value);
+            this.selectedCountries.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
 
         this.modalService.open(popup);
     }
 
-    onDelete(i: number) {
-        this.catalogueLine.goodsItem.item.certificate.splice(i, 1);
+    onDelete(certificate) {
+        let index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
+        this.catalogueLine.goodsItem.item.certificate.splice(index, 1);
+        this.updateCertificateLists();
     }
 
-    onAddCertificate(content) {
+    onAddCertificate(content, certificateGroup: 'arbitrary' | 'circularEconomy') {
         this.updateMode = 'add';
+        this.certificateGroup = certificateGroup;
         this.addCertForm = this._fb.group({
             name: [""],
             description: [""],
@@ -126,23 +146,26 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
         certificate.country = [];
         for (let countryName of this.selectedCountries) {
-            let country: Country = new Country(new Text(countryName, 'en'));
+            const countryIso = CountryUtil.getISObyCountry(countryName);
+
+            let country: Country = new Country();
+            country.identificationCode = new Code();
+            country.identificationCode.value = countryIso;
             certificate.country.push(country);
         }
 
         if (this.updateMode === 'add') {
             this.catalogueLine.goodsItem.item.certificate.push(certificate);
         }
+        this.updateCertificateLists();
         close();
     }
 
-    validateCountry(): boolean {
-        return validateCountrySimple(this.countryFormControl.value);
-    }
-
-    onCountrySelected() {
-        this.selectedCountries.push(this.countryFormControl.value);
-        this.countryFormControl.setValue('');
+    onCountrySelected(event) {
+        this.selectedCountries.push(event.item);
+        setTimeout(() => {
+            this.countryFormControl.setValue('');
+        });
     }
 
     onCountryRemoved(countryName: string) {
@@ -150,11 +173,15 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.countryFormControl.setValue('');
     }
 
+    /*
+     template getters
+     */
+
     getSuggestions = (text$: Observable<string>) =>
         text$.pipe(
             debounceTime(50),
             distinctUntilChanged(),
-            map(term => getCountrySuggestions(term))
+            map(term => CountryUtil.getCountrySuggestions(term))
         );
 
     getCertificateCountryNames(certificate: Certificate): string[] {
@@ -164,8 +191,74 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
 
         for (let country of certificate.country) {
-            countryNames.push(country.name.value);
+            countryNames.push(CountryUtil.getCountryByISO(country.identificationCode.value));
         }
         return countryNames;
     }
+
+    public getCircularCertificateTypes(): string[] {
+        return this.config.circularEconomy.productCertificates;
+    }
+
+    private updateCertificateLists(): void {
+        this.circularEconomyCertificates = [];
+        this.arbitraryCertificates = [];
+        this.catalogueLine.goodsItem.item.certificate.forEach(cert => {
+            if (cert.certificateType === config.circularEconomy.certificateGroup) {
+                this.circularEconomyCertificates.push(cert);
+            } else {
+                this.arbitraryCertificates.push(cert);
+            }
+        });
+    }
+
+    onNonPublicClicked(fieldId, checked){
+        if(checked){
+            let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+            nonPublicInformation.id = fieldId;
+            this.wrapper.addNonPublicInformation(nonPublicInformation)
+        } else{
+            this.wrapper.removeNonPublicInformation(fieldId);
+        }
+    }
+
+    isNonPublicChecked(fieldId){
+        return this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) !== -1;
+    }
+
+    markAllInformationAsNonPublic(checked){
+        if(checked){
+            this.CERTIFICATE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                nonPublicInformation.id = fieldId;
+                this.wrapper.addNonPublicInformation(nonPublicInformation);
+            })
+        } else{
+            this.CERTIFICATE_NON_PUBLIC_FIELD_IDS.forEach(fieldId => {
+                this.wrapper.removeNonPublicInformation(fieldId);
+            })
+        }
+    }
+
+    isAllInformationMarkedAsNonPublic(){
+        for (let fieldId of this.CERTIFICATE_NON_PUBLIC_FIELD_IDS) {
+            if(this.wrapper.nonPublicInformation.findIndex(value => value.id === fieldId) === -1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // methods for validation
+    areLanguageIdsProvidedForFiles(): boolean{
+        let fileWithNoLanguageId = this.selectedFiles.filter(value => !value.languageID).length;
+        return fileWithNoLanguageId === 0;
+    }
+
+    getAddCertificateErrorMessages(){
+        if(!this.areLanguageIdsProvidedForFiles()){
+            return this.translate.instant("LANGUAGE_ID_REQUIRED");
+        }
+    }
+    // the end of methods for validation
 }

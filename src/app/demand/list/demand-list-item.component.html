@@ -1,0 +1,89 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+<div class="card" [ngClass]="{'new-demand':isNewDemand}">
+    <div class="card-body d-flex">
+        <div class="col-2">
+            <div style="text-align:center">
+                <img *ngIf="!demand.image" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
+                <img *ngIf="demand.image" style="max-height:150px; max-width:100%" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" />
+            </div>
+        </div>
+        <div class="col-8 d-flex justify-content-between">
+            <div class="col">
+                <h5>{{selectPreferredValue(demand.title)}}</h5>
+                <ng-container *ngIf="isLoggedIn">
+                    <label class="d-block"> {{selectPreferredValue(demand.description)}}</label>
+                    <div class="row no-gutters">
+                        <div class="col-7">
+                            <div class="row no-gutters">
+                                <div class="col-5">
+                                    <div>{{'Product/Service Category:' | translate}} </div>
+                                </div>
+                                <div class="col-7">
+                                    <div>{{selectNameFromLabelObject(leafCategory.label)}}</div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col-5">
+                                    <div>{{'Due Date:' | translate}}</div>
+                                </div>
+                                <div class="col-7">
+                                    <div>{{demand.dueDate}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div>{{'Buyer Country:' | translate}} {{getCountryByISO(demand.buyerCountry.value)}}</div>
+                            <div>{{'Delivery Country:' | translate}} {{getCountryByISO(demand.deliveryCountry.value)}}</div>
+                        </div>
+                    </div>
+                </ng-container>
+                <div *ngIf="!isLoggedIn" class="badge badge-danger click-login-badge pointer" (click)="onLoginClicked()">{{'Log in to see demand and company details' | translate}}</div>
+            </div>
+        </div>
+        <div class="col-2">
+            <!-- show delete and edit buttons if the demand list shows company specific demands -->
+            <div *ngIf="showActionButtons">
+                <button type="button" class="btn btn-primary space-after col d-block" (click)="onEditClicked()">
+                    <span [innerHTML]="'Edit' | translate"></span>
+                </button>
+                <button type="button" class="btn btn-danger col d-block" (click)="onDeleteClicked()">
+                    <span [innerHTML]="'Delete' | translate"></span>
+                </button>
+            </div>
+            <!-- if action buttons are not shown, show buyer's info -->
+            <div *ngIf="companyData && !showActionButtons && buyerParty" class="pointer" (click)="onContactClicked(companyData)">
+                <div>
+                    <span *ngIf="companyData.brandName">{{ selectNameFromLabelObject(companyData.brandName) }}</span>
+                    <span *ngIf="!companyData.brandName">{{ companyData.legalName }}</span>
+                </div>
+                <div>
+                    <ngb-rating [rate]="companyData.trustRating ? companyData.trustRating : 0" [readonly]="true" max="5">
+                        <ng-template let-fill="fill">
+                            <span class="star" [class.full]="fill === 100">
+                                <span class="half" [style.width.%]="fill">&#9733;</span>&#9733;
+                            </span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+                <div *ngIf="companyData.id !== userCompanyId" class="btn btn-primary">{{'Contact' | translate}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #t let-fill="fill">
+  <span class="star" [class.full]="fill === 100">
+    <span class="half" [style.width.%]="fill">&hearts;</span>&hearts;
+  </span>
+</ng-template>

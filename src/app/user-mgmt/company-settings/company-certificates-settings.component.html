@@ -16,7 +16,7 @@
 
 <!-- Ppap -->
 <!-- <h3 class="space-after space-before">PPAP</h3> -->
-<div *ngIf="config.showPPAP">
+<div *ngIf="config.showPPAP && !onlyCertificatesReadOnly">
     <div class="form-group row space-before">
         <strong class="col-2 col-form-label"><span [innerHTML]="'PPAP Comp. Level:' | translate"></span></strong>
         <div class="col-10">
@@ -42,55 +42,110 @@
         </div>
     </div>
 
-    <hr>
+<!--    <hr>-->
 </div>
+<!-- Company Certificates to be edited -->
+<ng-container *ngIf="!onlyCertificatesReadOnly">
+    <!-- Circular economy certificates -->
+    <h4 class="space-after" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Circular Economy (Environment / Sustainability)' | translate"></span></h4>
 
-<!-- Certificates -->
-<h4 class="space-after" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Certificates' | translate"></span></h4>
-
-<call-status [callStatus]="certificatesCallStatus"></call-status>
-
-<div class="form-group row">
-    <div class="col-12">
-        <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
-            <colgroup>
-                <col style="width: 150%;">
-                <col style="width: 150%;">
-                <col style="width: 150%;">
-                <col style="width: auto;">
-            </colgroup>
-            <tr>
-                <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
-                <th><span [innerHTML]="'Certificate Name' | translate"></span></th>
-                <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
-                <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
-            </tr>
-            <tr *ngIf="certificates.length==0">
-                <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
-            </tr>
-            <tr *ngFor="let certificate of certificates; let i = index">
-                <td>{{certificate.type}}</td>
-                <td>{{certificate.name}}</td>
-                <td>{{certificate.description}}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
-                    <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, i)"><span [innerHTML]="'Edit' | translate"></span></button>
-                    <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id, i)"><span [innerHTML]="'Delete' | translate"></span></button>
-                </td>
-            </tr>
-        </table>
+    <div class="form-group row">
+        <div class="col-12">
+            <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+                <colgroup>
+                    <col style="width: 150%;">
+                    <col style="width: 150%;">
+                    <col style="width: 150%;">
+                    <col style="width: auto;">
+                </colgroup>
+                <tr>
+                    <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
+                    <th><span [innerHTML]="'Certificate Name' | translate"></span></th>
+                    <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
+                    <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+                </tr>
+                <tr *ngIf="!circularEconomyCertificates || circularEconomyCertificates.length==0">
+                    <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+                </tr>
+                <tr *ngFor="let certificate of circularEconomyCertificates; let i = index">
+                    <td>{{certificate.type | translate}}</td>
+                    <td>{{certificate.name | translate}}</td>
+                    <td>{{certificate.description}}</td>
+                    <td>
+                        <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+                        <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, certificate)"><span [innerHTML]="'Edit' | translate"></span></button>
+                        <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id)"><span [innerHTML]="'Delete' | translate"></span></button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-</div>
 
-<div class="row actions-row">
-    <div class="col-10"></div>
-    <div class="col-2">
-        <button class="btn btn-primary action" type="button" (click)="onAddCertificate(addCertModal)">
-            <span><span [innerHTML]="'Add Certificate' | translate"></span></span>
-        </button>
+    <div class="row actions-row">
+        <div class="col-10"></div>
+        <div class="col-2">
+            <button class="btn btn-primary action" type="button" (click)="onAddCertificate(addCertModal, 'circularEconomy')">
+                <span><span [innerHTML]="'Add Certificate' | translate"></span></span>
+            </button>
+        </div>
     </div>
-</div>
 
+    <!-- Certificates -->
+    <h4 class="space-after mt-5" [ngClass]="{'space-before':!config.showPPAP}"><span [innerHTML]="'Other Certificates' | translate"></span></h4>
+
+    <div class="form-group row">
+        <div class="col-12">
+            <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+                <colgroup>
+                    <col style="width: 150%;">
+                    <col style="width: 150%;">
+                    <col style="width: 150%;">
+                    <col style="width: auto;">
+                </colgroup>
+                <tr>
+                    <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
+                    <th><span [innerHTML]="'Certificate Name' | translate"></span></th>
+                    <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
+                    <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+                </tr>
+                <tr *ngIf="arbitraryCertificates.length==0">
+                    <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+                </tr>
+                <tr *ngFor="let certificate of arbitraryCertificates; let i = index">
+                    <td>{{certificate.type}}</td>
+                    <td>{{certificate.name}}</td>
+                    <td>{{certificate.description}}</td>
+                    <td>
+                        <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onDownloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
+                        <button class="btn btn-primary btn-sm" [disabled]="certificatesCallStatus.isLoading()" (click)="onEditCertificate(addCertModal, certificate)"><span [innerHTML]="'Edit' | translate"></span></button>
+                        <button class="btn btn-danger btn-sm ml-1" [disabled]="certificatesCallStatus.isLoading()" (click)="onRemoveCertificate(certificate.id)"><span [innerHTML]="'Delete' | translate"></span></button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <call-status [callStatus]="certificatesCallStatus"></call-status>
+
+    <div class="row actions-row">
+        <div class="col-10"></div>
+        <div class="col-2">
+            <button class="btn btn-primary action" type="button" (click)="onAddCertificate(addCertModal, 'arbitrary')">
+                <span><span [innerHTML]="'Add Certificate' | translate"></span></span>
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<!-- Company Certificates readonly -->
+<ng-container *ngIf="onlyCertificatesReadOnly">
+    <h3>{{'Company Certificates' | translate}}</h3>
+    <certificate-view *ngIf="circularEconomyCertificates.length !== 0"
+                      [userMgmtCertificates]="circularEconomyCertificates"
+                      tableName="Circular Economy (Environment / Sustainability)"></certificate-view>
+    <certificate-view *ngIf="arbitraryCertificates.length !== 0"
+                      [tableName]="circularEconomyCertificates.length !==0 ? 'Other Certificates':null "
+                      [userMgmtCertificates]="arbitraryCertificates"></certificate-view>
+</ng-container>
 <!-- Certificates Modal -->
 
 <!-- Modals -->
@@ -103,32 +158,58 @@
             </button>
         </div>
         <div class="modal-body">
+            <!-- File -->
             <div class="form-group row">
                 <label class="col-2 col-form-label"><span [innerHTML]="'File' | translate"></span></label>
                 <div class="col-10">
-                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)" [languageEnabled]="true" [binaryObjects]="selectedFiles" [multiple]="false" required>
+                    <file-input [disabled]="disabled" [presentationMode]="'edit'" (onSelectFile)="onSetCertificateFile($event)" (onRemovingEmit)="removedFile($event)"
+                                [binaryObjects]="selectedFiles" [multiple]="false" required>
                     </file-input>
                 </div>
             </div>
+            <!-- URI -->
+            <div class="form-group row">
+                <label class="col-2 col-form-label"><span [innerHTML]="'URL' | translate"></span></label>
+                <div class="col-10">
+                    <input type="text" class="form-control" formControlName="uri">
+                </div>
+            </div>
+            <!-- Type -->
             <div class="form-group row">
                 <label class="col-2 col-form-label"><span [innerHTML]="'Type' | translate"></span></label>
                 <div class="col-10">
-                    <select class="form-control" [formControl]="addCertForm.controls['type']" required>
+                    <ng-container *ngIf="certificateGroup === 'circularEconomy'">
+                        <!-- this input is just to update the form -->
+                        <input class="d-none" formControlName="type" [ngModel]="config.circularEconomy.certificateGroup">
+                        <!-- this input is to show the translated value -->
+                        <input class="form-control" [attr.disabled]="true" [ngModel]="config.circularEconomy.certificateGroup" [ngModelOptions]="{standalone: true}">
+                    </ng-container>
+                    <select *ngIf="certificateGroup === 'arbitrary'" class="form-control" formControlName="type" required>
                         <option></option>
-                        <option *ngFor="let certType of config.supportedCertificates" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
+                        <option *ngFor="let certType of config.supportedCertificates" [value]="certType" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
                     </select>
                 </div>
             </div>
+            <!-- name -->
             <div class="form-group row">
                 <label class="col-2 col-form-label"><span [innerHTML]="'Name' | translate"></span></label>
-                <div class="col-10">
-                    <input type="text" class="form-control" [formControl]="addCertForm.controls['name']" required>
+                <!-- free text name is for arbitrary certificates -->
+                <div *ngIf="certificateGroup === 'arbitrary'" class="col-10">
+                    <input type="text" class="form-control" formControlName="name" required>
+                </div>
+                <!-- predefined names for the circular economy certificates -->
+                <div *ngIf="certificateGroup === 'circularEconomy'" class="col-10">
+                    <select class="form-control" formControlName="name" required>
+                        <option></option>
+                        <option *ngFor="let certType of getCircularCertificateTypes()" [value]="certType" [selected]="certType == addCertForm.controls['type'].value">{{certType | translate}}</option>
+                    </select>
                 </div>
             </div>
+            <!-- description -->
             <div class="form-group row">
                 <label class="col-2 col-form-label"><span [innerHTML]="'Description' | translate"></span></label>
                 <div class="col-10">
-                    <input type="text" class="form-control" [formControl]="addCertForm.controls['description']">
+                    <input type="text" class="form-control" formControlName="description">
                 </div>
             </div>
         </div>

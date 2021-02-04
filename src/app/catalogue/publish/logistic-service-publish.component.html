@@ -14,7 +14,7 @@
    limitations under the License.
  -->
 
-<ng-container *ngIf="publishingGranularity === 'single' && (logisticCatalogueLines || catalogueLine)">
+<ng-container *ngIf="logisticCatalogueLines || catalogueLine">
     <!-- Logistics tabs -->
     <div>
         <div *ngIf="publishMode === 'create'" class="row space-before">
@@ -101,7 +101,7 @@
                 <div class="d-flex flex-wrap">
                     <div *ngFor="let property of getLogisticProperties('ROADTRANSPORT'); let i = index"
                          class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
-                        <options-panel [itemProperty]="property"></options-panel>
+                        <options-panel [catalogueLine]="getLogisticCatalogueLine('ROADTRANSPORT')" [itemProperty]="property"></options-panel>
                     </div>
                     <!-- empty panel is added in case the right column is empty to adjust the layout of the left column -->
                     <div *ngIf="getLogisticProperties('ROADTRANSPORT').length % 2 !== 0"
@@ -117,7 +117,7 @@
                 <div class="d-flex flex-wrap">
                     <div *ngFor="let property of getLogisticProperties('MARITIMETRANSPORT'); let i = index"
                          class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
-                        <options-panel [itemProperty]="property"></options-panel>
+                        <options-panel [catalogueLine]="getLogisticCatalogueLine('MARITIMETRANSPORT')" [itemProperty]="property"></options-panel>
                     </div>
                     <div *ngIf="getLogisticProperties('MARITIMETRANSPORT').length % 2 !== 0"
                          class="property-panel empty-panel">
@@ -132,7 +132,7 @@
                 <div class="d-flex flex-wrap">
                     <div *ngFor="let property of getLogisticProperties('AIRTRANSPORT'); let i = index"
                          class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
-                        <options-panel [itemProperty]="property"></options-panel>
+                        <options-panel [catalogueLine]="getLogisticCatalogueLine('AIRTRANSPORT')" [itemProperty]="property"></options-panel>
                     </div>
                     <div *ngIf="getLogisticProperties('AIRTRANSPORT').length % 2 !== 0"
                          class="property-panel empty-panel">
@@ -147,7 +147,7 @@
                 <div class="d-flex flex-wrap">
                     <div *ngFor="let property of getLogisticProperties('RAILTRANSPORT'); let i = index"
                          class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
-                        <options-panel [itemProperty]="property"></options-panel>
+                        <options-panel [catalogueLine]="getLogisticCatalogueLine('RAILTRANSPORT')" [itemProperty]="property"></options-panel>
                     </div>
                     <div *ngIf="getLogisticProperties('RAILTRANSPORT').length % 2 !== 0"
                          class="property-panel empty-panel">
@@ -158,11 +158,11 @@
             <!-- managed product type property -->
             <div class="d-flex space-before">
                 <div class="mr-3 property-panel">
-                    <options-panel [itemProperty]="getProductTypeProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('TRANSPORT')" [itemProperty]="getProductTypeProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
                 <!-- industry specialization property -->
                 <div class="property-panel">
-                    <options-panel [itemProperty]="getIndustrySpecializationProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('TRANSPORT')" [itemProperty]="getIndustrySpecializationProperty()" [checkboxOther]="false" [selectedOptionsWithExtraColumn]="false"></options-panel>
                 </div>
             </div>
 
@@ -171,10 +171,10 @@
             <!-- origin and destination fields -->
             <div class="d-flex space-before">
                 <div class="mr-3 property-panel">
-                    <origin-destination-view [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
+                    <origin-destination-view [catalogueLine]="getLogisticCatalogueLine('TRANSPORT')" [itemProperty]="getDestinationAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
                 <div class="property-panel">
-                    <origin-destination-view [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
+                    <origin-destination-view [catalogueLine]="getLogisticCatalogueLine('TRANSPORT')" [itemProperty]="getOriginAddressForLogistics('TRANSPORT')"></origin-destination-view>
                 </div>
             </div>
         </div>
@@ -188,7 +188,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}" >
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('WAREHOUSING')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('WAREHOUSING').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">
@@ -204,7 +204,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('ORDERPICKING')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('ORDERPICKING').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">
@@ -220,7 +220,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('REVERSELOGISTICS')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('REVERSELOGISTICS').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">
@@ -237,7 +237,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('INHOUSESERVICES')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('INHOUSESERVICES').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">
@@ -254,7 +254,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel  [catalogueLine]="getLogisticCatalogueLine('CUSTOMSMANAGEMENT')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('CUSTOMSMANAGEMENT').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">
@@ -270,7 +270,7 @@
             <div class="d-flex flex-wrap property-row">
                 <div *ngFor="let property of getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty; let i = index"
                      class="property-panel" [ngClass]="{'mr-3' : i%2 === 0}">
-                    <options-panel [itemProperty]="property"></options-panel>
+                    <options-panel [catalogueLine]="getLogisticCatalogueLine('LOGISTICSCONSULTANCY')" [itemProperty]="property"></options-panel>
                 </div>
                 <div *ngIf="getLogisticCatalogueLine('LOGISTICSCONSULTANCY').goodsItem.item.additionalItemProperty.length % 2 !== 0"
                      class="property-panel empty-panel">

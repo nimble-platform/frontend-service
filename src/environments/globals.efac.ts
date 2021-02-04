@@ -85,6 +85,24 @@ export const config = {
             "ontologyPrefix": "http://www.nimble-project.org/resource/aerospace#"
         }
     },
+    circularEconomy: {
+        certificateGroup: 'Circular Economy (Environment / Sustainability)',
+        companyCertificates: [
+            'ISO 14001 Environmental Management System',
+            'ISO 14006 Eco Design',
+            'ISO 50001 Energy Efficiency',
+            'Sustainability Report',
+            'Corporate Carbon Footprint'
+        ],
+        productCertificates: [
+            'PEFC Certificate',
+            'FSC Certificate',
+            'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
+            'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
+            'Free of Hazardous Substances'
+        ],
+        indexField: "circularEconomyCertificates"
+    },
     "contractForCatalogueEnabled":true,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
@@ -94,10 +112,13 @@ export const config = {
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": false,
+    "demandsEnabled": false,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": true,
     "hideTradeDetailsTab": false,
@@ -106,6 +127,7 @@ export const config = {
         "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
         "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Proveedor de Plataforma</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)</td></tr></table>"
     },
+    "invitationToPlatformEnabled": true,
     "kibanaConfig": {
         "companyDashboards": [],
         "companyGraphs": [],
@@ -121,6 +143,7 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": true,
     "networkEnabled": true,
+    "nonPublicInformationFunctionalityEnabled": true,
     "paymentMeans": [
         "Credit Card",
         "ACH Transfer",
@@ -163,6 +186,61 @@ export const config = {
             name: "Cash in advance",
             abbreviation: "CIA"
         },
+        {
+            id: "30_eom_10",
+            name: "30 EOM 10",
+            abbreviation: "E"
+        },
+        {
+            id: "100_down_payment_with_po",
+            name: "100% down payment with P/O",
+            abbreviation: "E0"
+        },
+        {
+            id: "30_days_net",
+            name: "30 days net",
+            abbreviation: "E1"
+        },
+        {
+            id: "30_days_net_14_days_2_discount",
+            name: "30 days net, 14 days 2% discount",
+            abbreviation: "E2"
+        },
+        {
+            id: "45_days_net",
+            name: "45 days net",
+            abbreviation: "E3"
+        },
+        {
+            id: "prior_to_delivery",
+            name: "Prior to delivery",
+            abbreviation: "E4"
+        },
+        {
+            id: "immediately_net",
+            name: "Immediately net",
+            abbreviation: "E5"
+        },
+        {
+            id: "60_days_net",
+            name: "60 days net",
+            abbreviation: "E6"
+        },
+        {
+            id: "confirmed_letter_of_credit",
+            name: "Confirmed letter of credit",
+            abbreviation: "E7"
+        },
+        {
+            id: "50_down_payment_with_po",
+            name: "50% down payment with P/O",
+            abbreviation: "E8"
+        },
+        {
+            id: "for_customs_purpose_only",
+            name: "For customs purpose only",
+            abbreviation: "E9"
+        },
     ],
     "permanentWelcomeTab": false,
     "phoneNumberRequired": true,
@@ -180,6 +258,7 @@ export const config = {
             "src": "./assets/tos.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":true,
@@ -346,14 +425,16 @@ export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
+export const product_price_hidden = "priceHidden";
+export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable", "sparePart"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable", "sparePart"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.circularEconomyCertificates","manufacturer.certificateType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType"];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "circularEconomyCertificates","certificateType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
@@ -371,7 +452,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price","_deliveryTime", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};
@@ -397,3 +478,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

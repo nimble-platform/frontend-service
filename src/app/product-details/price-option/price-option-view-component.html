@@ -56,7 +56,7 @@
         <div class="col-2">
             <input-label [label]="'Delivery Location' | translate"></input-label>
         </div>
-        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]" [disabled]="readonly" [required]="false"></address-input>
+        <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]" [disabled]="readonly" [required]="false" [parentForm]="formGroup"></address-input>
     </div>
 </div>
 

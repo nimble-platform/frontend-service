@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { UBLModelUtils } from '../model/ubl-model-utils';
 import { Location } from '@angular/common';
@@ -42,13 +42,18 @@ import { PublishingPropertyService } from './publishing-property.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";
 import { Subject } from 'rxjs';
+import 'rxjs/add/operator/takeUntil';
+import {NonPublicInformation} from '../model/publish/non-public-information';
+import {MultiTypeValue} from '../model/publish/multi-type-value';
+import {Text} from '../model/publish/text';
+import {Quantity} from '../model/publish/quantity';
 
 @Component({
     selector: "logistic-service-publish",
     templateUrl: "./logistic-service-publish.component.html",
     styleUrls: ["./logistic-service-publish.component.css"]
 })
-export class LogisticServicePublishComponent implements OnInit {
+export class LogisticServicePublishComponent implements OnInit , OnDestroy{
 
     constructor(public categoryService: CategoryService,
         private catalogueService: CatalogueService,
@@ -74,7 +79,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     publishMode: PublishMode;
     publishStatus: CallStatus = new CallStatus();
-    publishingGranularity: "single" | "bulk" = "single";
     companyNegotiationSettings: CompanyNegotiationSettings;
 
     callStatus: CallStatus = new CallStatus();
@@ -132,14 +136,6 @@ export class LogisticServicePublishComponent implements OnInit {
                 .catch(error => {
                     this.callStatus.error("Error while initializing the publish view.", error);
                 });
-        });
-
-        this.route.queryParams.subscribe((params: Params) => {
-            // handle publishing granularity: single, bulk, null
-            this.publishingGranularity = params['pg'];
-            if (this.publishingGranularity == null) {
-                this.publishingGranularity = 'single';
-            }
         });
     }
 
@@ -213,8 +209,6 @@ export class LogisticServicePublishComponent implements OnInit {
 
     private initView(userParty, catalogueResponse: CataloguePaginationResponse, settings, eClassLogisticCategories): void {
         this.companyNegotiationSettings = settings;
-        this.catalogueService.setEditMode(true);
-        this.publishStateService.resetData();
         // Following "if" block is executed when redirected by an "edit" button
         // "else" block is executed when redirected by "publish" tab
         this.publishMode = this.publishStateService.publishMode;
@@ -520,6 +514,51 @@ export class LogisticServicePublishComponent implements OnInit {
         }
     }
 
+    /**
+     * Creates {@link NonPublicInformation} for each non-public property of given catalogue lines
+     * The created {@link NonPublicInformation} includes the all values of property
+     * */
+    processNonPublicProductProperties(catalogueLines:CatalogueLine[]){
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            for (let catalogueLine1 of catalogueLines) {
+                let nonPublicInformationList = []
+
+                for (let catalogueLineNonPublicInformation of catalogueLine1.nonPublicInformation) {
+                    let nonPublicInformation:NonPublicInformation = new NonPublicInformation();
+                    nonPublicInformation.id = catalogueLineNonPublicInformation.id;
+
+                    let property = catalogueLine1.goodsItem.item.additionalItemProperty.find(value => value.id === catalogueLineNonPublicInformation.id);
+
+                    if(property){
+                        let multiTypeValue = new MultiTypeValue();
+                        multiTypeValue.valueQualifier = property.valueQualifier;
+                        switch (multiTypeValue.valueQualifier){
+                            case "STRING":
+                                for (let value of property.value) {
+                                    multiTypeValue.value.push(new Text(value.value,value.languageID));
+                                }
+                                break;
+                            case "QUANTITY":
+                                for (let quantity of property.valueQuantity) {
+                                    multiTypeValue.valueQuantity.push(new Quantity(quantity.value,quantity.unitCode));
+                                }
+                                break;
+                            case "NUMBER":
+                                for (let decimal of property.valueDecimal) {
+                                    multiTypeValue.valueDecimal.push(decimal);
+                                }
+                        }
+                        nonPublicInformation.value = multiTypeValue;
+
+                        nonPublicInformationList.push(nonPublicInformation)
+                    }
+
+                }
+                catalogueLine1.nonPublicInformation =  nonPublicInformationList;
+            }
+        }
+
+    }
     // publish or save
 
     onPublish(exitThePage: boolean) {
@@ -607,6 +646,9 @@ export class LogisticServicePublishComponent implements OnInit {
             splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
         }
 
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            this.processNonPublicProductProperties(splicedCatalogueLines)
+        }
         if (this.catalogueService.catalogueResponse.catalogueUuid == null) {
             const userId = this.cookieService.get("user_id");
             this.userService.getUserParty(userId).then(userParty => {
@@ -649,6 +691,9 @@ export class LogisticServicePublishComponent implements OnInit {
             splicedCatalogueLines.push(this.removeEmptyProperties(catalogueLine));
         }
 
+        if(this.config.nonPublicInformationFunctionalityEnabled){
+            this.processNonPublicProductProperties(splicedCatalogueLines)
+        }
         // TODO: create a service to update multiple catalogue lines
         for (let catalogueLine of splicedCatalogueLines) {
             this.publishStatus.aggregatedSubmit();

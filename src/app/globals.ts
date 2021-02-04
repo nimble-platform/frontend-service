@@ -106,15 +106,19 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - defaultBusinessProcessIds: Array of default business processes that shall be enabled for a company upon registration. Applicable values are "Item_Information_Request", "Ppap", "Negotiation", "Order", "Transport_Execution_Plan" and "Fulfilment". An empty array enables all processes
 - defaultSearchIndex: If "Name" the product search query prioritizes the product name, if "Category" it prioritizes the category name
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
+- demandsEnabled: Boolean flag if the demand functionality is enabled
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - docLink: Link to the documentation resources
+- enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
+- hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
 - hideTradeDetailsTab: Boolean flag whether to hide the trade details in the company settings page
 - hideVisitStats: Boolean flag if the visit stats tab in company analytics is hidden
 - imprint: HTML string of the imprint information to be shown on the according subpage
+- invitationToPlatformEnabled: Boolean flag if the users can invite other companies to the platform
 - kibanaConfig: Allows configuring the titles and links to the Kibana dashboards. The keys are "companyDashboards" (Basic company information), "companyGraphs" (More complex company information) and "dashboards" (Platform information), this value is an array of JSON objects with the following entries:
 	* title: Title to be displayed on the UI
 	* url: Sub-URL of the Kibana page starting at "#"
@@ -127,6 +131,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - federationLogoPath: Link to the logo of the federated login
 - logoRequired: Boolean flag if the submission of a company logo is required upon registration
 - networkEnabled: Boolean flag if the network functionality is enabled
+- nonPublicInformationFunctionalityEnabled: Boolean flag if the non-public product information functionality is enabled
 - paymentMeans: Array of payment means
 - paymentTerms: Array of payment terms
 - permanentWelcomeTab: Boolean flag if the welcome page is permanent
@@ -138,6 +143,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
 	* title: Title to be displayed on the UI
 	* src: Link to the agreement document
+- separateFilterForCircularEconomyCertificatesInCompanySearch: Boolean flag if the separate filter will be created for company circular economy certificates in the company search
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
@@ -191,6 +197,24 @@ export const config = {
             "ontologyPrefix": "http://www.aidimme.es/FurnitureSectorOntology.owl#"
         }
     },
+    circularEconomy: {
+        certificateGroup: 'Circular Economy (Environment / Sustainability)',
+        companyCertificates: [
+            'ISO 14001 Environmental Management System',
+            'ISO 14006 Eco Design',
+            'ISO 50001 Energy Efficiency',
+            'Sustainability Report',
+            'Corporate Carbon Footprint'
+        ],
+        productCertificates: [
+            'PEFC Certificate',
+            'FSC Certificate',
+            'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
+            'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
+            'Free of Hazardous Substances'
+        ],
+        indexField: "circularEconomyCertificates" // index field for circular economy certificates
+    },
     "contractForCatalogueEnabled":false,
     "collaborationEnabled": false,
     "collapsiblePropertyFacets": false,
@@ -200,10 +224,13 @@ export const config = {
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": true,
+    "demandsEnabled": false,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": true,
@@ -212,6 +239,7 @@ export const config = {
         "en": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
         "es": "<u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
     },
+    "invitationToPlatformEnabled": false,
     "kibanaConfig": {
         "companyDashboards": [
             {
@@ -266,6 +294,7 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "nonPublicInformationFunctionalityEnabled": false,
     "paymentMeans": [
         "Credit Card",
         "ACH Transfer",
@@ -321,6 +350,7 @@ export const config = {
             "src": "./assets/eula.pdf"
         }
     ],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,
@@ -436,6 +466,8 @@ export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
+export const product_price_hidden = "priceHidden";
+export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
@@ -443,11 +475,11 @@ export const item_manufacturer_id = "manufacturerId";
 // <<<
 // Grouping of facets into categories (Product / Service, Vendor, Trust / Rating, Other)
 // >>>
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "manufacturer.circularEconomyCertificates","manufacturer.certificateType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin","circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
 // <<<
@@ -468,7 +500,7 @@ export const product_filter_mappings = {
 // Facets removed from the UI by full name
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
 // Facets removed from the UI by regex
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel","_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit","lmf.", "manufacturer.", "_id", "_lowercaseLabel","_txt", "_desc", "_label", "_key", "_price", "_deliveryTime", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 // Facets removed from the UI by data type
 export const product_nonfilter_data_type = []
 // Facets used for configuration
@@ -506,3 +538,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

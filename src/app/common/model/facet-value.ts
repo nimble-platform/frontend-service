@@ -12,18 +12,12 @@
    limitations under the License.
  */
 
-import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from "@angular/router";
-import { Injectable } from "@angular/core";
-import { CategorySearchComponent } from "./category-search.component";
-
-@Injectable()
-export class CategoryDeactivateGuardService implements CanDeactivate<CategorySearchComponent>{
-
-    canDeactivate(component: CategorySearchComponent,
-        currentRoute: ActivatedRouteSnapshot,
-        currentState: RouterStateSnapshot,
-        nextState: RouterStateSnapshot): boolean | Promise<boolean> {
-        return component.canDeactivate(nextState);
-
+export class FacetValue {
+    public value: string;
+    public count: number;
+    public selected: boolean;
+    constructor(json: any) {
+        this.value = json.value;
+        this.count = json.count;
     }
 }

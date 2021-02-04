@@ -75,9 +75,6 @@
                         {{ wrapper.lastOfferQuotationWrapper.warranty | quantityTranslatePipe }}
                     </ng-container>
                 </ng-container>
-<!--                <span [ngStyle]="getWarrantyPeriodStyle()">-->
-<!--                    {{ getWarrantyPeriodText() }}-->
-<!--                </span>-->
             </div>
             <!-- Customer's offer-->
             <div *ngIf="showCounterOfferTerms" class="col-5">
@@ -222,9 +219,6 @@
 
             </div>
             <div class="col-5">
-                <!--<ng-container *ngIf="manufacturersTermsSource == 'frame_contract'">-->
-                <!--{{ wrapper.frameContractQuotationWrapper.orderedQuantity.value }} {{wrapper.frameContractQuotationWrapper.orderedQuantity.unitCode}}-->
-                <!--</ng-container>-->
             </div>
             <div class="col-5">
                 <div class="row">
@@ -409,17 +403,23 @@
             <div class="row content-row mt-2" [hidden]="selectedTCTab != 'CLAUSES'">
                 <div class="col-2"></div>
                 <div class="col-5">
-                    <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'" [sellerFederationId]="sellerFederationId" [termsAndConditions]="defaultTermsAndConditions" [originalTermAndConditionClauses]="defaultTermsAndConditions">
+                    <terms-and-conditions [hidden]="manufacturersTermsSource != 'product_defaults'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-product-defaults'" [sellerFederationId]="sellerFederationId"
+                                          [termsAndConditions]="defaultTermsAndConditions" [originalTermAndConditionClauses]="defaultTermsAndConditions" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'" [sellerFederationId]="sellerFederationId" [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.frameContractQuotation" [hidden]="manufacturersTermsSource != 'frame_contract'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-frame-contract'"
+                                          [sellerFederationId]="sellerFederationId" [termsAndConditions]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
-                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'" [sellerFederationId]="sellerFederationId" [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause" [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause">
+                    <terms-and-conditions *ngIf="wrapper.lastOfferQuotation" [hidden]="manufacturersTermsSource != 'last_offer'" [sellerPartyId]="sellerId" [readOnly]="true" [documentType]="'rfq-manufacturer-last-offer'"
+                                          [sellerFederationId]="sellerFederationId" [termsAndConditions]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause"
+                                          [originalTermAndConditionClauses]="wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause" [componentIndex]="wrapper.lineIndex">
                     </terms-and-conditions>
                 </div>
                 <div class="col-5">
                     <terms-and-conditions [sellerPartyId]="sellerId" [sellerFederationId]="sellerFederationId" [selectedIncoterm]="wrapper.rfqIncoterms" [selectedTradingTerm]="wrapper.rfqPaymentTerms.paymentTerm" (onIncotermChanged)="wrapper.rfqIncoterms = $event; onTermsChange(FIXED_NEGOTIATION_TERMS.INCOTERMS);" (onPaymentMeansChanged)="wrapper.rfqPaymentTerms.paymentTerm=$event; onTermsChange(FIXED_NEGOTIATION_TERMS.PAYMENT_MEANS);" (onClauseUpdated)="onClauseUpdate($event,wrapper);" [originalTermAndConditionClauses]="manufacturersTermsSource == 'last_offer' ? wrapper.lastOfferQuotation.quotationLine[wrapper.lineIndex].lineItem.clause :
                                                       (manufacturersTermsSource == 'frame_contract' ? wrapper.frameContractQuotation.quotationLine[wrapper.frameContractQuotationWrapper.quotationLineIndex].lineItem.clause :
-                                                      defaultTermsAndConditions)" [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause" [readOnly]="isLoading() || isReadOnly()" [documentType]="'rfq'">
+                                                      defaultTermsAndConditions)" [termsAndConditions]="wrapper.rfq.requestForQuotationLine[wrapper.lineIndex].lineItem.clause" [readOnly]="isLoading() || isReadOnly()"
+                                          [documentType]="'rfq'" [componentIndex]="wrapper.lineIndex" [showActionButton]="true">
                     </terms-and-conditions>
                 </div>
             </div>

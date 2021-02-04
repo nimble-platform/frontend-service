@@ -38,6 +38,7 @@ import { deliveryPeriodUnitListId, warrantyPeriodUnitListId } from "../common/co
 import { Certificate } from "../catalogue/model/publish/certificate";
 import { copy } from '../common/utils';
 import {PeriodRange} from './model/period-range';
+import {AccountLink} from './model/account-link';
 
 @Injectable()
 export class UserService {
@@ -150,10 +151,40 @@ export class UserService {
             .catch(this.handleError);
     }
 
-    getParty(partyId: string, delegateId: string = FEDERATIONID()): Promise<Party> {
-        let url = `${this.url}/party/${partyId}`;
+    connectStripe(accountId:string,partyId:string):Promise<AccountLink> {
+        let url = `${this.url}/account?partyId=${partyId}`;
+        if(accountId)
+            url += `&id=${accountId}`;
+        let headers = this.getAuthorizedHeaders();
+        return this.http.post(url, {}, {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.json();
+            })
+    }
+
+    deleteAccount(accountId:string):Promise<string> {
+        let headers = this.getAuthorizedHeaders();
+        return this.http.delete(`${this.url}/account?id=${accountId}`,  {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.text();
+            })
+    }
+
+    getAccountLoginLink(accountId:string):Promise<string> {
+        let headers = this.getAuthorizedHeaders();
+        return this.http.get(`${this.url}/account/login-link?id=${accountId}`, {headers: headers})
+            .toPromise()
+            .then(resp => {
+                return resp.text();
+            })
+    }
+
+    getParty(partyId: string, delegateId: string = FEDERATIONID(),includeRoles:boolean = false): Promise<Party> {
+        let url = `${this.url}/party/${partyId}?includeRoles=${includeRoles}`;
         if (this.delegated) {
-            url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}`;
+            url = `${this.delegate_url}/party/${partyId}?delegateId=${delegateId}&includeRoles=${includeRoles}`;
         }
         let headers = this.getAuthorizedHeaders();
         return this.http
@@ -424,12 +455,13 @@ export class UserService {
         });
     }
 
-    saveCert(file: File, name: string, description: string, type: string, partyId: string, certID?: string, langId: string = "en"): Promise<void> {
+    saveCert(file: File, name: string, description: string, type: string, uri: string,
+             partyId: string, certID?: string, langId: string = "en"): Promise<void> {
 
         if (langId == null || langId == "") {
             langId = "en";
         }
-        const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}&langId=${langId}`;
+        const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}&uri=${uri}&langId=${langId}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const headers_token = new Headers({ 'Authorization': token });
         const form_data: FormData = new FormData();

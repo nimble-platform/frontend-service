@@ -31,7 +31,6 @@ import { BpUserRole } from "../../model/bp-user-role";
 import { OrderResponseSimple } from "../../../catalogue/model/publish/order-response-simple";
 import { PriceWrapper } from "../../../common/price-wrapper";
 import { Party } from "../../../catalogue/model/publish/party";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
 import { Address } from "../../../catalogue/model/publish/address";
 import { SearchContextService } from "../../../simple-search/search-context.service";
 import { EpcCodes } from "../../../data-channel/model/epc-codes";
@@ -39,7 +38,6 @@ import { EpcService } from "../epc-service";
 import { DocumentService } from "../document-service";
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import * as myGlobals from '../../../globals';
-import { Contract } from '../../../catalogue/model/publish/contract';
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { TranslateService } from '@ngx-translate/core';
 import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
@@ -47,6 +45,7 @@ import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
 import { Item } from '../../../catalogue/model/publish/item';
 import { Invoice } from '../../../catalogue/model/publish/invoice';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {PaymentService} from '../../payment/payment-service';
 
 @Component({
     selector: "order",
@@ -59,9 +58,8 @@ export class OrderComponent implements OnInit {
     // whether the process details are viewed for all products in the negotiation
     @Input() areProcessDetailsViewedForAllProducts: boolean;
     order: Order;
-    address: Address
+    address: Address;
     orderResponse: OrderResponseSimple;
-    lastQuotation: Quotation;
     priceWrappers: PriceWrapper[];
     userRole: BpUserRole;
     config = myGlobals.config;
@@ -80,7 +78,6 @@ export class OrderComponent implements OnInit {
 
     initCallStatus: CallStatus = new CallStatus();
     submitCallStatus: CallStatus = new CallStatus();
-    fetchDataMonitoringStatus: CallStatus = new CallStatus();
 
     // the copy of ThreadEventMetadata of the current business process
     processMetadata: ThreadEventMetadata;
@@ -88,7 +85,6 @@ export class OrderComponent implements OnInit {
     getPartyId = UBLModelUtils.getPartyId;
 
     selectedPanel: string;
-    selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';
     selectedTrackAndTraceTab: 'EPC_CODES' | 'PRODUCTION_PROCESS_TEMPLATE' = 'EPC_CODES';
 
     // map representing the workflow of seller's company
@@ -112,6 +108,7 @@ export class OrderComponent implements OnInit {
         private epcService: EpcService,
         private location: Location,
         private router: Router,
+        private paymentService: PaymentService,
         private translate: TranslateService,
         private modalService: NgbModal,
         private documentService: DocumentService) {
@@ -271,9 +268,9 @@ export class OrderComponent implements OnInit {
         order.sellerSupplierParty = new SupplierParty(this.sellerParty);
 
         this.bpeService.startProcessWithDocument(order, this.sellerParty.federationInstanceID)
-            .then(res => {
+            .then(() => {
                 this.submitCallStatus.callback("Order placed", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.sellerParty.federationInstanceID } });
@@ -294,7 +291,7 @@ export class OrderComponent implements OnInit {
             .then(() => {
                 this.documentService.updateCachedDocument(order.id, order);
                 this.submitCallStatus.callback("Order updated", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab } });
@@ -314,9 +311,9 @@ export class OrderComponent implements OnInit {
 
         //this.submitCallStatus.submit();
         this.bpeService.startProcessWithDocument(this.bpDataService.orderResponse, this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID)
-            .then(res => {
+            .then(() => {
                 this.submitCallStatus.callback("Order Response placed", true);
-                var tab = "PURCHASES";
+                let tab = 'PURCHASES';
                 if (this.bpDataService.bpActivityEvent.userRole == "seller")
                     tab = "SALES";
                 this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.bpDataService.orderResponse.sellerSupplierParty.party.federationInstanceID } });
@@ -347,7 +344,7 @@ export class OrderComponent implements OnInit {
 
     onPaymentDone(close = null) {
         this.submitCallStatus.submit();
-        this.bpeService.paymentDone(this.order.id, this.invoiceId, this.sellerParty.federationInstanceID).then(response => {
+        this.bpeService.paymentDone(this.order.id, this.invoiceId, this.sellerParty.federationInstanceID).then(() => {
             this.isPaymentDone = true;
             this.submitCallStatus.callback(null, true);
             // redirect user to purchase or sales tab according to his role
@@ -364,6 +361,14 @@ export class OrderComponent implements OnInit {
         }).catch(error => {
             this.submitCallStatus.error("Error while processing the payment", error);
         })
+    }
+
+    checkout() {
+        this.paymentService.orderId = this.order.id;
+        this.paymentService.priceWrappers = this.priceWrappers;
+        this.paymentService.sellerStripeAccountId = this.sellerParty.stripeAccountId;
+
+        this.router.navigate(['bpe/payment']);
     }
 
     onDispatchOrder() {
@@ -443,11 +448,6 @@ export class OrderComponent implements OnInit {
         this.epcCodes.codes.push("");
     }
 
-    onTCTabSelect(event: any, id: any): void {
-        event.preventDefault();
-        this.selectedTCTab = id;
-    }
-
     /*
      * Getters & Setters
      */
@@ -488,10 +488,8 @@ export class OrderComponent implements OnInit {
     }
 
     isInvoiceTabShown(): boolean {
-        if (this.invoice && this.invoice.id != null) {
-            return true;
-        }
-        return false;
+        return this.invoice && this.invoice.id != null;
+
     }
 
     getInvoiceBlockChainInfo() {
@@ -577,51 +575,12 @@ export class OrderComponent implements OnInit {
         }
     }
 
-    getOrderContract(): Contract {
-        let orderContract = null;
-        if (this.order.contract) {
-            for (let contract of this.order.contract) {
-                for (let clause of contract.clause) {
-                    if (clause.type) {
-                        orderContract = contract;
-                        break;
-                    }
-                }
-            }
-        }
-        return orderContract;
-    }
-
     getTotalPrice() {
         let totalPrice = 0;
         for (let priceWrapper of this.priceWrappers) {
             totalPrice += priceWrapper.totalPrice;
         }
         return roundToTwoDecimals(totalPrice);
-    }
-
-    getTotalPriceString() {
-        let totalPrice = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            totalPrice += priceWrapper.totalPrice;
-        }
-        return roundToTwoDecimals(totalPrice) + " " + this.priceWrappers[0].currency;
-    }
-
-    getVatTotalString() {
-        let vatTotal = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            vatTotal += priceWrapper.vatTotal
-        }
-        return roundToTwoDecimals(vatTotal) + " " + this.priceWrappers[0].currency;
-    }
-
-    getGrossTotalString() {
-        let grossTotal = 0;
-        for (let priceWrapper of this.priceWrappers) {
-            grossTotal += priceWrapper.grossTotal;
-        }
-        return roundToTwoDecimals(grossTotal) + " " + this.priceWrappers[0].currency;
     }
 
     isThereADeletedProduct(): boolean {
@@ -638,6 +597,10 @@ export class OrderComponent implements OnInit {
     }
 
     showOrderResponseNotes() {
-        return this.isOrderCompleted || (this.orderResponse && this.processMetadata.collaborationStatus != 'CANCELLED');
+        return this.isOrderCompleted() || (this.orderResponse && this.processMetadata.collaborationStatus != 'CANCELLED');
+    }
+
+    isCheckoutButtonVisible(){
+        return this.config.enableStripePayment && this.sellerParty.stripeAccountId;
     }
 }

@@ -67,3 +67,7 @@
 .publish-menu {
     display: none;
 }
+
+.nav-item.active {
+    font-weight: bold;
+}

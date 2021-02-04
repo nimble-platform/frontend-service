@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Params, Router, RouterStateSnapshot } from "@angular/router";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
 import { Category } from "../model/category/category";
 import { CategoryService } from "./category.service";
 import { CookieService } from "ng2-cookies";
@@ -32,9 +32,8 @@ import { Text } from '../model/publish/text';
 import { Observable } from "rxjs/Observable";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { SimpleSearchService } from "../../simple-search/simple-search.service";
-import { TranslateService } from '@ngx-translate/core';
 
-type ProductType = "product" | "transportation";
+const productType = "product";
 type SelectedTab = "TREE"
     | "FAVORITE"
     | "RECENT";
@@ -45,21 +44,24 @@ type SelectedTab = "TREE"
     styleUrls: ["./category-search.component.css"]
 })
 export class CategorySearchComponent implements OnInit {
-
+    // whether the categories are selected for the publishing
+    @Input() categoriesSelected:boolean = false;
+    @Input() titleTranslationKey:string = null;
+    @Output() onCategoryRemoved = new EventEmitter<string>();
     selectedTab: SelectedTab = "TREE";
 
     getCategoriesStatus: CallStatus = new CallStatus();
     favoriteCategoriesStatus: CallStatus = new CallStatus();
     recentCategoriesStatus: CallStatus = new CallStatus();
     addFavoriteCategoryStatus: CallStatus = new CallStatus();
-    addRecentCategoryStatus: CallStatus = new CallStatus();
     getCategoryDetailsStatus: CallStatus = new CallStatus();
 
     categories: Category[];
-    originalPageRef: string = null; // keeps the source page, which was the initial page before navigating to this page
-    pageRef: string = null;
-    publishingGranularity: string;
-
+    /*
+    query parameters
+     */
+    // indicates whether only one category can be selected or multiple categories can be selected
+    @Input() categoryCount: 'single' | 'multiple' = 'multiple';
 
     // keeps the query term
     categoryKeyword: string;
@@ -77,12 +79,7 @@ export class CategorySearchComponent implements OnInit {
     taxonomyIDs: string[];
     prefCats: string[] = [];
     recCats: string[] = [];
-
-    isLogistics: boolean;
-    logisticsCategory: Category = null;
-
     showOtherProperties = null;
-    productType: ProductType;
 
     favSelected: boolean;
 
@@ -99,36 +96,12 @@ export class CategorySearchComponent implements OnInit {
         public categoryService: CategoryService,
         private simpleSearchService: SimpleSearchService,
         private publishService: PublishService,
-        public appComponent: AppComponent,
-        private translate: TranslateService
+        public appComponent: AppComponent
     ) {
     }
 
     ngOnInit(): void {
-        this.route.queryParams.subscribe((params: Params) => {
-            // current page regs considered: menu, publish, null
-            this.pageRef = params["pageRef"];
-            // original page ref is set once only if it is null
-            if (this.originalPageRef == null) {
-                this.originalPageRef = this.pageRef;
-            }
-
-            //set product type
-            this.productType = params["productType"] === "transportation" ? "transportation" : "product";
-            this.isLogistics = this.productType === "transportation";
-
-            if (this.pageRef === 'menu' && this.originalPageRef === 'publish') {
-                // This part is necessary since only the params has changes,canDeactivate method will not be called.
-                // This situation occurs when the user clicks on the Publish button in the top menu during the publication process.
-                this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
-                    if(result){
-                        this.initCategories(params);
-                    }
-                });
-            } else{
-                this.initCategories(params);
-            }
-        });
+        this.initCategories();
         // get available taxonomy ids
         this.categoryService.getAvailableTaxonomies().then(taxonomyIDs => {
             this.taxonomyIDs = ["All"];
@@ -153,16 +126,15 @@ export class CategorySearchComponent implements OnInit {
         return false;
     }
 
-    initCategories(params){
-        if (this.pageRef == null || this.pageRef == "menu") {
+    initCategories(categoryKeyword:string = null){
+        if (!this.categoriesSelected) {
             // reset categories
             this.categoryService.resetSelectedCategories();
             this.selectedCategory = null;
             this.selectedCategoryWithDetails = null;
             this.pathToSelectedCategories = null;
             // reset draft catalogue line
-            this.publishService.publishingStarted = false;
-            this.publishService.publishMode = "create";
+            this.publishService.resetData();
         }
 
         // get the favorite categories
@@ -171,14 +143,8 @@ export class CategorySearchComponent implements OnInit {
         // get the recently used categories
         this.getRecentCategories();
 
-        // publishing granularity: single, bulk, null
-        this.publishingGranularity = params["pg"];
-        if (this.publishingGranularity == null) {
-            this.publishingGranularity = "single";
-        }
-
         // handle category query term
-        this.categoryKeyword = params["cat"];
+        this.categoryKeyword = categoryKeyword;
         if (this.categoryKeyword != null) {
             this.getCategories();
         }
@@ -197,7 +163,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getPrefCat(userId).then(res => {
             var prefCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
             }
             prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.prefCats = prefCats_tmp;
@@ -215,7 +181,7 @@ export class CategorySearchComponent implements OnInit {
         this.userService.getRecCat(userId).then(res => {
             var recCats_tmp = [];
             for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
+                if (res[i].split("::")[3] == productType) recCats_tmp.push(res[i]);
             }
             recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
             this.recCats = recCats_tmp;
@@ -227,7 +193,7 @@ export class CategorySearchComponent implements OnInit {
     }
 
     findPrefCat(cat: Category): boolean {
-        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+        var cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
         var found = false;
         if (this.prefCats.indexOf(cat_str) != -1) found = true;
         return found;
@@ -236,12 +202,12 @@ export class CategorySearchComponent implements OnInit {
     removeCategoryFromFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;
@@ -256,12 +222,12 @@ export class CategorySearchComponent implements OnInit {
     addCategoryToFavorites(cat: Category) {
         if (!this.addFavoriteCategoryStatus.isLoading()) {
             this.addFavoriteCategoryStatus.submit();
-            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + this.productType;
+            const cat_str = cat.id + "::" + cat.taxonomyId + "::" + selectPreferredName(cat) + "::" + productType;
             const userId = this.cookieService.get("user_id");
             this.userService.togglePrefCat(userId, cat_str).then(res => {
                 const prefCats_tmp = [];
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].split("::")[3] == this.productType) prefCats_tmp.push(res[i]);
+                    if (res[i].split("::")[3] == productType) prefCats_tmp.push(res[i]);
                 }
                 prefCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
                 this.prefCats = prefCats_tmp;
@@ -271,29 +237,6 @@ export class CategorySearchComponent implements OnInit {
                     this.addFavoriteCategoryStatus.error("Error while adding category to favorites", error);
                 });
         }
-    }
-
-    addRecentCategories(cat: Category[]) {
-        this.addRecentCategoryStatus.submit();
-        var recCatPost = [];
-        var timeStamp = new Date().getTime();
-        for (var i = 0; i < cat.length; i++) {
-            const cat_str = cat[i].id + "::" + cat[i].taxonomyId + "::" + selectPreferredName(cat[i]) + "::" + this.productType + "::" + timeStamp;
-            recCatPost.push(cat_str);
-        }
-        const userId = this.cookieService.get("user_id");
-        this.userService.addRecCat(userId, recCatPost).then(res => {
-            var recCats_tmp = [];
-            for (var i = 0; i < res.length; i++) {
-                if (res[i].split("::")[3] == this.productType) recCats_tmp.push(res[i]);
-            }
-            recCats_tmp.sort((a, b) => a.split("::")[2].localeCompare(b.split("::")[2]));
-            this.recCats = recCats_tmp;
-            this.addRecentCategoryStatus.callback("Categories added to recently used", true);
-        })
-            .catch(error => {
-                this.addRecentCategoryStatus.error("Error while adding categories to recently used", error);
-            });
     }
 
     selectPreferredName(cp: Category | Property) {
@@ -314,29 +257,12 @@ export class CategorySearchComponent implements OnInit {
         return "";
     }
 
-    canDeactivate(nextState: RouterStateSnapshot): boolean | Promise<boolean>{
-        if (this.originalPageRef === 'publish' && !nextState.url.startsWith('/catalogue/publish')) {
-            return this.appComponent.confirmModalComponent.open('You will lose any changes you made, are you sure you want to quit ?').then(result => {
-                return result;
-            });
-        } else{
-            return true;
-        }
-    }
-
     onSearchCategory(): void {
         this.parentCategories = null;
         this.pathToSelectedCategories = null;
         this.selectedCategoryWithDetails = null;
         this.treeView = false;
-        this.router.navigate(["/catalogue/categorysearch"], {
-            queryParams: {
-                pg: this.publishingGranularity,
-                pageRef: this.pageRef,
-                cat: this.categoryKeyword,
-                productType: this.productType
-            }
-        });
+        this.initCategories(this.categoryKeyword)
     }
 
     toggleTreeView(): void {
@@ -349,26 +275,30 @@ export class CategorySearchComponent implements OnInit {
         this.categoryService
             .getRootCategories(taxonomyIds)
             .then(rootCategories => {
-                this.rootCategories = sortCategories(rootCategories);
+                this.setRootCategories(rootCategories);
                 this.getCategoriesStatus.aggregatedCallBack("Retrieved category details", true);
-                for(let taxonomyId of taxonomyIds){
-                    this.logisticsCategory = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].logisticsCategory);
-                    if (this.logisticsCategory != null) {
-                        let searchIndex = findCategoryInArray(this.rootCategories, this.logisticsCategory);
-                        this.rootCategories.splice(searchIndex, 1);
-                    }
-                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
-                        let filterCat = this.rootCategories.find(c => c.code === this.categoryFilter[taxonomyId].hiddenCategories[i]);
-                        if (filterCat != null) {
-                            let searchIndex = findCategoryInArray(this.rootCategories, filterCat);
-                            this.rootCategories.splice(searchIndex, 1);
-                        }
-                    }
-                }
             })
             .catch(error => {
                 this.getCategoriesStatus.aggregatedError("Failed to retrieve category details", error);
             });
+    }
+
+    /**
+     * Sets the root categories by excluding the ones which are configured as hidden
+     * */
+    setRootCategories(rootCategories:any){
+        // set root categories
+        this.rootCategories = sortCategories(rootCategories);
+        // exclude the hidden ones
+        let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
+        for(let taxonomyId of taxonomyIds){
+            // remove logistics categories
+            this.rootCategories = this.rootCategories.filter(category => category.code !== this.categoryFilter[taxonomyId].logisticsCategory)
+            // remove hidden categories
+            for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                this.rootCategories = this.rootCategories.filter(c => c.code !== this.categoryFilter[taxonomyId].hiddenCategories[i]);
+            }
+        }
     }
 
     getSuggestions = (text$: Observable<string>) =>
@@ -383,11 +313,21 @@ export class CategorySearchComponent implements OnInit {
     private getCategories(): void {
         this.getCategoriesStatus.aggregatedSubmit();
         this.categoryService
-            .getCategoriesByName(this.categoryKeyword, this.taxonomyId, this.isLogistics)
+            .getCategoriesByName(this.categoryKeyword, this.taxonomyId, false)
             .then(categories => {
                 this.parentCategories = null;
                 this.pathToSelectedCategories = null;
                 this.categories = categories;
+                // exclude the hidden categories
+                let taxonomyIds = this.taxonomyId == "All" ? Object.keys(this.categoryFilter) : [this.taxonomyId];
+                for(let taxonomyId of taxonomyIds){
+                    // remove logistics categories
+                    this.categories = this.categories.filter(category => category.code !== this.categoryFilter[taxonomyId].logisticsCategory)
+                    // remove hidden categories
+                    for (var i = 0; i < this.categoryFilter[taxonomyId].hiddenCategories.length; i++) {
+                        this.categories = this.categories.filter(c => this.getCategoryCode(c.rootCategoryUri) !== this.categoryFilter[taxonomyId].hiddenCategories[i]);
+                    }
+                }
                 this.getCategoriesStatus.aggregatedCallBack("Successfully got search results", true);
             })
             .catch(error => {
@@ -395,24 +335,30 @@ export class CategorySearchComponent implements OnInit {
             });
     }
 
-    addCategoryToSelected(category: Category): void {
-        // if no category is selected or if the selected category is already selected
-        // do nothing
-        if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
-            return;
-        }
+    /**
+     * Returns the category code for the given category uri
+     * */
+    getCategoryCode(categoryUri:string){
+        return categoryUri.substr(categoryUri.lastIndexOf('#') + 1);
+    }
 
-        if (this.selectedCategoryWithDetails !== category) {
-            throw new Error("Inconsistent state: can only select the details category.");
+    addCategoryToSelected(category: Category): void {
+        if (this.categoryCount === 'multiple') {
+            // if no category is selected or if the selected category is already selected
+            // do nothing
+            if (category == null || findCategoryInArray(this.categoryService.selectedCategories, category) > -1) {
+                return;
+            }
+
+            if (this.selectedCategoryWithDetails !== category) {
+                throw new Error("Inconsistent state: can only select the details category.");
+            }
+        } else {
+            // if single category is allowed, clear the already selected category
+            this.categoryService.selectedCategories = [];
         }
 
         this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
-    }
-
-    navigateToPublishingPage(): void {
-        this.addRecentCategories(this.categoryService.selectedCategories);
-        // ProductPublishComponent.dialogBox = true;
-        this.router.navigate(["catalogue/publish"], { queryParams: { pg: this.publishingGranularity, productType: this.productType } });
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {
@@ -426,7 +372,7 @@ export class CategorySearchComponent implements OnInit {
                 this.categoryService
                     .getCategory(category)
                     .then(category => {
-                        this.rootCategories = sortCategories(categories.categories[0]);
+                        this.setRootCategories(categories.categories[0]);
                         if (!scrollToDivId) {
                             this.scrollToDivId = category.code;
                         }
@@ -471,7 +417,8 @@ export class CategorySearchComponent implements OnInit {
             properties: [],
             keywords: [],
             taxonomyId: cat_split[1],
-            categoryUri: ""
+            categoryUri: "",
+            rootCategoryUri: null
         };
         this.getCategoryDetails(catFull, true);
     }
@@ -546,7 +493,7 @@ export class CategorySearchComponent implements OnInit {
         }
     }
 
-    private scrollToDiv(divId: string, event: any) {
+    private scrollToDiv(divId: string) {
         //this.scrollToDivId = divId;
         // if treeView is false,firstly we have to switch to tree view
         if (!this.getCategoryDetailsStatus.isDisplayed()) {
@@ -558,5 +505,10 @@ export class CategorySearchComponent implements OnInit {
                 document.getElementById("scrollDiv").scrollTop -= 57;
             }
         }
+    }
+
+    public removeSelectedCategory(selectedCategory:Category){
+        this.categoryService.removeSelectedCategory(selectedCategory);
+        this.onCategoryRemoved.next(selectedCategory.id);
     }
 }

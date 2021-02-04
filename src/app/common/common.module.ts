@@ -44,6 +44,12 @@ import {AmountUiTranslatePipe} from './pipe/amount-ui-translate.pipe';
 import {QuantityTranslatePipe} from './pipe/quantity-translate.pipe';
 import {WordByWordTranslatePipe} from './pipe/word-by-word-translate.pipe';
 import {CancelCollaborationModalComponent} from './cancel-collaboration-modal.component';
+import {CategoryFacetComponent} from './search/category-facet.component';
+import {SearchFacetComponent} from './search/search-facet.component';
+import {CountryInputComponent} from './country-input-component';
+import {AddressMapComponent} from './address-map.component';
+import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {CertificateViewComponent} from './certificate-view-component';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -63,7 +69,8 @@ export function HttpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient]
             },
             isolate: false
-        })
+        }),
+        LeafletModule.forRoot(),
     ],
     declarations: [
         CallStatusComponent,
@@ -75,18 +82,23 @@ export function HttpLoaderFactory(http: HttpClient) {
         DateInputComponent,
         ConfirmModalComponent,
         AddressInputComponent,
+        AddressMapComponent,
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
         BooleanInputComponent,
+        CountryInputComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
+        CertificateViewComponent,
         AmountInputComponent,
         ExpandableFlexRow,
         MultiTypeInputComponent,
         DisableControlDirective,
         CancelCollaborationModalComponent,
-        SingleClickDirective
+        SingleClickDirective,
+        CategoryFacetComponent,
+        SearchFacetComponent
     ],
     exports: [
         CallStatusComponent,
@@ -97,11 +109,14 @@ export function HttpLoaderFactory(http: HttpClient) {
         FileInputComponent,
         DateInputComponent,
         AddressInputComponent,
+        AddressMapComponent,
+        LeafletModule,
         BooleanInputComponent,
         CancelCollaborationModalComponent,
         ConfirmModalComponent,
         MultiAddressInputComponent,
         InputLabelComponent,
+        CertificateViewComponent,
         AmountInputComponent,
         ExpandableFlexRow,
         MultiTypeInputComponent,
@@ -109,7 +124,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
-        SingleClickDirective
+        SingleClickDirective,
+        CategoryFacetComponent,
+        SearchFacetComponent,
+        CountryInputComponent
     ],
     providers: [
     ]

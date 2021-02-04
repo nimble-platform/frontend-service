@@ -85,6 +85,24 @@ export const config = {
           "ontologyPrefix": "http://nimble-project.eu/TextileAndWGSectorsOntology.owl#"
       }
     },
+    circularEconomy: {
+        certificateGroup: 'Circular Economy (Environment / Sustainability)',
+        companyCertificates: [
+            'ISO 14001 Environmental Management System',
+            'ISO 14006 Eco Design',
+            'ISO 50001 Energy Efficiency',
+            'Sustainability Report',
+            'Corporate Carbon Footprint'
+        ],
+        productCertificates: [
+            'PEFC Certificate',
+            'FSC Certificate',
+            'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
+            'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
+            'Free of Hazardous Substances'
+        ],
+        indexField: "circularEconomyCertificates"
+    },
     "contractForCatalogueEnabled":false,
     "collaborationEnabled": true,
     "collapsiblePropertyFacets": false,
@@ -94,10 +112,13 @@ export const config = {
     ],
     "defaultSearchIndex": "Name",
     "delegationEnabled": true,
+    "demandsEnabled": false,
     "displayCategoryCounts":true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": false,
     "hideTradeDetailsTab": false,
@@ -106,6 +127,7 @@ export const config = {
         "en": "<br/>E-Mail: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>",
         "es": "<br/>Correo electrónico: <a href='mailto:nimble@il.ibm.com'>nimble@il.ibm.com</a><br/>"
     },
+    "invitationToPlatformEnabled": false,
     "kibanaConfig": {
         "companyDashboards": [],
         "companyGraphs": [],
@@ -121,6 +143,7 @@ export const config = {
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
     "networkEnabled": false,
+    "nonPublicInformationFunctionalityEnabled": false,
     "paymentMeans": [
         "Credit Card",
         "ACH Transfer",
@@ -171,6 +194,7 @@ export const config = {
     "vatEnabled": true,
     "projectsEnabled": true,
     "requiredAgreements": [],
+    "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":true,
@@ -284,14 +308,16 @@ export const class_label = "classification.allLabels";
 export const product_description = "description";
 export const product_img = "imgageUri";
 export const product_price = "price";
+export const product_price_hidden = "priceHidden";
+export const product_delivery_time = "deliveryTime";
 export const product_currency = "currency";
 export const product_cat = "classificationUri";
 export const product_cat_mix = "commodityClassficationUri";
-export const product_filter_prod = ["freeOfCharge", "certificateType", "applicableCountries", "customizable"];
-export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
+export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable"];
+export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.circularEconomyCertificates","manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "{NULL}_certificateType", "ppapComplianceLevel", "ppapDocumentType"];
-export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
 export const product_filter_trust = ["manufacturer.trustScore", "manufacturer.trustRating", "manufacturer.trustSellerCommunication", "manufacturer.trustFullfillmentOfTerms", "manufacturer.trustDeliveryPackaging", "manufacturer.trustNumberOfTransactions"];
@@ -309,7 +335,7 @@ export const product_filter_mappings = {
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
-export const product_nonfilter_regex = ["lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_deliveryTime","_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};
@@ -335,3 +361,6 @@ export const query_settings_comp = {
         "legalName": 64
     }
 };
+
+// Stripe publishable key
+export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";

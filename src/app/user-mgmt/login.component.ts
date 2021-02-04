@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import {Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as myGlobals from '../globals';
@@ -24,7 +24,7 @@ import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 })
 
 
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
     public pageRef: string = null;
     config = myGlobals.config;
     disclaimer = "";

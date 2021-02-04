@@ -12,30 +12,26 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Location } from "@angular/common";
-import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
-import { RequestForQuotation } from "../../../catalogue/model/publish/request-for-quotation";
-import { BPDataService } from "../bp-data-service";
-import { BPEService } from "../../bpe.service";
-import { Router } from "@angular/router";
-import { Quotation } from "../../../catalogue/model/publish/quotation";
-import { NegotiationModelWrapper } from "./negotiation-model-wrapper";
-import { CURRENCIES } from "../../../catalogue/model/constants";
-import { CallStatus } from "../../../common/call-status";
-import { Quantity } from "../../../catalogue/model/publish/quantity";
-import { BpUserRole } from "../../model/bp-user-role";
-import { CookieService } from 'ng2-cookies';
-import { DiscountModalComponent } from '../../../product-details/discount-modal.component';
-import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {CatalogueLine} from '../../../catalogue/model/publish/catalogue-line';
+import {RequestForQuotation} from '../../../catalogue/model/publish/request-for-quotation';
+import {BPDataService} from '../bp-data-service';
+import {BPEService} from '../../bpe.service';
+import {Quotation} from '../../../catalogue/model/publish/quotation';
+import {NegotiationModelWrapper} from './negotiation-model-wrapper';
+import {CURRENCIES} from '../../../catalogue/model/constants';
+import {CallStatus} from '../../../common/call-status';
+import {Quantity} from '../../../catalogue/model/publish/quantity';
+import {BpUserRole} from '../../model/bp-user-role';
+import {DiscountModalComponent} from '../../../product-details/discount-modal.component';
+import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event-metadata';
+import {UBLModelUtils} from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
-import * as moment from "moment";
-import { Moment, unitOfTime } from "moment";
-import { Clause } from '../../../catalogue/model/publish/clause';
-import { TranslateService } from '@ngx-translate/core';
-import { Delivery } from '../../../catalogue/model/publish/delivery';
+import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
+import * as moment from 'moment';
+import {Moment, unitOfTime} from 'moment';
+import {Clause} from '../../../catalogue/model/publish/clause';
+import {Delivery} from '../../../catalogue/model/publish/delivery';
 
 @Component({
     selector: "negotiation-response-item",
@@ -84,16 +80,12 @@ export class NegotiationResponseItemComponent implements OnInit {
     // if there are delivery date-quantity pairs instead of delivery period in the request, this field is true.
     isDeliveryDateSectionOpen: boolean = false;
 
-    onClauseUpdate(event): void {
+    onClauseUpdate(): void {
         this.tcChanged = UBLModelUtils.areTermsAndConditionListsDifferent(this.wrapper.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause, this.wrapper.newQuotation.quotationLine[this.wrapper.lineIndex].lineItem.clause);
     }
 
     constructor(private bpeService: BPEService,
-        private bpDataService: BPDataService,
-        private location: Location,
-        private cookieService: CookieService,
-        private translate: TranslateService,
-        private router: Router) {
+        private bpDataService: BPDataService) {
     }
 
     ngOnInit() {
@@ -224,8 +216,7 @@ export class NegotiationResponseItemComponent implements OnInit {
             case "day(s)": rangeUnit = 'd'; break;
         }
         let m: Moment = moment().add(this.wrapper.newQuotationWrapper.frameContractDuration.value, <unitOfTime.DurationConstructor>rangeUnit);
-        let date: string = m.format(this.dateFormat);
-        return date;
+        return m.format(this.dateFormat);
     }
 
     onAddDeliveryDate() {

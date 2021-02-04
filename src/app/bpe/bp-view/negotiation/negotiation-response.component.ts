@@ -31,9 +31,8 @@ import { DiscountModalComponent } from '../../../product-details/discount-modal.
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
 import * as myGlobals from '../../../globals';
-import { isValidPrice, roundToTwoDecimals } from '../../../common/utils';
+import { isValidPrice } from '../../../common/utils';
 import { DigitalAgreement } from "../../../catalogue/model/publish/digital-agreement";
-import { Clause } from '../../../catalogue/model/publish/clause';
 import { TranslateService } from '@ngx-translate/core';
 import { Item } from '../../../catalogue/model/publish/item';
 import {AppComponent} from '../../../app.component';
@@ -173,11 +172,9 @@ export class NegotiationResponseComponent implements OnInit {
             this.quotation.documentStatusCode.name = NEGOTIATION_RESPONSES.REJECTED;
         }
 
-        //this.callStatus.submit();
-
         this.bpeService.startProcessWithDocument(this.quotation, this.quotation.sellerSupplierParty.party.federationInstanceID).then(() => {
             this.callStatus.callback("Quotation sent", true);
-            var tab = "PURCHASES";
+            let tab = 'PURCHASES';
             if (this.bpDataService.bpActivityEvent.userRole == "seller")
                 tab = "SALES";
             this.router.navigate(['dashboard'], { queryParams: { tab: tab, ins: this.quotation.sellerSupplierParty.party.federationInstanceID } });
@@ -215,10 +212,6 @@ export class NegotiationResponseComponent implements OnInit {
 
     isDisabled(): boolean {
         return this.isLoading() || this.readonly;
-    }
-
-    getPresentationMode(): "edit" | "view" {
-        return this.isReadOnly() ? "view" : "edit";
     }
 
     isReadOnly(): boolean {
@@ -357,39 +350,6 @@ export class NegotiationResponseComponent implements OnInit {
             }
         }
         return true;
-    }
-
-    getTotalPriceString() {
-        let totalPrice = 0;
-        for (let wrapper of this.wrappers) {
-            totalPrice += wrapper.newQuotationWrapper.priceWrapper.totalPrice;
-        }
-        if (totalPrice == 0) {
-            return "On demand";
-        }
-        return roundToTwoDecimals(totalPrice) + " " + this.wrappers[0].currency;
-    }
-
-    getVatTotalString() {
-        let vatTotal = 0;
-        for (let wrapper of this.wrappers) {
-            vatTotal += wrapper.newQuotationWrapper.priceWrapper.vatTotal;
-        }
-        if (vatTotal == 0) {
-            return "On demand";
-        }
-        return roundToTwoDecimals(vatTotal) + " " + this.wrappers[0].currency;
-    }
-
-    getGrossTotalString() {
-        let grossTotal = 0;
-        for (let wrapper of this.wrappers) {
-            grossTotal += wrapper.newQuotationWrapper.priceWrapper.grossTotal;
-        }
-        if (grossTotal == 0) {
-            return "On demand";
-        }
-        return roundToTwoDecimals(grossTotal) + " " + this.wrappers[0].currency;
     }
 
     showTab(tab: boolean): boolean {

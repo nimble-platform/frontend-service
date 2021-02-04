@@ -24,13 +24,15 @@ import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "../../app.component";
 import { TranslateService } from '@ngx-translate/core';
 import { FEDERATIONID } from '../../catalogue/model/constants';
+import {Certificate} from '../model/certificate';
 
 type SelectedTab = "COMPANY_DATA"
     | "COMPANY_DESCRIPTION"
     | "NEGOTIATION_SETTINGS"
     | "DELIVERY_TERMS"
     | "CERTIFICATES"
-    | "CATEGORIES";
+    | "CATEGORIES"
+    | "PAYMENT";
 
 @Component({
     selector: "company-settings",
@@ -40,7 +42,7 @@ type SelectedTab = "COMPANY_DATA"
 export class CompanySettingsComponent implements OnInit {
 
     settings: CompanySettings;
-    certificates: any;
+    certificates: Certificate[];
     ppapLevel: any;
     selectedTab: SelectedTab = "COMPANY_DATA";
     initCallStatus: CallStatus = new CallStatus();

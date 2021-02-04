@@ -195,8 +195,20 @@ export class HomepageComponent {
         });
     }
 
+    onPublishDemandClicked(): void {
+        this.router.navigate(['/demand/publish']);
+    }
+
+    onSearchDemandClicked(): void {
+        this.router.navigate(['/demand'], {
+            queryParams: {
+                page: 1,
+            }
+        });
+    }
+
     onPublishProductClicked(): void {
-        this.router.navigate(['catalogue/categorysearch'], { queryParams: { pageRef: 'homepage', productType: 'product'} });
+        this.router.navigate(['catalogue/publish-single'], { queryParams: { pageRef: 'homepage'} });
     }
 
     onCategoryClicked(category: Category): void {

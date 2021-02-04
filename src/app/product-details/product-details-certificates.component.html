@@ -15,28 +15,23 @@
  -->
 
 <div class="p-1">
-    <h3 *ngIf="settings.certificates.length !== 0"><span [innerHTML]="'Company Certificates' | translate"></span></h3>
-
-    <div *ngFor="let certificate of settings.certificates" class="row mt-1">
-        <div class="col-10">
-            {{ certificate.name }} (type: {{ certificate.type }})
-        </div>
-        <div class="col-2">
-            <button *ngIf="certificate.documentReference?.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadCertificate(certificate.id)"><span [innerHTML]="'Download' | translate"></span></button>
-        </div>
-    </div>
-
-    <h3 *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0" class="space-before"><span [innerHTML]="'Product / Service Certificates' | translate"></span></h3>
-
-    <div *ngFor="let certificate of wrapper.line.goodsItem.item.certificate" class="row mt-1">
-        <div class="col-10">
-            {{ certificate.certificateTypeCode.name }} (type: {{ certificate.certificateType }})
-        </div>
-        <div *ngIf="certificate.country.length !== 0" class="col-10">
-            <small class="float-right">Available Countries: {{ getCertificateCountryNames(certificate.country) }}</small>
-        </div>
-        <div class="col-2">
-            <button *ngIf="certificate.documentReference.length !== 0" class="btn btn-primary btn-sm w-100" (click)="downloadProductCertificate(certificate)"><span [innerHTML]="'Download' | translate"></span></button>
-        </div>
-    </div>
+    <!-- Product / Service Certificates -->
+    <ng-container *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0">
+        <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)"
+                          tableName="Circular Economy (Environment / Sustainability)"
+                          [certificates]="productCircularEconomyCertificates"></certificate-view>
+        <certificate-view *ngIf="productArbitraryCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)"
+                          [tableName]="productCircularEconomyCertificates.length !==0 ? 'Other Certificates':null "
+                          [certificates]="productArbitraryCertificates"></certificate-view>
+    </ng-container>
+    <!-- Company Certificates -->
+    <ng-container *ngIf="settings.certificates.length !== 0">
+        <h3>{{'Company Certificates' | translate}}</h3>
+        <certificate-view *ngIf="companyCircularEconomyCertificates.length !== 0"
+                          [userMgmtCertificates]="companyCircularEconomyCertificates"
+                          tableName="Circular Economy (Environment / Sustainability)"></certificate-view>
+        <certificate-view *ngIf="companyArbitraryCertificates.length !== 0"
+                          [tableName]="companyCircularEconomyCertificates.length !==0 ? 'Other Certificates':null "
+                          [userMgmtCertificates]="companyArbitraryCertificates"></certificate-view>
+    </ng-container>
 </div>

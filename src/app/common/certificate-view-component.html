@@ -1,0 +1,71 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+<!-- Certificate table name -->
+<h5 *ngIf="tableName" class="space-before"><span [innerHTML]="tableName | translate"></span></h5>
+<!-- Certificate table -->
+<div class="form-group row">
+    <div class="col-12">
+        <table class="table table-striped table-bordered mb-0 mt-2"
+               style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col style="width: 150%;">
+                <col *ngIf="certificates" style="width: 150%;">
+                <col style="width: auto;">
+            </colgroup>
+            <tr>
+                <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
+                <th><span [innerHTML]="'Certificate Name' | translate"></span></th>
+                <th><span [innerHTML]="'Certificate Description' | translate"></span></th>
+                <th *ngIf="certificates"><span [innerHTML]="'Applicable Countries' | translate"></span>
+                <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+            </tr>
+            <tr *ngIf="(!userMgmtCertificates || userMgmtCertificates.length == 0) && (!certificates || certificates.length == 0)">
+                <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
+            </tr>
+            <ng-container *ngIf="userMgmtCertificates && userMgmtCertificates.length > 0">
+                <tr *ngFor="let certificate of userMgmtCertificates">
+                    <td>{{certificate.type | translate}}</td>
+                    <td>{{certificate.name | translate}}</td>
+                    <td>{{certificate.description}}</td>
+                    <td>
+                        <button *ngIf="certificate.hasFile" class="btn btn-primary btn-sm"
+                                (click)="downloadCertificate(certificate.id)"><span
+                                [innerHTML]="'Download' | translate"></span></button>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="certificates && certificates.length > 0">
+                <tr *ngFor="let certificate of certificates; let i = index">
+                    <td>{{certificate.certificateType | translate}}</td>
+                    <td>{{certificate.certificateTypeCode.name | translate}}</td>
+                    <td>{{certificate.remarks}}</td>
+                    <td>
+                        <expandable-flex-row [content]="getCertificateCountryNames(certificate)"
+                                             [shrinkElementSize]="2"></expandable-flex-row>
+                    </td>
+                    <td>
+                        <button *ngIf="certificate.documentReference.length !== 0"
+                                class="btn btn-primary btn-sm"
+                                (click)="downloadProductCertificate(certificate)"><span
+                                [innerHTML]="'Download' | translate"></span></button>
+                    </td>
+                </tr>
+            </ng-container>
+        </table>
+    </div>
+</div>

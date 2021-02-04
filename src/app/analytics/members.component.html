@@ -44,8 +44,8 @@
                     <option value="score desc" [selected]="sort=='score desc'"></option>
                     <option value="lowercaseLegalName asc" [selected]="sort=='lowercaseLegalName asc'"><span [innerHTML]="'A -> Z' | translate"></span></option>
                     <option value="lowercaseLegalName desc" [selected]="sort=='lowercaseLegalName desc'"><span [innerHTML]="'Z -> A' | translate"></span></option>
-                    <option *ngIf="mgmt_view" value="uri asc" [selected]="sort=='uri asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
-                    <option *ngIf="mgmt_view" value="uri desc" [selected]="sort=='uri desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="idSorted asc" [selected]="sort=='idSorted asc'"><span [innerHTML]="'ID: 0 -> 9' | translate"></span></option>
+                    <option *ngIf="mgmt_view" value="idSorted desc" [selected]="sort=='idSorted desc'"><span [innerHTML]="'ID: 9 -> 0' | translate"></span></option>
                 </select>
             </div>
         </div>
@@ -74,6 +74,9 @@
                                         <a *ngIf="showCompanyDetailsOnClicked" [href]="getCompLink(result)" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</a>
                                         <a *ngIf="!showCompanyDetailsOnClicked && result.website && getLink(result.website) != ''" [href]="getLink(result.website)" [title]="result[product_vendor_name]" target="_blank">{{result[product_vendor_name]}}</a>
                                         <span *ngIf="!showCompanyDetailsOnClicked && (!result.website || getLink(result.website) == '')" [title]="result[product_vendor_name]">{{result[product_vendor_name]}}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <img *ngIf="result.circularEconomyCertificates" [src]="'assets/eco_label.png'" style="max-width: 25px">
                                     </div>
                                 </div>
                                 <div *ngIf="mgmt_view" class="col-12 pt-2">

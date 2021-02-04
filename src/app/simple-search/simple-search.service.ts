@@ -128,6 +128,11 @@ export class SimpleSearchService {
         } else {
             queryRes = this.buildQueryString(query, myGlobals.query_settings, true, true, true);
         }
+
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex != -1) {
+            facets.splice(facetIndex, 1);
+        }
         searchObject.sort = [];
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
         searchObject.sort.push(sort);
@@ -182,6 +187,12 @@ export class SimpleSearchService {
         searchObject.start = page - 1;
         searchObject.sort = [];
         sort = sort.replace('{LANG}', DEFAULT_LANGUAGE());
+
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex != -1) {
+            facets.splice(facetIndex, 1);
+        }
+
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
@@ -610,7 +621,13 @@ export class SimpleSearchService {
         return value.replace(regexp, '\\$1');
     }
 
-    checkField(field: string, prefix: string = '', facetMetadata: any = null): boolean {
+    /**
+     * Checks whether a facet should be shown on the UI
+     * @param field
+     * @param prefix
+     * @param facetMetadata
+     */
+    isFieldDisplayed(field: string, prefix: string = '', facetMetadata: any = null): boolean {
         if (field == this.product_name || field == this.product_img || field == this.product_vendor_id || field == this.product_cat || field == this.product_cat_mix) {
             return false;
         }
@@ -657,7 +674,7 @@ export class SimpleSearchService {
         return Promise.reject(error.message || error);
     }
 
-    getCompanies(query: string, facets: string[], facetQueries: string[]): Promise<any> {
+    getCompanies(query: string, facets: string[], rowCount: number): Promise<any> {
         query = query.replace(/[!'()]/g, '');
         // var start = page*10-10;
         let url = this.url + `/party/search`;
@@ -665,8 +682,13 @@ export class SimpleSearchService {
             url = this.delegate_url + `/party/search`;
         }
 
+        const facetIndex: number = facets.findIndex(f => f === 'certificateCode');
+        if (facetIndex != -1) {
+            facets.splice(facetIndex, 1);
+        }
+
         let searchObject: any = {};
-        searchObject.rows = facetQueries.length;
+        searchObject.rows = rowCount;
 
         searchObject.q = query;
 

@@ -28,6 +28,7 @@ import {Item} from '../catalogue/model/publish/item';
 import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {CookieService} from 'ng2-cookies';
 import {Router} from '@angular/router';
+import {NON_PUBLIC_FIELD_ID} from '../catalogue/model/constants';
 
 @Component({
     selector: 'product-details-tabs',
@@ -41,12 +42,16 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() itemWithSelectedProps: Item;
     @Input() associatedProducts: CatalogueLine[];
     @Input() settings: CompanySettings;
+    // whether this component is used in publishing page
+    @Input() productDetailsTabInProductPublishing:boolean = false;
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
     // whether the item is deleted or not
     // if it's deleted PRICE and DELIVERY_TRADING tabs are not shown to the user since it's not possible to retrieve those information anymore
     @Input() isCatalogueLineDeleted: boolean = false;
+
+    NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
 
     @Input()
     set tabToOpen(tab: ProductDetailsTab) {
@@ -75,6 +80,7 @@ export class ProductDetailsTabsComponent implements OnInit {
 
     config = myGlobals.config;
 
+    getPropertyValuesAsStrings = getPropertyValuesAsStrings;
     constructor(
         private translate: TranslateService,
         private bpeService: BPEService,
@@ -88,7 +94,7 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
         this.isLoggedIn = !!this.cookieService.get('user_id');
-        if (this.wrapper.getDimensions().length == 0 && this.wrapper.getUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
+        if (this.wrapper.getDimensions().length == 0 && this.wrapper.getPublicUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }
@@ -156,10 +162,6 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = 'COMPANY';
             this.tabStatus.emit(false);
         }
-    }
-
-    getValuesAsString(property: ItemProperty): string[] {
-        return getPropertyValuesAsStrings(property);
     }
 
     getMultiValuedDimensionAsString(quantities: Quantity[]) {

@@ -14,70 +14,140 @@
    limitations under the License.
  -->
 
+<div *ngIf="nonPublicInformationFunctionalityEnabled" class="row space-after">
+    <div class="col-10"></div>
+    <div class="col-2">
+        <b>{{'Non Public ?'|translate}}</b>
+        <div>
+            <input type="checkbox" (change)="markAllInformationAsNonPublic($event.target.checked)" [checked]="isAllInformationMarkedAsNonPublic()">
+        </div>
+    </div>
+</div>
 <!-- Warranty -->
-<quantity-input [label]="'Warranty Period' | translate"
-                [definition]="warrantyPeriodRangeDefinition"
-                [disabled]="disabled"
-                [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits"
-                rowClass="space-before"
-                [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure"
-                (onQuantityUnitChange)="setWarrantyPeriodRangeDefinition()"
-                [periodRanges]="companyNegotiationSettings.warrantyPeriodRanges"
-                [periodUnits]="companyNegotiationSettings.warrantyPeriodUnits"
-                [parentForm]="formGroup"
-                [formFieldName]="'warranty_period'">
-</quantity-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <quantity-input [label]="'Warranty Period' | translate"
+                        [definition]="warrantyPeriodRangeDefinition"
+                        [disabled]="disabled"
+                        [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits"
+                        rowClass="space-before"
+                        [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure"
+                        (onQuantityUnitChange)="setWarrantyPeriodRangeDefinition()"
+                        [periodRanges]="companyNegotiationSettings.warrantyPeriodRanges"
+                        [periodUnits]="companyNegotiationSettings.warrantyPeriodUnits"
+                        [parentForm]="formGroup"
+                        [formFieldName]="'warranty_period'">
+        </quantity-input>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)">
+    </div>
+</div>
 
 <hr>
 
 <!-- Incoterms -->
-<options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before" [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms" [areOptionsMultilingual]="true">
-</options-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <options-input [label]="'Incoterms' | translate" [disabled]="disabled" rowClass="space-before" [options]="wrapper.negotiationSettings.incoterms" [(selected)]="wrapper.line.goodsItem.deliveryTerms.incoterms" [areOptionsMultilingual]="true">
+        </options-input>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled"  class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.INCOTERMS,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.INCOTERMS)">
+    </div>
+</div>
 
 <!-- Delivery Period -->
-<quantity-input [label]="'Delivery Period' | translate"
-                [definition]="deliveryPeriodRangeDefinition"
-                [disabled]="disabled"
-                [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits"
-                rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure"
-                (onQuantityUnitChange)="setDeliveryPeriodRangeDefinition()"
-                [periodRanges]="companyNegotiationSettings.deliveryPeriodRanges"
-                [periodUnits]="companyNegotiationSettings.deliveryPeriodUnits"
-                [parentForm]="formGroup"
-                [formFieldName]="'delivery_period'">
-</quantity-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <quantity-input [label]="'Delivery Period' | translate"
+                        [definition]="deliveryPeriodRangeDefinition"
+                        [disabled]="disabled"
+                        [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits"
+                        rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure"
+                        (onQuantityUnitChange)="setDeliveryPeriodRangeDefinition()"
+                        [periodRanges]="companyNegotiationSettings.deliveryPeriodRanges"
+                        [periodUnits]="companyNegotiationSettings.deliveryPeriodUnits"
+                        [parentForm]="formGroup"
+                        [formFieldName]="'delivery_period'">
+        </quantity-input>
+    </div>
+    <div  *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)">
+    </div>
+</div>
+
 
 <br />
 <!-- Special Terms -->
-<text-input [label]="'Special Terms' | translate" [disabled]="disabled" rowClass="space-before" [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms[0].value">
-</text-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <text-input [label]="'Special Terms' | translate" [disabled]="disabled" rowClass="space-before" [(text)]="wrapper.line.goodsItem.deliveryTerms.specialTerms[0].value">
+        </text-input>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled"  class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)">
+    </div>
+</div>
+
 
 <hr>
 
 <!-- Packaging Quantity -->
-<quantity-input [label]="'Quantity Per Package' | translate" [disabled]="disabled" rowClass="space-before" [quantity]="wrapper.line.goodsItem.containingPackage.quantity">
-</quantity-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <quantity-input [label]="'Quantity Per Package' | translate" [disabled]="disabled" rowClass="space-before" [quantity]="wrapper.line.goodsItem.containingPackage.quantity">
+        </quantity-input>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled"  class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)">
+    </div>
+</div>
+
 
 <!-- Packaging Type -->
-<text-input [label]="'Packaging Type' | translate" [disabled]="disabled" rowClass="space-before" [rows]="1" valueTextClass="form-control-sm" [(text)]="wrapper.line.goodsItem.containingPackage.packagingTypeCode.value">
-</text-input>
+<div class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <text-input [label]="'Packaging Type' | translate" [disabled]="disabled" rowClass="space-before" [rows]="1" valueTextClass="form-control-sm" [(text)]="wrapper.line.goodsItem.containingPackage.packagingTypeCode.value">
+        </text-input>
+    </div>
+    <div *ngIf="nonPublicInformationFunctionalityEnabled"  class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE)">
+    </div>
+</div>
+
 
 <!-- Customizable -->
 <hr>
 <div class="row">
-    <div class="col-3">
-        <strong><span [innerHTML]="'Customizable' | translate"></span>:</strong>
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row">
+            <div class="col-3">
+                <strong><span [innerHTML]="'Customizable' | translate"></span>:</strong>
+            </div>
+            <div class="col-9">
+                <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.customizable">
+            </div>
+        </div>
     </div>
-    <div class="col-9">
-        <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.customizable">
+    <div *ngIf="nonPublicInformationFunctionalityEnabled"  class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE)">
     </div>
 </div>
+
 <!-- Spare Part -->
-<div *ngIf="product_filter_prod.indexOf('sparePart') != -1" class="row space-before">
-    <div class="col-3">
-        <strong><span [innerHTML]="'Spare Part' | translate"></span>:</strong>
+<div *ngIf="product_filter_prod.indexOf('sparePart') != -1" class="row">
+    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+        <div class="row space-before">
+            <div class="col-3">
+                <strong><span [innerHTML]="'Spare Part' | translate"></span>:</strong>
+            </div>
+            <div class="col-9">
+                <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.sparePart">
+            </div>
+        </div>
     </div>
-    <div class="col-9">
-        <input type="checkbox" [(ngModel)]="wrapper.line.goodsItem.item.sparePart">
+    <div  *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2  d-flex align-items-center">
+        <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.SPARE_PART,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.SPARE_PART)">
     </div>
 </div>
