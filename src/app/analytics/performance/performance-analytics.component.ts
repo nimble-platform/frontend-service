@@ -443,15 +443,21 @@ export class PerformanceAnalyticsComponent implements OnInit {
                 var i = 0;
                 var obj = [];
 
-
-                for (var y = 0; y < 12; y++) {
-                    if (map1[y] != undefined) {
-                        obj.push({
-                            "value": map1[y],
-                            "name": this.months[y]
-                        })
+                // get the current month
+                let currentMonth = new Date().getMonth();
+                // populate the data for each month starting from the current one
+                while(map1[currentMonth] != undefined){
+                    obj.push({
+                        "value": map1[currentMonth],
+                        "name": this.months[currentMonth]
+                    })
+                    currentMonth--;
+                    if(currentMonth < 0){
+                        currentMonth = 11;
                     }
                 }
+                // reverse the array so that the current month is the last one in the graph
+                obj.reverse();
 
                 if (obj.length == 6) {
                     var dataGr =
