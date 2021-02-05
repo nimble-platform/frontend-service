@@ -45,6 +45,8 @@ export class SimpleSearchService {
     product_nonfilter_data_type = myGlobals.product_nonfilter_data_type;
     party_filter_main = myGlobals.party_filter_main;
     party_filter_trust = myGlobals.party_filter_trust;
+    party_legal_name = myGlobals.product_vendor_name;
+    party_brand_name = myGlobals.product_vendor_brand_name;
     product_configurable = myGlobals.product_configurable;
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
@@ -196,8 +198,14 @@ export class SimpleSearchService {
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
+            let querySettings = {
+                'fields': [this.party_legal_name, ('{LANG}_' + this.party_brand_name)],
+                'boosting': false,
+                'boostingFactors': {}
+            };
+            let queryRes = this.buildQueryString(query, querySettings, true, true);
             url = this.eFactoryIndexingEndpoint + `/party/search`;
-            searchObject.q = 'hasRegisteredUser:true';
+            searchObject.q =  'hasRegisteredUser:true AND ' + queryRes.queryStr;
             searchObject.fq = [];
             // EFPF companies might not have lowercaseLegalName field, so, replace it with legalName
             sort = sort.replace("lowercaseLegalName","legalName");
