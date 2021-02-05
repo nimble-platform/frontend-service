@@ -12,9 +12,24 @@
    limitations under the License.
  */
 
-.header-mock {
-    height: 56px;
+@media only screen and (min-width: 1388px) {
+    .header-mock {
+        height: 56px;
+    }
 }
+
+@media only screen and (max-width: 1388px) {
+    .header-mock {
+        height: 85px;
+    }
+}
+
+@media only screen and (max-width: 980px) {
+    .header-mock {
+        height: 56px;
+    }
+}
+
 #header {
     position: fixed;
     width: 100%;
