@@ -64,7 +64,7 @@ export class CancelCollaborationModalComponent {
         return this.compComment == '';
     }
 
-    cancelCollaboration() {
+    cancelCollaboration(close) {
         this.appComponent.confirmModalComponent.open('Are you sure that you want to cancel this collaboration?').then(result => {
             if (result) {
                 this.cancelCollaborationCallStatus.submit();
@@ -75,6 +75,8 @@ export class CancelCollaborationModalComponent {
                         this.cancelCollaborationCallStatus.callback('Cancelled collaboration successfully');
                         // emit the status
                         this.onCollaborationCancelStatusUpdated.next(new CancelCollaborationStatus('COMPLETED'));
+                        // close the modal
+                        close();
                     })
                     .catch(err => {
                         this.cancelCollaborationCallStatus.error('Failed to cancel collaboration', err);

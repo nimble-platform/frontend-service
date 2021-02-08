@@ -41,7 +41,7 @@
         </div>
         <div class="modal-footer">
             <call-status [callStatus]="cancelCollaborationCallStatus"></call-status>
-            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="cancelCollaborationCallStatus.isLoading() || checkCompComment()" (click)="cancelCollaboration()">
+            <button type="button" class="btn btn-primary save-cert-btn" [disabled]="cancelCollaborationCallStatus.isLoading() || checkCompComment()" (click)="cancelCollaboration(d)">
                 <span [innerHTML]="'Cancel collaboration' | translate"></span>
             </button>
         </div>
