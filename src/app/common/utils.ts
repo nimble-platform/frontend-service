@@ -747,3 +747,37 @@ export function getAuthorizedHeaders(cookieService: CookieService): Headers {
 export function findCategoryInArray(categoryArray: Category[], category: Category): number {
     return categoryArray.findIndex(c => c.id == category.id);
 }
+
+export function getTimeLabel(timeInDays){
+    if(timeInDays <= 0){
+        return null;
+    }
+    if(timeInDays < 0.0417){
+        return Math.round(timeInDays * 10 * 1440) / 10 + " M";
+    }
+    else if(timeInDays < 1){
+        return Math.round(timeInDays * 10 * 24) / 10 + " H";
+    }
+    return Math.round(timeInDays * 10) / 10 + " D";
+}
+
+export function populateValueObjectForMonthGraphs(map): any[]{
+    var obj = [];
+
+    // get the current month
+    let currentMonth = new Date().getMonth();
+    // populate the data for each month starting from the current one
+    while(map[currentMonth] != undefined){
+        obj.push({
+            "value": map[currentMonth],
+            "name": this.months[currentMonth]
+        })
+        currentMonth--;
+        if(currentMonth < 0){
+            currentMonth = 11;
+        }
+    }
+    // reverse the array so that the current month is the last one in the graph
+    obj.reverse();
+    return obj;
+}

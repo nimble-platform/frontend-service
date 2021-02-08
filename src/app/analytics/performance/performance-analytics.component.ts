@@ -20,7 +20,7 @@ import { CallStatus } from "../../common/call-status";
 import { SimpleSearchService } from '../../simple-search/simple-search.service';
 import { CategoryService } from '../../catalogue/category/category.service';
 import * as myGlobals from '../../globals';
-import { selectNameFromLabelObject } from '../../common/utils';
+import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGraphs} from '../../common/utils';
 import { CookieService } from "ng2-cookies";
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from "@angular/platform-browser";
@@ -121,7 +121,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
     single: any[];
 
-    view: any[] = [700, 400];
+    view: any[] = [700, 450];
 
     // options
     showXAxis = true;
@@ -132,14 +132,23 @@ export class PerformanceAnalyticsComponent implements OnInit {
     xAxisLabel = 'Month';
     showGridLines = true;
     showYAxisLabel = true;
-    yAxisLabel = this.translate.instant('Average Response Time(s) in days');
-    showChart = false;
+    yAxisLabelForAverageResponseChart = this.translate.instant('Average Response Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeChart = this.translate.instant('Average Collaboration Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeSalesChart = this.translate.instant('Average Collaboration Time(s) In Sales in days');
+    yAxisLabelForAverageCollaborationTimePurchaseChart = this.translate.instant('Average Collaboration Time(s) In Purchases in days');
+    showAverageResponseChart = false;
+    showAverageCollaborationTimeChart = false;
+    showAverageCollaborationTimeSalesChart = false;
+    showAverageCollaborationTimePurchaseChart = false;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
     // line, area
     autoScale = true;
     multi = [];
+    averageCollaborationTimeChartData = [];
+    averageCollaborationTimeSalesChartData = [];
+    averageCollaborationTimePurchaseChartData = [];
 
     product_count = 0;
     service_count = 0;
@@ -431,34 +440,57 @@ export class PerformanceAnalyticsComponent implements OnInit {
                 this.trade_red_perc_str = this.trade_red_perc + "%";
 
                 //collab time
-                this.collab_time = this.getTimeLabel(res.collaborationTime.averageCollabTime);
-                this.collab_time_buy = this.getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
-                this.collab_time_sell = this.getTimeLabel(res.collaborationTime.averageCollabTimeSales);
+                this.collab_time = getTimeLabel(res.collaborationTime.averageCollabTime);
+                this.collab_time_buy = getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
+                this.collab_time_sell = getTimeLabel(res.collaborationTime.averageCollabTimeSales);
 
+                // average collaboration time chart
+                let obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
 
+                    this.averageCollaborationTimeChartData.push(dataGr);
+                    this.showAverageCollaborationTimeChart = true;
 
-                this.avg_res_time = this.getTimeLabel(res.responseTime.averageTime);
-
-                var map1 = res.responseTime.averageTimeForMonths;
-                var i = 0;
-                var obj = [];
-
-                // get the current month
-                let currentMonth = new Date().getMonth();
-                // populate the data for each month starting from the current one
-                while(map1[currentMonth] != undefined){
-                    obj.push({
-                        "value": map1[currentMonth],
-                        "name": this.months[currentMonth]
-                    })
-                    currentMonth--;
-                    if(currentMonth < 0){
-                        currentMonth = 11;
-                    }
                 }
-                // reverse the array so that the current month is the last one in the graph
-                obj.reverse();
 
+                // average collaboration time in sales chart
+                obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeSalesForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
+
+                    this.averageCollaborationTimeSalesChartData.push(dataGr);
+                    this.showAverageCollaborationTimeSalesChart = true;
+
+                }
+
+                // average collaboration time in purchase chart
+                obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimePurchasesForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
+
+                    this.averageCollaborationTimePurchaseChartData.push(dataGr);
+                    this.showAverageCollaborationTimePurchaseChart = true;
+
+                }
+
+                // average response time
+
+                this.avg_res_time = getTimeLabel(res.responseTime.averageTime);
+
+                obj = populateValueObjectForMonthGraphs(res.responseTime.averageTimeForMonths);
                 if (obj.length == 6) {
                     var dataGr =
                     {
@@ -467,7 +499,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
                     };
 
                     this.multi.push(dataGr);
-                    this.showChart = true;
+                    this.showAverageResponseChart = true;
 
                 }
 
@@ -476,20 +508,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
             .catch(error => {
                 this.callStatusCollab.error("Error while loading platform analytics", error);
             });
-    }
-
-
-    getTimeLabel(timeInDays){
-        if(timeInDays <= 0){
-            return null;
-        }
-        if(timeInDays < 0.0417){
-            return Math.round(timeInDays * 10 * 1440) / 10 + " M";
-        }
-        else if(timeInDays < 1){
-            return Math.round(timeInDays * 10 * 24) / 10 + " H";
-        }
-        return Math.round(timeInDays * 10) / 10 + " D";
     }
 
     onSelectTab(event: any, id: any): void {

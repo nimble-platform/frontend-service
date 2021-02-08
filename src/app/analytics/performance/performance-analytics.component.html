@@ -144,6 +144,7 @@
     </div>
 
     <div [hidden]="isCollabLoading()" *ngIf="selectedTab === 'Collaboration'">
+        <!-- Trading Volume-->
         <div class="row justify-content-center">
             <div class="col-4">
                 <div class="row justify-content-center">
@@ -217,48 +218,82 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <hr>
 
         <div class="row justify-content-center">
-            <div class="col-4">
-                <div class="row justify-content-center">
-                    <div class="card col-9" style="height: 170px;">
-                        <div class="card-body text-center">
-                            <h4 *ngIf="collab_time" class="card-title"><b>{{collab_time}}</b></h4>
-                            <h4 *ngIf="!collab_time" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
-                            <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+            <div class="col-12 row space-after">
+                <div class="col-4">
+                    <div class="row justify-content-center">
+                        <div class="card col-9" style="height: 170px;">
+                            <div class="card-body text-center">
+                                <h4 *ngIf="collab_time" class="card-title"><b>{{collab_time}}</b></h4>
+                                <h4 *ngIf="!collab_time" class="card-title"><b>???</b></h4>
+                                <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
+                                <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                                                   [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeChart" [showGridLines]="showGridLines"
+                                                   [autoScale]="autoScale" (select)="onSelect($event)">
+                            </ngx-charts-line-chart>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-4">
-                <div class="row justify-content-center">
-                    <div class="card col-9" style="height: 170px;">
-                        <div class="card-body text-center">
-                            <h4 *ngIf="collab_time_buy" class="card-title"><b>{{collab_time_buy}}</b></h4>
-                            <h4 *ngIf="!collab_time_buy" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
-                            <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+            <div class="col-12 row space-after">
+                <div class="col-4">
+                    <div class="row justify-content-center">
+                        <div class="card col-9" style="height: 170px;">
+                            <div class="card-body text-center">
+                                <h4 *ngIf="collab_time_buy" class="card-title"><b>{{collab_time_buy}}</b></h4>
+                                <h4 *ngIf="!collab_time_buy" class="card-title"><b>???</b></h4>
+                                <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
+                                <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimePurchaseChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimePurchaseChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                                                   [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimePurchaseChart" [showGridLines]="showGridLines"
+                                                   [autoScale]="autoScale" (select)="onSelect($event)">
+                            </ngx-charts-line-chart>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-4">
-                <div class="row justify-content-center">
-                    <div class="card col-9" style="height: 170px;">
-                        <div class="card-body text-center">
-                            <h4 *ngIf="collab_time_sell" class="card-title"><b>{{collab_time_sell}}</b></h4>
-                            <h4 *ngIf="!collab_time_sell" class="card-title"><b>???</b></h4>
-                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
-                            <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+            <div class="col-12 row space-after">
+                <div class="col-4">
+                    <div class="row justify-content-center">
+                        <div class="card col-9" style="height: 170px;">
+                            <div class="card-body text-center">
+                                <h4 *ngIf="collab_time_sell" class="card-title"><b>{{collab_time_sell}}</b></h4>
+                                <h4 *ngIf="!collab_time_sell" class="card-title"><b>???</b></h4>
+                                <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
+                                <p class="card-text" style="font-size:32px"><i class="fa fa-clock"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeSalesChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeSalesChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                                                   [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeSalesChart" [showGridLines]="showGridLines"
+                                                   [autoScale]="autoScale" (select)="onSelect($event)">
+                            </ngx-charts-line-chart>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
         <hr />
         <div class="row justify-content-center">
@@ -277,7 +312,9 @@
             <div class="col-8">
                 <div class="row justify-content-center">
                     <div class="col-9">
-                        <ngx-charts-line-chart *ngIf="showChart" [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [showGridLines]="showGridLines" [autoScale]="autoScale" (select)="onSelect($event)">
+                        <ngx-charts-line-chart *ngIf="showAverageResponseChart" [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                                               [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageResponseChart" [showGridLines]="showGridLines"
+                                               [autoScale]="autoScale" (select)="onSelect($event)">
                         </ngx-charts-line-chart>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ import { CallStatus } from "../common/call-status";
 import { SimpleSearchService } from '../simple-search/simple-search.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
-import { selectNameFromLabelObject } from '../common/utils';
+import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGraphs} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
 import { TranslateService } from '@ngx-translate/core';
@@ -71,11 +71,12 @@ export class PlatformAnalyticsComponent implements OnInit {
     dashboards = [];
     selectedTab;
 
+    view: any[] = [700, 450];
     // collab time
-    collab_time = 0;
-    collab_time_sell = 0;
-    collab_time_buy = 0;
-    avg_res_time = 0;
+    collab_time = null;
+    collab_time_sell = null;
+    collab_time_buy = null;
+    avg_res_time = null;
 
     // options
     showXAxis = true;
@@ -87,13 +88,23 @@ export class PlatformAnalyticsComponent implements OnInit {
     showGridLines = true;
     showYAxisLabel = true;
     yAxisLabel = this.translate.instant('Average Response Time(s) in days');
-    showChart = false;
+    yAxisLabelForAverageResponseChart = this.translate.instant('Average Response Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeChart = this.translate.instant('Average Collaboration Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeSalesChart = this.translate.instant('Average Collaboration Time(s) In Sales in days');
+    yAxisLabelForAverageCollaborationTimePurchaseChart = this.translate.instant('Average Collaboration Time(s) In Purchases in days');
+    showAverageResponseChart = false;
+    showAverageCollaborationTimeChart = false;
+    showAverageCollaborationTimeSalesChart = false;
+    showAverageCollaborationTimePurchaseChart = false;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
     // line, area
     autoScale = true;
     multi = [];
+    averageCollaborationTimeChartData = [];
+    averageCollaborationTimeSalesChartData = [];
+    averageCollaborationTimePurchaseChartData = [];
 
     months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -154,34 +165,65 @@ export class PlatformAnalyticsComponent implements OnInit {
                     .then(res => {
                         this.callStatus.callback("Successfully loaded platform analytics", true);
                         //collab time
-                        this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10 * 24) / 10;
-                        this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10 * 24) / 10;
-                        this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10 * 24) / 10;
+                        this.collab_time = getTimeLabel(res.collaborationTime.averageCollabTime);
+                        this.collab_time_buy = getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
+                        this.collab_time_sell = getTimeLabel(res.collaborationTime.averageCollabTimeSales);
 
-                        this.avg_res_time = Math.round(res.responseTime.averageTime * 10 * 24) / 10;
-                        var map1 = res.responseTime.averageTimeForMonths;
-                        var i = 0;
-                        var obj = [];
-
-
-                        for (var y = 0; y < 12; y++) {
-                            if (map1[y] != undefined) {
-                                obj.push({
-                                    "value": map1[y],
-                                    "name": this.months[y]
-                                })
-                            }
-                        }
-
+                        // average collaboration time chart
+                        let obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeForMonths);
                         if (obj.length == 6) {
                             var dataGr =
-                            {
-                                "name": "Time series",
-                                "series": obj
-                            };
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimeChartData.push(dataGr);
+                            this.showAverageCollaborationTimeChart = true;
+
+                        }
+
+                        // average collaboration time in sales chart
+                        obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeSalesForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimeSalesChartData.push(dataGr);
+                            this.showAverageCollaborationTimeSalesChart = true;
+
+                        }
+
+                        // average collaboration time in purchase chart
+                        obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimePurchasesForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimePurchaseChartData.push(dataGr);
+                            this.showAverageCollaborationTimePurchaseChart = true;
+
+                        }
+
+                        // average response time
+                        this.avg_res_time = getTimeLabel(res.responseTime.averageTime);
+
+                        obj = populateValueObjectForMonthGraphs(res.responseTime.averageTimeForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
 
                             this.multi.push(dataGr);
-                            this.showChart = true;
+                            this.showAverageResponseChart = true;
 
                         }
 
