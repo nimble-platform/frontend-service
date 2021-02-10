@@ -305,9 +305,8 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                         .subscribe((categories: Category[]) => {
                             // upon navigating from the catalogue view, classification codes are set as selected categories
                             for (let category of categories) {
-                                this.categoryService.selectedCategories.push(category);
+                                this.categoryService.addSelectedCategory(category);
                             }
-                            sortCategories(this.categoryService.selectedCategories);
 
                             if (this.categoryService.selectedCategories != []) {
                                 this.populateCommodityClassificationForCategories();
