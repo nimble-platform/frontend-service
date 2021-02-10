@@ -112,14 +112,22 @@ export class ProductWrapper {
 
         for (let dimension of dimensions) {
             const nonPublicDimensions = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
+            // the dimension type has some non-public values
             if(nonPublicDimensions.length > 0){
+                let isNonPublicDimensionValue = false;
                 for (let nonPublicDimension of nonPublicDimensions) {
-                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) === -1){
-                        publicDimensions.push(dimension);
+                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
+                        isNonPublicDimensionValue = true;
                         break;
                     }
                 }
-
+                if(!isNonPublicDimensionValue){
+                    publicDimensions.push(dimension);
+                }
+            }
+            // the dimension type is public
+            else{
+                publicDimensions.push(dimension);
             }
         }
 
