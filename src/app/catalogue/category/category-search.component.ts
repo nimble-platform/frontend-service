@@ -118,7 +118,7 @@ export class CategorySearchComponent implements OnInit {
     disableCategorySelection(){
         // if there are some selected categories, enable the selection iff the type of category (i.e, Product or Service) is the same with the others
         if(this.categoryService.selectedCategories.length !== 0){
-            let isServiceCategory = this.categoryService.isServiceCategory(this.pathToSelectedCategories.parents);
+            let isServiceCategory = this.categoryService.isServiceCategory(this.selectedCategoryWithDetails.rootCategoryUri);
 
             return !((this.categoryService.hasServiceCategories && isServiceCategory) || (!this.categoryService.hasServiceCategories && !isServiceCategory));
         }
@@ -358,7 +358,7 @@ export class CategorySearchComponent implements OnInit {
             this.categoryService.selectedCategories = [];
         }
 
-        this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
+        this.categoryService.addSelectedCategory(category);
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {
