@@ -56,7 +56,7 @@
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
-            <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} section">
+            <div *ngIf="!categoryService.hasServiceCategories" class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} section">
                 <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Dimensions' | translate" ></span>
                     <i>
