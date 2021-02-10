@@ -1341,18 +1341,21 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             }
             // handle dimensions
             for (let dimension of this.multiValuedDimensions) {
-                let nonPublicInformation = this.catalogueLine.nonPublicInformation.find(value => value.id === dimension.attributeID);
-
+                // create non-public information ui model for the dimension
                 let nonPublicInformationUI = new NonPublicInformationUi();
-                nonPublicInformationUI.id = nonPublicInformation.id ;
-
-                let indexes = []
+                nonPublicInformationUI.id = dimension.attributeID ;
                 let multiTypeValue = new MultiTypeValue();
                 multiTypeValue.valueQualifier = "QUANTITY";
                 multiTypeValue.valueQuantity = dimension.measure;
-                for (let value of nonPublicInformation.value.valueQuantity) {
-                    let index = dimension.measure.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
-                    indexes.push(index);
+
+                // find the indexes of values which are non-public
+                let indexes = []
+                let nonPublicInformationList = this.catalogueLine.nonPublicInformation.filter(value => value.id === dimension.attributeID);
+                for (let nonPublicInformation of nonPublicInformationList) {
+                    for (let value of nonPublicInformation.value.valueQuantity) {
+                        let index = dimension.measure.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
+                        indexes.push(index);
+                    }
                 }
                 nonPublicInformationUI.value = multiTypeValue;
                 nonPublicInformationUI.indexes = indexes;
