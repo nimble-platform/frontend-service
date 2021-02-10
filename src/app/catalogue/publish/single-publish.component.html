@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
-<ng-container *ngIf="catalogueLine">
+<ng-container *ngIf="catalogueLine && !isProductCategoriesLoading()">
     <!-- Single Upload Publishing Steps -->
     <product-publish-steps
             [currentStep]="publishingStep"
