@@ -17,6 +17,7 @@
 <div class="p-1">
     <!-- Product / Service Certificates -->
     <ng-container *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0">
+        <h3>{{'Product Certificates' | translate}}</h3>
         <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)"
                           tableName="Circular Economy (Environment / Sustainability)"
                           [certificates]="productCircularEconomyCertificates"></certificate-view>
