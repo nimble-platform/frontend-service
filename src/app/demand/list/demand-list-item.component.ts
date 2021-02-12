@@ -148,7 +148,7 @@ export class DemandListItemComponent {
             var subject = this.translateService.instant('Demand Interest');
             mailto += '?subject=' + encodeURIComponent(subject);
             // open mail template
-            window.open(mailto, '_blank')
+            window.location.href = mailto;
         })
     }
 }
