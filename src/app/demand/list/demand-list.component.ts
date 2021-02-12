@@ -35,6 +35,7 @@ import {AppComponent} from '../../app.component';
 })
 export class DemandListComponent implements OnInit, OnDestroy {
     @Input() companyDemands = false;
+    @Input() showTitle:boolean = true;
 
     /*
     data object to be presented contains the original demand entity and also the associated leaf category details to be presented in the form of
