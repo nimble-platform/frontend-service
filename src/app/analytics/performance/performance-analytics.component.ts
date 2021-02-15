@@ -46,8 +46,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
     cat_level = -2;
     cat = "";
 
-    months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
     greenTotalApproved = 0;
     yellowTotWaiting = 0;
     redTotDenide = 0;

@@ -47,3 +47,5 @@ export const AEROSPACE_TAXONOMY_PART_NUMBER_PROPERTY_URI = "http://www.nimble-pr
 export const MAX_INT = 2147483647;
 
 export const CIRCULER_ECONOMY_CERTIFICATE_GROUP = '';
+
+export const MONTHS = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];

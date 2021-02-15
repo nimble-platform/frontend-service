@@ -29,7 +29,7 @@ import {Amount} from '../catalogue/model/publish/amount';
 import {CookieService} from 'ng2-cookies';
 import {Headers} from '@angular/http';
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {maximumDecimalsForPrice} from './constants'
+import {maximumDecimalsForPrice, MONTHS} from './constants'
 
 const UI_NAMES: any = {
     STRING: 'TEXT'
@@ -770,7 +770,7 @@ export function populateValueObjectForMonthGraphs(map): any[]{
     while(map[currentMonth] != undefined){
         obj.push({
             "value": map[currentMonth],
-            "name": this.months[currentMonth]
+            "name": MONTHS[currentMonth]
         })
         currentMonth--;
         if(currentMonth < 0){
