@@ -425,7 +425,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
                 let totalTradingVolumeApproved = res.tradingVolumesales.approved + res.tradingVolumespurchase.approved;
                 let totalTradingVolumeWaiting = res.tradingVolumesales.waiting + res.tradingVolumespurchase.waiting;
-                let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumesales.denied;
+                let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumespurchase.denied;
                 this.trade_green = Math.round(totalTradingVolumeApproved);
                 this.trade_yellow = Math.round(totalTradingVolumeWaiting);
                 this.trade_red = Math.round(totalTradingVolumeDenied);
