@@ -16,7 +16,7 @@
 
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
-        <h5 class="modal-title" id="modal-basic-title">{{ prettyName }}</h5>
+        <h5 class="modal-title" id="modal-basic-title">{{ prettyName | translate}}</h5>
         <button type="button" class="close" aria-label="Close" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>

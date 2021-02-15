@@ -23,7 +23,7 @@
         <button *ngIf="!stripeLoginLink && !connectStripeCallStatus.isAllSuccessful()" class="btn btn-primary"
                 (click)="createAccount()"
                 [disabled]="connectStripeCallStatus.isLoading() || deleteAccountCallStatus.isLoading()">
-            <span>{{companySettings.tradeDetails.stripeAccountId ? "Complete Stripe Account Set-up" : "Connect with Stripe"}}</span>
+            <span>{{(companySettings.tradeDetails.stripeAccountId ? "Complete Stripe Account Set-up" : "Connect with Stripe")|translate}}</span>
         </button>
         <button *ngIf="stripeLoginLink" class="btn btn-primary" (click)="navigateLoginLink()">
             <span>{{'Sign in to your account'|translate}}</span>

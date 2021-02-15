@@ -357,7 +357,7 @@
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
                                 <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" (change)="onToggleCategoryPropertySelected(category, property)">
-                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
+                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) | translate }})</label>
                             </div>
                         </ng-container>
                     </div>
