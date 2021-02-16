@@ -276,14 +276,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
 
     private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
-            taxonomy = this.config.standardTaxonomy;
-        }
-        var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
-            taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
-
         // retrieve the labels for the category uris included in the categoryCounts field
         let categoryUris: string[] = [];
         for (let categoryCount of categoryCounts) {
@@ -292,86 +284,24 @@ export class PerformanceAnalyticsComponent implements OnInit {
         this.cat_loading = true;
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
-        let split_idx: any = -1;
-        let name: any = "";
-        if (taxonomyPrefix != "") {
-            // ToDo: Remove manual distinction after search update
-            // ================================================================================
-            if (taxonomy == "eClass") {
-                this.cat_levels = [[], [], [], []];
-                for (let categoryCount of categoryCounts) {
-                    let facet_inner = categoryCount.label;
-                    var count = categoryCount.count;
-                    if (facet_inner.startsWith(taxonomyPrefix)) {
-                        var eclass_idx = categoryDisplayInfo[facet_inner].code;
-                        if (eclass_idx % 1000000 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                    }
-                }
-            }
-            // ================================================================================
-            // if (this.cat == "") {
-            else if (this.cat == "") {
-                this.cat_levels = [];
-                var lvl = [];
 
-                for (let categoryCount of categoryCounts) {
-                    var count = categoryCount.count;
-                    var ontology = categoryCount.label;
-                    if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
-                        split_idx = ontology.lastIndexOf("#");
-                        name = ontology.substr(split_idx + 1);
-                        if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                            if (ontology.startsWith(taxonomyPrefix)) {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label) });
-                            } else {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": ontology });
-                            }
-                        }
-                    }
-                }
-                this.cat_levels.push(lvl);
+        let rootCategories = [];
+        categoryUris.forEach(categoryUri => {
+            if(categoryDisplayInfo[categoryUri] && categoryDisplayInfo[categoryUri].isRoot){
+                rootCategories.push(categoryUri);
             }
-            else {
-                var catLevels = [];
-                this.cat_levels = [];
-                for (var i = 0; i < catLevels.length; i++) {
-                    var lvl = [];
-                    var constructedLevel: string[] = catLevels[i];
-                    for (let uri of constructedLevel) {
-                        let categoryCount = categoryCounts.find(cat => cat.label == uri);
-                        if (categoryCount != null) {
-                            var count = categoryCount.count;
-                            var ontology = categoryCount.label;
+        })
 
-                            if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-                                split_idx = uri.lastIndexOf("#");
-                                name = uri.substr(split_idx + 1);
-                                if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                                    if (ontology.startsWith(taxonomyPrefix)) {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label) });
-                                    } else {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": name });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    this.cat_levels.push(lvl);
-                }
+        // set product and service counts
+        this.product_count = 0;
+        this.service_count = 0;
+        rootCategories.forEach(rootCategoryUri => {
+            if(this.categoryService.isServiceCategory(rootCategoryUri)){
+                this.service_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
+            } else{
+                this.product_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
             }
-        }
-
-        this.cat_levels[0].forEach(catele => {
-            if (catele.preferredName != null && catele.preferredName != '') {
-                if (catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0) {
-                    this.service_count = this.service_count + catele.count;
-                } else {
-                    this.product_count = this.product_count + catele.count;
-                }
-            }
-        });
+        })
 
         this.loadedps = true;
         this.cat_loading = false;
