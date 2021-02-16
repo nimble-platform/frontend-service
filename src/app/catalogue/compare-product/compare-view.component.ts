@@ -160,7 +160,7 @@ export class CompareViewComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, this.searchIndex)
             )
         );
 
@@ -180,7 +180,7 @@ export class CompareViewComponent implements OnInit {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, this.searchIndex)
             )
         );
 

@@ -514,7 +514,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, this.searchIndex)
             )
         ).pipe(map(suggestions => {
             // for the category search, suggestions include category label and uri

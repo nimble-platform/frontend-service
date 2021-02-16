@@ -295,7 +295,8 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getSuggestions(query: string, item_field: string, search_index: string) {
+    getSuggestions(query: string, search_index: string) {
+        const item_field = '{LANG}_' + this.product_name;
         let url = this.url + `/item/search`;
         let queryRes;
         if (this.delegated) {
