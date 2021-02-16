@@ -296,18 +296,27 @@ export class SimpleSearchService {
     }
 
     getSuggestions(query: string, item_field: string, search_index: string) {
-        let querySettings = {
-            'fields': [item_field],
-            'boosting': false,
-            'boostingFactors': {}
-        };
-        let queryRes = this.buildQueryString(query, querySettings, true, true, search_index != 'Category');
         let url = this.url + `/item/search`;
+        let queryRes;
         if (this.delegated) {
             url = this.delegate_url + `/item/search`;
         }
         if (search_index == 'Category') {
-            url = this.url + `/class/search`;
+            let querySettings = {
+                'fields': ["classification."+item_field],
+                'boosting': false,
+                'boostingFactors': {}
+            };
+            queryRes = this.buildQueryString(query, querySettings, true, true, false);
+            // in the beginning of query, we need a space ,otherwise SOLR can not parse the query
+            queryRes.queryStr = " "+ queryRes.queryStr;
+        } else{
+            let querySettings = {
+                'fields': [item_field],
+                'boosting': false,
+                'boostingFactors': {}
+            };
+            queryRes = this.buildQueryString(query, querySettings, true, true, true);
         }
         let searchObject: any = {};
         searchObject.rows = 0;
