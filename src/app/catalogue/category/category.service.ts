@@ -43,8 +43,6 @@ export class CategoryService {
     constructor(private http: Http,
         private userService: UserService,
         private cookieService: CookieService) {
-        // get service categories for available taxonomies
-        this.getServiceCategoriesForAvailableTaxonomies();
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string, isLogistics: boolean): Promise<Category[]> {

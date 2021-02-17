@@ -42,6 +42,7 @@ import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
 import {CountryUtil} from './common/country-util';
 import {DemandService} from './demand/demand-service';
+import {CategoryService} from './catalogue/category/category.service';
 
 @Component({
     selector: 'nimble-app',
@@ -96,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private modalService: NgbModal,
         private titleService: Title,
+        private categoryService: CategoryService,
         private demandService: DemandService,
         public translate: TranslateService,
         public sanitizer: DomSanitizer
@@ -263,7 +265,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
         }
-
+        // get service categories for available taxonomies
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies();
         this.getVersions();
         this.checkLogin("");
 
