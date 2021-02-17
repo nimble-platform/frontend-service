@@ -20,39 +20,50 @@
         <ul class="nav nav-tabs">
             <ng-container *ngIf="showOverview">
                 <li class="nav-item">
-                    <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}" (click)="onSelectTab($event,'OVERVIEW')">
+                    <a href id="OVERVIEW" class="nav-link" [ngClass]="{ active: selectedTab === 'OVERVIEW'}"
+                       (click)="onSelectTab($event,'OVERVIEW')">
                         <span [innerHTML]="'Overview' | translate"></span>
                     </a>
                 </li>
             </ng-container>
             <li *ngIf="haveDetails" class="nav-item">
-                <a href id="DETAILS" class="nav-link" [ngClass]="{ active: selectedTab === 'DETAILS'}" (click)="onSelectTab($event,'DETAILS')">
+                <a href id="DETAILS" class="nav-link" [ngClass]="{ active: selectedTab === 'DETAILS'}"
+                   (click)="onSelectTab($event,'DETAILS')">
                     <span [innerHTML]="'Details' | translate"></span>
                 </a>
             </li>
             <!-- For transport/logistic services, we do not need to show Price tab since these services do not have price details -->
-            <li *ngIf="haveTransportServiceDetails && !(isLogistics || isTransportService) && !isCatalogueLineDeleted" class="nav-item">
-                <a href id="PRICE" class="nav-link" [ngClass]="{ active: selectedTab === 'PRICE'}" (click)="onSelectTab($event,'PRICE')">
+            <li *ngIf="haveTransportServiceDetails && !(isLogistics || isTransportService) && !isCatalogueLineDeleted"
+                class="nav-item">
+                <a href id="PRICE" class="nav-link" [ngClass]="{ active: selectedTab === 'PRICE'}"
+                   (click)="onSelectTab($event,'PRICE')">
                     <span [innerHTML]="'Price' | translate"></span>
                 </a>
             </li>
             <li *ngIf="haveTransportServiceDetails && !isCatalogueLineDeleted" class="nav-item">
-                <a href id="DELIVERY_TRADING" class="nav-link" *ngIf="isLogistics === false" [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}" (click)="onSelectTab($event,'DELIVERY_TRADING')">
-                    <span [innerHTML]="'Delivery' | translate"></span> &amp; <span [innerHTML]="'Trading' | translate"></span>
+                <a href id="DELIVERY_TRADING" class="nav-link" *ngIf="isLogistics === false"
+                   [ngClass]="{ active: selectedTab === 'DELIVERY_TRADING'}"
+                   (click)="onSelectTab($event,'DELIVERY_TRADING')">
+                    <span [innerHTML]="'Delivery' | translate"></span> &amp; <span
+                        [innerHTML]="'Trading' | translate"></span>
                 </a>
             </li>
-            <li *ngIf="haveCertificates && (settings.certificates.length || wrapper.line.goodsItem.item.certificate.length)" class="nav-item">
-                <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}" (click)="onSelectTab($event,'CERTIFICATES')">
+            <li *ngIf="haveCertificates && (settings.certificates.length || wrapper.line.goodsItem.item.certificate.length)"
+                class="nav-item">
+                <a href id="CERTIFICATES" class="nav-link" [ngClass]="{ active: selectedTab === 'CERTIFICATES'}"
+                   (click)="onSelectTab($event,'CERTIFICATES')">
                     <span [innerHTML]="'Certificates' | translate"></span>
                 </a>
             </li>
             <li *ngIf="config.showLCPA && haveLCPA" class="nav-item">
-                <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false" [ngClass]="{ active: selectedTab === 'LCPA'}" (click)="onSelectTab($event,'LCPA')">
+                <a href id="LCPA" class="nav-link" *ngIf="isLogistics === false"
+                   [ngClass]="{ active: selectedTab === 'LCPA'}" (click)="onSelectTab($event,'LCPA')">
                     <span [innerHTML]="'LCPA' | translate"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href id="COMPANY" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY'}" (click)="onSelectTab($event,'COMPANY')">
+                <a href id="COMPANY" class="nav-link" [ngClass]="{ active: selectedTab === 'COMPANY'}"
+                   (click)="onSelectTab($event,'COMPANY')">
                     <span [innerHTML]="'Company Details' | translate"></span>
                 </a>
             </li>
@@ -71,7 +82,10 @@
     <!-- Overview Tab -->
     <div *ngIf="selectedTab === 'OVERVIEW'" class="p-3 col-12">
         <h3 class="p-1"><span [innerHTML]="'Overview' | translate"></span></h3>
-        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps" [associatedProducts]="associatedProducts" [readonly]="readonly" (compStatus)="setTab($event)" [overviewInProductPublishing]="productDetailsTabInProductPublishing">
+        <product-details-overview [wrapper]="wrapper" [itemWithSelectedProps]="itemWithSelectedProps"
+                                  [associatedProducts]="associatedProducts" [readonly]="readonly"
+                                  (compStatus)="setTab($event)"
+                                  [overviewInProductPublishing]="productDetailsTabInProductPublishing">
         </product-details-overview>
     </div>
 
@@ -80,12 +94,15 @@
         <ng-container *ngIf="isLoggedIn">
             <!-- The product/service does not have any details -->
             <div *ngIf="wrapper.getDimensions(false).length == 0 && wrapper.getPublicUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
-                <p class="p-1"><span [innerHTML]="'This product / service does not seem to have any details.' | translate"></span></p>
+                <p class="p-1"><span
+                        [innerHTML]="'This product / service does not seem to have any details.' | translate"></span>
+                </p>
             </div>
 
-            <div class="row p-1" >
+            <div class="row p-1">
                 <!-- Properties including dimensions -->
-                <div class="col-6" *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
+                <div class="col-6"
+                     *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
                     <h3><span [innerHTML]="'Properties' | translate"></span></h3>
 
                     <table class="table table-sm">
@@ -106,10 +123,12 @@
                                             {{ getPropertyValuesAsStrings(property).join(", ") }}
                                         </span>
                                     <span *ngIf="property.valueQualifier === 'BOOLEAN'">
-                                            <i class="fa boolean-type {{getPropertyValuesAsStrings(property)[0] == 'true' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                                            <i class="fa boolean-type {{getPropertyValuesAsStrings(property)[0] == 'true' ? 'fa-check': 'fa-times'}}"
+                                               aria-hidden="true"></i>
                                         </span>
                                     <ng-container *ngIf="property.valueQualifier === 'FILE'">
-                                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary" [multiple]="true" [small]="true"></file-input>
+                                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary"
+                                                    [multiple]="true" [small]="true"></file-input>
                                     </ng-container>
                                 </td>
                             </tr>
@@ -121,9 +140,12 @@
                 <div class="col-6" *ngIf="wrapper.getAdditionalDocuments().length > 0">
                     <h3><span [innerHTML]="'Additional Information' | translate"></span></h3>
                     <div class="row mx-auto">
-                        <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()" class="p-1 col-6 d-flex">
+                        <div *ngFor="let documentReference of wrapper.getAdditionalDocuments()"
+                             class="p-1 col-6 d-flex">
                             <ng-container>
-                                <file-input presentationMode="view" [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]" [multiple]="true" [small]="true"></file-input>
+                                <file-input presentationMode="view"
+                                            [binaryObjects]="[documentReference.attachment.embeddedDocumentBinaryObject]"
+                                            [multiple]="true" [small]="true"></file-input>
                             </ng-container>
                         </div>
                     </div>
@@ -131,7 +153,8 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!isLoggedIn">
-            <div class="badge badge-danger click-login-badge" (click)="onLoginClicked()">{{'Log in to see product details' | translate}}</div>
+            <div class="badge badge-danger click-login-badge"
+                 (click)="onLoginClicked()">{{'Log in to see product details' | translate}}</div>
         </ng-container>
     </div>
 
@@ -139,65 +162,91 @@
     <div *ngIf="selectedTab === 'PRICE'" class="p-3 col-12">
         <ng-container *ngIf="isLoggedIn">
             <div style="flex-grow:1;">
-                <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1"><span [innerHTML]="'Price' | translate"></span></h3>
-                <div *ngIf="wrapper.getPricePerItem() != 'On demand' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) " class="p-1">
-                    <strong><span [innerHTML]="'Price:' | translate"></span> </strong> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
+                <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1">
+                    <span [innerHTML]="'Price' | translate"></span></h3>
+                <div *ngIf="wrapper.getPricePerItem() != 'On demand' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) "
+                     class="p-1">
+                    <strong><span [innerHTML]="'Price:' | translate"></span>
+                    </strong> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
                 </div>
-                <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT) " class="p-1">
+                <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT) "
+                     class="p-1">
                     <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
                 </div>
-                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) " class="p-1">
-                    <strong><span [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
+                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) "
+                     class="p-1">
+                    <strong><span
+                            [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
                 </div>
-                <div *ngIf="wrapper.getFreeSample() != 'No' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE) " class="p-1">
+                <div *ngIf="wrapper.getFreeSample() != 'No' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE) "
+                     class="p-1">
                     <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
-                    <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                    <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}"
+                       aria-hidden="true"></i>
                 </div>
-                <ng-container *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)">
+                <ng-container
+                        *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)">
                     <h3 class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
                     <div class="p-1">
-                        <discount-details [catalogueLine]="wrapper.line" [companyNegotiationSettings]="settings.negotiationSettings" [readonly]="true"></discount-details>
+                        <discount-details [catalogueLine]="wrapper.line"
+                                          [companyNegotiationSettings]="settings.negotiationSettings"
+                                          [readonly]="true"></discount-details>
                     </div>
                 </ng-container>
             </div>
         </ng-container>
         <ng-container *ngIf="!isLoggedIn">
-            <div class="badge badge-danger click-login-badge" (click)="onLoginClicked()">{{'Log in to see price details' | translate}}</div>
+            <div class="badge badge-danger click-login-badge"
+                 (click)="onLoginClicked()">{{'Log in to see price details' | translate}}</div>
         </ng-container>
     </div>
 
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
-            <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS) && (wrapper.getIncoterms() != 'None' || wrapper.getWarrantyPeriodString() != 'Not specified' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None')" class="flex-item">
+            <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS) && (wrapper.getIncoterms() != 'None' || wrapper.getWarrantyPeriodString() != 'Not specified' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None')"
+                 class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
-                <div *ngIf="wrapper.getIncoterms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)" class="p-1">
-                    <strong><span [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
+                <div *ngIf="wrapper.getIncoterms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)"
+                     class="p-1">
+                    <strong><span
+                            [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
                 </div>
-                <div *ngIf="wrapper.getSpecialTerms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)" class="p-1">
-                    <strong><span [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
+                <div *ngIf="wrapper.getSpecialTerms() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)"
+                     class="p-1">
+                    <strong><span
+                            [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
                 </div>
-                <div *ngIf="wrapper.getWarrantyPeriodString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)" class="p-1">
-                    <strong><span [innerHTML]="'Warranty Period:' | translate"></span></strong> {{ wrapper.getWarrantyPeriod() | quantityTranslatePipe}}
+                <div *ngIf="wrapper.getWarrantyPeriodString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)"
+                     class="p-1">
+                    <strong><span
+                            [innerHTML]="'Warranty Period:' | translate"></span></strong> {{ wrapper.getWarrantyPeriod() | quantityTranslatePipe}}
                 </div>
-                <div *ngIf="wrapper.getDeliveryPeriodString() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)" class="p-1">
-                    <strong><span [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
+                <div *ngIf="wrapper.getDeliveryPeriodString() != 'None' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)"
+                     class="p-1">
+                    <strong><span
+                            [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
             <div class="flex-item">
-                <h3 *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)" class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
-                <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)" class="p-1">
-                    <strong><span [innerHTML]="'Packaging' | translate"></span>: </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
+                <h3 *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
+                    class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
+                <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
+                     class="p-1">
+                    <strong><span [innerHTML]="'Packaging' | translate"></span>:
+                    </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
             </div>
             <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE) " class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong>
-                    <i class="fa boolean-type {{wrapper.getCustomizable() == 'Yes' ? 'fa-check': 'fa-times'}}" aria-hidden="true"></i>
+                    <i class="fa boolean-type {{wrapper.getCustomizable() == 'Yes' ? 'fa-check': 'fa-times'}}"
+                       aria-hidden="true"></i>
                 </div>
             </div>
-            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPARE_PART) " class="flex-item">
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPARE_PART) "
+                 class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
                 <div class="p-1">
                     <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}
@@ -208,13 +257,15 @@
 
     <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
-        <product-details-certificates (certificateStatus)="getCertificateStatusTab($event)" [wrapper]="wrapper" [settings]="settings">
+        <product-details-certificates (certificateStatus)="getCertificateStatusTab($event)" [wrapper]="wrapper"
+                                      [settings]="settings">
         </product-details-certificates>
     </div>
 
     <!-- LCPA Tab -->
     <div *ngIf="selectedTab === 'LCPA'" class="p-3 col-12">
-        <product-lcpa-tab (lcpaStatus)="getLCPAStatusTab($event)" [presentationMode]="'view'" [catalogueLine]="wrapper.line">
+        <product-lcpa-tab (lcpaStatus)="getLCPAStatusTab($event)" [presentationMode]="'view'"
+                          [catalogueLine]="wrapper.line">
         </product-lcpa-tab>
     </div>
 

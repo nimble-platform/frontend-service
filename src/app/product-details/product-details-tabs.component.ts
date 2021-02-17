@@ -18,7 +18,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ProductDetailsTab} from './model/product-details-tab';
 import {ProductWrapper} from '../common/product-wrapper';
 import {BPEService} from '../bpe/bpe.service';
-import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {getPropertyValuesAsStrings, selectPartyName} from '../common/utils';
 import {CompanySettings} from '../user-mgmt/model/company-settings';
 import * as myGlobals from '../globals';
@@ -43,7 +42,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     @Input() associatedProducts: CatalogueLine[];
     @Input() settings: CompanySettings;
     // whether this component is used in publishing page
-    @Input() productDetailsTabInProductPublishing:boolean = false;
+    @Input() productDetailsTabInProductPublishing: boolean = false;
 
     @Input() showOverview: boolean = false;
     @Input() readonly: boolean = false;
@@ -81,6 +80,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     config = myGlobals.config;
 
     getPropertyValuesAsStrings = getPropertyValuesAsStrings;
+
     constructor(
         private translate: TranslateService,
         private bpeService: BPEService,
@@ -99,7 +99,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = this.getFirstTab();
         }
         if (!this.isLogistics) {
-            if (this.wrapper.getIncoterms() == 'None' && this.wrapper.getSpecialTerms() == 'None' && this.wrapper.getWarrantyPeriodString() == "Not specified" && this.wrapper.getDeliveryPeriodString() == 'None' && this.wrapper.getPackaging() == 'Not specified') {
+            if (this.wrapper.getIncoterms() == 'None' && this.wrapper.getSpecialTerms() == 'None' && this.wrapper.getWarrantyPeriodString() == 'Not specified' && this.wrapper.getDeliveryPeriodString() == 'None' && this.wrapper.getPackaging() == 'Not specified') {
                 this.haveTransportServiceDetails = false;
                 this.selectedTab = this.getFirstTab();
             }
@@ -154,7 +154,7 @@ export class ProductDetailsTabsComponent implements OnInit {
     }
 
     onLoginClicked(): void {
-        this.router.navigate(['/user-mgmt/login'], { queryParams: { redirectURL: this.router.url } });
+        this.router.navigate(['/user-mgmt/login'], {queryParams: {redirectURL: this.router.url}});
     }
 
     setTab(data) {
@@ -213,13 +213,13 @@ export class ProductDetailsTabsComponent implements OnInit {
             } else if (this.havePrice) {
                 return 'PRICE';
             } else if (this.haveTransportServiceDetails) {
-                return "DELIVERY_TRADING";
+                return 'DELIVERY_TRADING';
             } else if (this.haveCertificates) {
-                return "CERTIFICATES";
+                return 'CERTIFICATES';
             } else if (this.config.showLCPA && this.haveLCPA) {
-                return "LCPA";
+                return 'LCPA';
             } else {
-                return "COMPANY";
+                return 'COMPANY';
             }
         }
     }
