@@ -36,6 +36,7 @@ import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dime
 import {DiscountPriceWrapper} from './discount-price-wrapper';
 import {AmountUI} from '../catalogue/model/ui/amount-ui';
 import {NonPublicInformation} from '../catalogue/model/publish/non-public-information';
+import {NON_PUBLIC_FIELD_ID} from '../catalogue/model/constants';
 
 /**
  * Wrapper class for Catalogue line.
@@ -263,6 +264,9 @@ export class ProductWrapper {
     }
 
     getSpecialTerms(): string {
+        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)){
+            return 'None';
+        }
         return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : 'None';
     }
 
@@ -271,6 +275,9 @@ export class ProductWrapper {
     }
 
     getDeliveryPeriodString(): string {
+        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)){
+            return 'Not specified';
+        }
         return periodToString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
     }
 
@@ -279,7 +286,7 @@ export class ProductWrapper {
     }
 
     getWarrantyPeriodString(): string {
-        if (!this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
+        if (!this.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD) || !this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
             return 'Not specified';
         }
 
@@ -287,6 +294,9 @@ export class ProductWrapper {
     }
 
     getIncoterms(): string {
+        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)){
+            return 'None';
+        }
         return this.goodsItem.deliveryTerms.incoterms || 'None';
     }
 
