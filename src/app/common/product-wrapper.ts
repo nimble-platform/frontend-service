@@ -278,6 +278,14 @@ export class ProductWrapper {
         return this.line.warrantyValidityPeriod.durationMeasure;
     }
 
+    getWarrantyPeriodString(): string {
+        if (!this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
+            return 'Not specified';
+        }
+
+        return `${this.line.warrantyValidityPeriod.durationMeasure.value} ${this.line.warrantyValidityPeriod.durationMeasure.unitCode}`;
+    }
+
     getIncoterms(): string {
         return this.goodsItem.deliveryTerms.incoterms || 'None';
     }

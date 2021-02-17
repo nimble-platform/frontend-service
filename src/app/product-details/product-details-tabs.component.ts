@@ -99,7 +99,7 @@ export class ProductDetailsTabsComponent implements OnInit {
             this.selectedTab = this.getFirstTab();
         }
         if (!this.isLogistics) {
-            if (this.wrapper.getIncoterms() == 'None' && this.wrapper.getSpecialTerms() == 'None' && this.wrapper.getDeliveryPeriodString() == 'None' && this.wrapper.getPackaging() == 'Not specified') {
+            if (this.wrapper.getIncoterms() == 'None' && this.wrapper.getSpecialTerms() == 'None' && this.wrapper.getWarrantyPeriodString() == "Not specified" && this.wrapper.getDeliveryPeriodString() == 'None' && this.wrapper.getPackaging() == 'Not specified') {
                 this.haveTransportServiceDetails = false;
                 this.selectedTab = this.getFirstTab();
             }
