@@ -228,11 +228,10 @@
                             [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
-            <div class="flex-item">
-                <h3 *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
-                    class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
-                <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
-                     class="p-1">
+            <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
+                 class="flex-item">
+                <h3 class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
+                <div class="p-1">
                     <strong><span [innerHTML]="'Packaging' | translate"></span>:
                     </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
