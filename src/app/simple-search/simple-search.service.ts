@@ -296,29 +296,30 @@ export class SimpleSearchService {
     }
 
     getSuggestions(query: string, search_index: string) {
-        const item_field = '{LANG}_' + this.product_name;
-        let url = this.url + `/item/search`;
+        let querySettings = {
+            'fields': ['{LANG}_' + this.product_name],
+            'boosting': false,
+            'boostingFactors': {}
+        };
+        // base url
+        let baseUrl = this.url;
+        // path to search index
+        let pathToSearchIndex = `/item/search`;
         let queryRes;
-        if (this.delegated) {
-            url = this.delegate_url + `/item/search`;
-        }
         if (search_index == 'Category') {
-            let querySettings = {
-                'fields': ["classification."+item_field],
-                'boosting': false,
-                'boostingFactors': {}
-            };
+            // change the path
+            pathToSearchIndex = `/class/search`;
             queryRes = this.buildQueryString(query, querySettings, true, true, false);
-            // in the beginning of query, we need a space ,otherwise SOLR can not parse the query
-            queryRes.queryStr = " "+ queryRes.queryStr;
+            // modify query such that the suggestions include only the categories which are used to annotate some products
+            queryRes.queryStr = "("+queryRes.queryStr+") AND item.commodityClassficationUri:* ";
         } else{
-            let querySettings = {
-                'fields': [item_field],
-                'boosting': false,
-                'boostingFactors': {}
-            };
             queryRes = this.buildQueryString(query, querySettings, true, true, true);
         }
+        if (this.delegated) {
+            baseUrl = this.delegate_url;
+        }
+        // create the url for request
+        const url = baseUrl + pathToSearchIndex;
         let searchObject: any = {};
         searchObject.rows = 0;
         searchObject.q = queryRes.queryStr;
