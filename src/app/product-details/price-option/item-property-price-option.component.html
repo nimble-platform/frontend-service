@@ -16,7 +16,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-5">
-                <input-label [label]="'Item Property' | translate"></input-label>
+                <input-label [label]="'Item Property' | translate" [class]="'bold-text'"></input-label>
                 <!--<div *ngFor="let itemProperty of priceOption.itemProperty; let i = index">-->
                 <!--<div class="mt-3">-->
                 <!--<strong>{{itemProperty.name}}: </strong>-->
@@ -41,7 +41,7 @@
     <div class="col d-flex align-items-center mt-2">
         <div class="row col-3">
             <div class="row col-10">
-                <strong>{{getItemPropertyName(itemProperty.name)}}: </strong>
+                <b>{{getItemPropertyName(itemProperty.name)}}: </b>
             </div>
         </div>
 

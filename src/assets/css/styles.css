@@ -747,3 +747,11 @@ ngb-pagination .page-item.active .page-link {
     overflow: hidden;
     color: red;
 }
+
+/*style for bold text*/
+.bold-text{
+    font-weight: bold;
+}
+.bold-text strong{
+    font-weight: bold;
+}

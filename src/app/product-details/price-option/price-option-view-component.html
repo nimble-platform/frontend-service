@@ -17,7 +17,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-5">
-                <input-label [label]="'Incoterm' | translate"></input-label>
+                <input-label [label]="'Incoterm' | translate" [class]="'bold-text'"></input-label>
             </div>
             <div class="col-7">
                 <select *ngIf="!readonly" class="form-control form-control-sm" [(ngModel)]="priceOption.incoterms[0]">
@@ -36,7 +36,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-5">
-                <input-label [label]="'Payment Mean' | translate"></input-label>
+                <input-label [label]="'Payment Mean' | translate" [class]="'bold-text'"></input-label>
             </div>
             <div class="col-7">
                 <select *ngIf="!readonly" class="form-control form-control-sm" [(ngModel)]="priceOption.paymentMeans[0].paymentMeansCode.value">
@@ -54,7 +54,7 @@
 <div *ngIf="priceOption.typeID == priceOptions.DELIVERY_LOCATION.typeID" class="row">
     <div class="row">
         <div class="col-2">
-            <input-label [label]="'Delivery Location' | translate"></input-label>
+            <input-label [label]="'Delivery Location' | translate" [class]="'bold-text'"></input-label>
         </div>
         <address-input class="col-10" [address]="priceOption.itemLocationQuantity.applicableTerritoryAddress[0]" [disabled]="readonly" [required]="false" [parentForm]="formGroup"></address-input>
     </div>
@@ -63,7 +63,7 @@
 <!--delivery period related options-->
 <div *ngIf="priceOption.typeID == priceOptions.DELIVERY_PERIOD.typeID">
     <div class="row">
-        <quantity-input class="col-6" [label]="'Delivery Period' | translate" [labelClass]="'col-5'" [valueQuantityClass]="'col-7'" [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure" [presentationMode]="readonly ? 'view': 'edit'" [quantityUnits]="deliveryPeriodUnits">
+        <quantity-input class="col-6" [label]="'Delivery Period' | translate" [labelClass]="'col-5 bold-text'" [valueQuantityClass]="'col-7'" [quantity]="priceOption.estimatedDeliveryPeriod.durationMeasure" [presentationMode]="readonly ? 'view': 'edit'" [quantityUnits]="deliveryPeriodUnits">
         </quantity-input>
     </div>
 </div>

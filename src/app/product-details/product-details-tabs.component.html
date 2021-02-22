@@ -166,21 +166,21 @@
                     <span [innerHTML]="'Price' | translate"></span></h3>
                 <div *ngIf="wrapper.getPricePerItem() != 'On demand' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) "
                      class="p-1">
-                    <strong><span [innerHTML]="'Price:' | translate"></span>
-                    </strong> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
+                    <b><span [innerHTML]="'Price:' | translate"></span>
+                    </b> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
                 </div>
                 <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT) "
                      class="p-1">
-                    <strong><span [innerHTML]="'VAT:' | translate"></span></strong> {{ wrapper.getVat() }}%
+                    <b><span [innerHTML]="'VAT:' | translate"></span></b> {{ wrapper.getVat() }}%
                 </div>
                 <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) "
                      class="p-1">
-                    <strong><span
-                            [innerHTML]="'Minimum Order Quantity:' | translate"></span></strong> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
+                    <b><span
+                            [innerHTML]="'Minimum Order Quantity:' | translate"></span></b> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
                 </div>
                 <div *ngIf="wrapper.getFreeSample() != 'No' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE) "
                      class="p-1">
-                    <strong><span [innerHTML]="'Free Sample:' | translate"></span></strong>
+                    <b><span [innerHTML]="'Free Sample:' | translate"></span></b>
                     <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}"
                        aria-hidden="true"></i>
                 </div>
@@ -209,37 +209,37 @@
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
                 <div *ngIf="wrapper.getIncoterms() != 'None'"
                      class="p-1">
-                    <strong><span
-                            [innerHTML]="'Incoterms:' | translate"></span></strong> {{ wrapper.getIncoterms() | translate}}
+                    <b><span
+                            [innerHTML]="'Incoterms:' | translate"></span></b> {{ wrapper.getIncoterms() | translate}}
                 </div>
                 <div *ngIf="wrapper.getSpecialTerms() != 'None'"
                      class="p-1">
-                    <strong><span
-                            [innerHTML]="'Special Terms:' | translate"></span></strong> {{ wrapper.getSpecialTerms() }}
+                    <b><span
+                            [innerHTML]="'Special Terms:' | translate"></span></b> {{ wrapper.getSpecialTerms() }}
                 </div>
                 <div *ngIf="wrapper.getWarrantyPeriodString() != 'Not specified'"
                      class="p-1">
-                    <strong><span
-                            [innerHTML]="'Warranty Period:' | translate"></span></strong> {{ wrapper.getWarrantyPeriod() | quantityTranslatePipe}}
+                    <b><span
+                            [innerHTML]="'Warranty Period:' | translate"></span></b> {{ wrapper.getWarrantyPeriod() | quantityTranslatePipe}}
                 </div>
                 <div *ngIf="wrapper.getDeliveryPeriodString() != 'None'"
                      class="p-1">
-                    <strong><span
-                            [innerHTML]="'Delivery Period:' | translate"></span></strong> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
+                    <b><span
+                            [innerHTML]="'Delivery Period:' | translate"></span></b> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
             <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
                  class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
                 <div class="p-1">
-                    <strong><span [innerHTML]="'Packaging' | translate"></span>:
-                    </strong> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
+                    <b><span [innerHTML]="'Packaging' | translate"></span>:
+                    </b> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
             </div>
             <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE) " class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
-                    <strong><span [innerHTML]="'Customizable' | translate"></span>: </strong>
+                    <b><span [innerHTML]="'Customizable' | translate"></span>: </b>
                     <i class="fa boolean-type {{wrapper.getCustomizable() == 'Yes' ? 'fa-check': 'fa-times'}}"
                        aria-hidden="true"></i>
                 </div>
@@ -248,7 +248,7 @@
                  class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
                 <div class="p-1">
-                    <strong><span [innerHTML]="'Spare Part' | translate"></span>: </strong> {{ wrapper.getSparePart() }}
+                    <b><span [innerHTML]="'Spare Part' | translate"></span>: </b> {{ wrapper.getSparePart() }}
                 </div>
             </div>
         </div>
