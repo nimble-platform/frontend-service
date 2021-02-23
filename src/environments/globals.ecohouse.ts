@@ -261,7 +261,7 @@ export const config = {
     ],
     "supportMail": "wel1@biba.uni-bremen.de",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]"
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]"
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
