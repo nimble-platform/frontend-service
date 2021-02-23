@@ -798,6 +798,7 @@
   "Invalid email or password": "Invalid email or password",
   "Invitation pending": "Invitation pending",
   "Invitation to platform": "Invitation to {{platformName}}",
+  "invitationMailContent": "Hello,\n\nyou have been invited to the {{platformName}} platform by {{companyName}}.\n\nPlease follow the link in order to get access.\n\n{{frontendUrl}}\n\nSincerely,\nyour {{platformName}} platform manager",
   "Invite to Platform": "Invite to Platform",
   "Invoice": "Invoice",
   "Invoice Id": "Invoice Id",

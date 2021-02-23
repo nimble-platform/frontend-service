@@ -809,7 +809,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         return this.allowed;
     }
 
+    /**
+     * Returns the mailto content for the invitation of a company
+     * */
     getInvitationMailTo(){
-        return "mailto:?subject=" + encodeURIComponent(this.translate.instant("Invitation to platform",{platformName:this.config.platformNameInMail}));
+        let mailto = "mailto:";
+        mailto += "?subject=" + encodeURIComponent(this.translate.instant("Invitation to platform",{platformName:this.config.platformNameInMail}));
+        mailto += "&body=" + encodeURIComponent(this.translate.instant("invitationMailContent",{platformName:this.config.platformNameInMail,companyName:this.activeCompanyName,frontendUrl:myGlobals.frontendURL}));
+        return mailto ;
     }
 }
