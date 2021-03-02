@@ -111,6 +111,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - displayProductIdInOverview: Boolean flag if the product id is displayed in the product overview
 - docLink: Link to the documentation resources
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
+- enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
@@ -229,6 +230,7 @@ export const config = {
     "displayCategoryCounts":true,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,

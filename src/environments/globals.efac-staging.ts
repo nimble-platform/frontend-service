@@ -115,6 +115,7 @@ export const config = {
     "displayCategoryCounts":true,
     "displayProductIdInOverview": false,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableOtherFiltersSearch": true,
     "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",
     "hideContactInformationInCompanyDetails": false,

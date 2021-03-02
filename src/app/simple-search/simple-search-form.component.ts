@@ -97,6 +97,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
     displayCategoryCounts = myGlobals.config.displayCategoryCounts;
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
+    enableOtherFiltersSearch = myGlobals.config.enableOtherFiltersSearch;
     showTrustScore = myGlobals.config.showTrustScore;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
@@ -2315,8 +2316,22 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.companyFilter.facets.splice(circularEconomyFacetIndex,1);
             }
         }
+        // set the facets names for other filters
+        // they are used in the filter search component
+        if(this.productOtherFilter.facets.length){
+            this.productOtherFilter.facetNames = this.productOtherFilter.facets.map(facet => facet.realName);
+        }
     }
 
+    /**
+     * Changes the visibility of other filter facets.
+     * @param facetNames facet names which are filtered and visible to the user
+     * */
+    onOtherFilterFacetsFiltered(facetNames): void {
+        this.productOtherFilter.facets.forEach(facet => {
+            facet.visible = facetNames.indexOf(facet.realName) !== -1 ;
+        })
+    }
     /**
      * Checks whether a facet identifying a specific company such brand name or legal name is selected
      */

@@ -680,63 +680,69 @@
                             </div>
 
                             <div *ngIf="!productOtherFilter.isCollapsed">
-                                <div *ngFor="let facet of productOtherFilter.facets">
-                                    <div class="card mb-3">
-                                        <!-- Display the units for quantity properties -->
-                                        <div *ngIf="facet.showContent && facet.units && facet.units.length > 1"
-                                             class="card-header" (click)="onFacetClicked(facet)">
-                                            <div class="row">
-                                                <div class="col-8 my-auto">
-                                                    {{ facet.realName }}
-                                                </div>
-                                                <div class="col-4">
-                                                    <select class="form-control custom-select"
-                                                            [(ngModel)]="facet.selectedUnit"
-                                                            [ngModelOptions]="{standalone: true}"
-                                                            (click)="$event.stopPropagation()">
-                                                        <option *ngFor="let unit of facet.units">{{unit}}</option>
-                                                    </select>
+                                <filter-search-input *ngIf="enableOtherFiltersSearch && !searchCallStatus.isLoading()" [values]="productOtherFilter.facetNames"
+                                                     (onValueChanged)="onOtherFilterFacetsFiltered($event)">
+                                </filter-search-input>
+
+                                <ng-container *ngFor="let facet of productOtherFilter.facets">
+                                    <div *ngIf="facet.visible" >
+                                        <div class="card mb-3">
+                                            <!-- Display the units for quantity properties -->
+                                            <div *ngIf="facet.showContent && facet.units && facet.units.length > 1"
+                                                 class="card-header" (click)="onFacetClicked(facet)">
+                                                <div class="row">
+                                                    <div class="col-8 my-auto">
+                                                        {{ facet.realName }}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <select class="form-control custom-select"
+                                                                [(ngModel)]="facet.selectedUnit"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                (click)="$event.stopPropagation()">
+                                                            <option *ngFor="let unit of facet.units">{{unit}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1"
-                                             class="card-header" (click)="onFacetClicked(facet)">
-                                            {{ facet.realName }}
-                                        </div>
-                                        <div *ngIf="facet.showContent" class="card-body">
-                                            <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
-                                                <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                            <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1"
+                                                 class="card-header" (click)="onFacetClicked(facet)">
+                                                {{ facet.realName }}
+                                            </div>
+                                            <div *ngIf="facet.showContent" class="card-body">
+                                                <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
+                                                    <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
                                                           (click)="setFacet(facetInner.unitGenName ? facetInner.unitGenName : facet.name,facetInner.name,facet.genName)"
                                                           [title]="facetInner.realName">{{ facetInner.realName.substring(0, 30) }}
                                                         <span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'"
-                                                       (click)="setFacet(facet.name,facetInner.name,facet.genName)"
-                                                       class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
-                                                       aria-hidden="true"></i> ({{ facetInner.count }})
-                                                </div>
-                                                <div *ngIf="facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                                        <i *ngIf="facet.dataType == 'boolean'"
+                                                           (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                           class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
+                                                           aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    </div>
+                                                    <div *ngIf="facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
                                                           (click)="setFacet(facetInner.unitGenName ? facetInner.unitGenName : facet.name,facetInner.name,facet.genName)"
                                                           [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0, 30) }}
                                                         <span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'"
-                                                       (click)="setFacet(facet.name,facetInner.name,facet.genName)"
-                                                       class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
-                                                       aria-hidden="true"></i> ({{ facetInner.count }})
+                                                        <i *ngIf="facet.dataType == 'boolean'"
+                                                           (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                           class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
+                                                           aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div *ngIf="getFacetOptions(facet.options,facet.selectedUnit).length>maxFacets">
-                                                <hr>
-                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
-                                                        *ngIf="!facet.expanded"><span
-                                                        [innerHTML]="'Show more' | translate"></span></span><span
-                                                        *ngIf="facet.expanded"><span
-                                                        [innerHTML]="'Show less' | translate"></span></span></span>
+                                                <div *ngIf="getFacetOptions(facet.options,facet.selectedUnit).length>maxFacets">
+                                                    <hr>
+                                                    <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
+                                                            *ngIf="!facet.expanded"><span
+                                                            [innerHTML]="'Show more' | translate"></span></span><span
+                                                            *ngIf="facet.expanded"><span
+                                                            [innerHTML]="'Show less' | translate"></span></span></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ng-container>
                             </div>
 
                         </div>
