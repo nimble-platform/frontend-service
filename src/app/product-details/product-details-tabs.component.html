@@ -93,7 +93,7 @@
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <ng-container *ngIf="isLoggedIn">
             <!-- The product/service does not have any details -->
-            <div *ngIf="wrapper.getDimensions(false).length == 0 && wrapper.getPublicUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
+            <div *ngIf="wrapper.getPublicDimensions().length == 0 && wrapper.getPublicUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
                 <p class="p-1"><span
                         [innerHTML]="'This product / service does not seem to have any details.' | translate"></span>
                 </p>
@@ -102,13 +102,13 @@
             <div class="row p-1">
                 <!-- Properties including dimensions -->
                 <div class="col-6"
-                     *ngIf="wrapper.getDimensions(false).length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
+                     *ngIf="wrapper.getPublicDimensions().length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
                     <h3><span [innerHTML]="'Properties' | translate"></span></h3>
 
                     <table class="table table-sm">
                         <tbody>
                         <!-- Dimensions -->
-                        <ng-container *ngIf="wrapper.getDimensions(false).length > 0">
+                        <ng-container *ngIf="wrapper.getPublicDimensions().length > 0">
                             <tr *ngFor="let multiValuedDimension of wrapper.getPublicDimensionMultiValue()">
                                 <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
                                 <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>

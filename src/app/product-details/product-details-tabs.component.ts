@@ -94,7 +94,7 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
         this.isLoggedIn = !!this.cookieService.get('user_id');
-        if (this.wrapper.getDimensions().length == 0 && this.wrapper.getPublicUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
+        if (this.wrapper.getPublicDimensions().length == 0 && this.wrapper.getPublicUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }

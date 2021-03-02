@@ -88,20 +88,14 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getDimensions(includingNullValues: boolean = true): Dimension[] {
+    getPublicDimensions(): Dimension[] {
         if (!this.item) {
             return [];
         }
         const ret = [];
         this.item.dimension.forEach(prop => {
-            if (includingNullValues) {
-                if (prop.attributeID) {
-                    ret.push(prop);
-                }
-            } else {
-                if (prop.attributeID && prop.measure.value) {
-                    ret.push(prop);
-                }
+            if (prop.attributeID && prop.measure.value) {
+                ret.push(prop);
             }
         })
         return this.removeNonPublicDimensions(ret);
