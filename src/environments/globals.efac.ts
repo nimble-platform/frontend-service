@@ -114,6 +114,7 @@ export const config = {
     "delegationEnabled": false,
     "demandsEnabled": false,
     "displayCategoryCounts":true,
+    "displayProductIdInOverview": false,
     "docLink": "https://www.nimble-project.org/docs/",
     "enableStripePayment": true,
     "faviconPath": "./assets/favicon.ico",

@@ -108,6 +108,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - demandsEnabled: Boolean flag if the demand functionality is enabled
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
+- displayProductIdInOverview: Boolean flag if the product id is displayed in the product overview
 - docLink: Link to the documentation resources
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - faviconPath: Link to the favicon
@@ -226,6 +227,7 @@ export const config = {
     "delegationEnabled": true,
     "demandsEnabled": false,
     "displayCategoryCounts":true,
+    "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
     "enableStripePayment": false,
     "faviconPath": "./assets/favicon.ico",

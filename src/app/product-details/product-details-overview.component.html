@@ -124,7 +124,7 @@
         <!-- Product id or Product part number-->
         <div class="col-12 pr-0 space-before">
             <small class="float-right">
-                <span *ngIf="!productPartNumberProperty">ID: {{productId}}</span>
+                <span *ngIf="!productPartNumberProperty && config.displayProductIdInOverview">ID: {{productId}}</span>
                 <span *ngIf="productPartNumberProperty" style="font-size: 120%">
                     {{ wrapper.getPropertyName(productPartNumberProperty) }}: {{ getPropertyValuesAsStrings(productPartNumberProperty).join(", ") }}
                 </span>

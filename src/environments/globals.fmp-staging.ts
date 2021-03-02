@@ -107,6 +107,7 @@ export const config = {
     "delegationEnabled": false,
     "demandsEnabled": true,
     "displayCategoryCounts":false,
+    "displayProductIdInOverview": true,
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
     "enableStripePayment": false,
     "faviconPath": "./assets/B2B_favicon.ico",
