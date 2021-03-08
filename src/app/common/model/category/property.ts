@@ -17,8 +17,8 @@
 import { Unit } from "./unit";
 import { KeywordSynonym } from "./keyword-synonym";
 import { Value } from "./value";
-import { PropertyValueQualifier } from "../publish/property-value-qualifier";
-import { Text } from '../publish/text';
+import { PropertyValueQualifier } from "../../../catalogue/model/publish/property-value-qualifier";
+import { Text } from '../../../catalogue/model/publish/text';
 
 export class Property {
     constructor(

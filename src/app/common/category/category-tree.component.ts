@@ -16,11 +16,11 @@
 
 import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 import { Category } from "../model/category/category";
-import { CategoryService } from "./category.service";
 import { CallStatus } from "../../common/call-status";
 import { ParentCategories } from "../model/category/parent-categories";
 import { sortCategories, scrollToDiv, selectPreferredName } from '../../common/utils';
 import { Property } from '../model/category/property';
+import {CategoryService} from '../../catalogue/category/category.service';
 
 @Component({
     selector: 'category-tree',

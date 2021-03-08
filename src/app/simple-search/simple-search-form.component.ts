@@ -26,7 +26,7 @@ import {copy, getPropertyKey, roundToTwoDecimals, selectNameFromLabelObject} fro
 import {CallStatus} from '../common/call-status';
 import {CURRENCIES, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {CategoryService} from '../catalogue/category/category.service';
-import {Category} from '../catalogue/model/category/category';
+import {Category} from '../common/model/category/category';
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {PublishService} from '../catalogue/publish-and-aip.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';

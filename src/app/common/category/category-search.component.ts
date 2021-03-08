@@ -15,23 +15,29 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { Category } from "../model/category/category";
-import { CategoryService } from "./category.service";
-import { CookieService } from "ng2-cookies";
-import { UserService } from "../../user-mgmt/user.service";
-import { PublishService } from "../publish-and-aip.service";
-import { CallStatus } from "../../common/call-status";
-import {findCategoryInArray, sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
-import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories, scrollToDiv } from "../../common/utils";
-import { Property } from "../model/category/property";
+import {ActivatedRoute, Router} from '@angular/router';
+import {Category} from '../model/category/category';
+import {CookieService} from 'ng2-cookies';
+import {UserService} from '../../user-mgmt/user.service';
+import {CallStatus} from '../../common/call-status';
+import {
+    findCategoryInArray,
+    sanitizeDataTypeName,
+    scrollToDiv,
+    selectPreferredName,
+    selectPreferredValues,
+    sortCategories
+} from '../../common/utils';
+import {ParentCategories} from '../model/category/parent-categories';
+import {Property} from '../model/category/property';
 import * as myGlobals from '../../globals';
-import { AppComponent } from "../../app.component";
-import { Text } from '../model/publish/text';
-import { Observable } from "rxjs/Observable";
-import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
-import { SimpleSearchService } from "../../simple-search/simple-search.service";
+import {AppComponent} from '../../app.component';
+import {Observable} from 'rxjs/Observable';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {SimpleSearchService} from '../../simple-search/simple-search.service';
+import {CategoryService} from '../../catalogue/category/category.service';
+import {PublishService} from '../../catalogue/publish-and-aip.service';
+import {Text} from '../../catalogue/model/publish/text';
 
 const productType = "product";
 type SelectedTab = "TREE"

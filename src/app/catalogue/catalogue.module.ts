@@ -21,13 +21,11 @@ import { CommonModule } from "@angular/common";
 import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CatalogueRoutingModule } from "./catalogue-routing.module";
-import { CategorySearchComponent } from "./category/category-search.component";
 import { CatalogueViewComponent } from "./ubl-model-view/catalogue/catalogue-view.component";
 import { FavouriteViewComponent } from "./favourite/favourite-view.component";
 import { CompareViewComponent } from "./compare-product/compare-view.component";
 import { CatalogueLinePanelComponent } from "./ubl-model-view/catalogue/catalogue-line-panel.component";
 import { PublishDeactivateGuardService } from "./publish-deactivate-guard.service";
-import { CategoryTreeComponent } from "./category/category-tree.component";
 import { EditPropertyModalComponent } from "./publish/edit-property-modal.component";
 import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trading.component";
 import { ProductDetailsModule } from "../product-details/product-details.module";
@@ -57,8 +55,6 @@ import {SinglePublishComponent} from './publish/single-publish.component';
         NgbModule.forRoot()
     ],
     declarations: [
-        CategorySearchComponent,
-        CategoryTreeComponent,
         ProductPublishStepsComponent,
         LogisticServicePublishComponent,
         EditPropertyModalComponent,
@@ -78,7 +74,6 @@ import {SinglePublishComponent} from './publish/single-publish.component';
         CompareViewComponent
     ],
     exports: [
-        CategorySearchComponent,
         CatalogueViewComponent,
         CatalogueLinePanelComponent,
         NoteFileViewComponent,

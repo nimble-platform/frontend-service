@@ -12,10 +12,9 @@
    limitations under the License.
  */
 
-import {Category} from '../category/category';
+import {Category} from '../../../common/model/category/category';
 import {LanguageUtils} from './language-utils';
 import {Text} from '../publish/text';
-import {Property} from '../category/property';
 
 export class CategoryModelUtils {
     /**

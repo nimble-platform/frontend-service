@@ -18,10 +18,10 @@
 
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {Category} from '../model/category/category';
+import {Category} from '../../common/model/category/category';
 import * as myGlobals from '../../globals';
 import {Code} from '../model/publish/code';
-import {ParentCategories} from '../model/category/parent-categories';
+import {ParentCategories} from '../../common/model/category/parent-categories';
 import {findCategoryInArray, getAuthorizedHeaders, selectPreferredName, sortCategories} from '../../common/utils';
 import {CookieService} from 'ng2-cookies';
 import {UserService} from '../../user-mgmt/user.service';

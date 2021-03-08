@@ -22,7 +22,7 @@ import {catalogue_endpoint, catalogue_endpoint_with_zuul, config, delegate_endpo
 import {Catalogue} from './model/publish/catalogue';
 import {UserService} from '../user-mgmt/user.service';
 import {CatalogueLine} from './model/publish/catalogue-line';
-import {Category} from './model/category/category';
+import {Category} from '../common/model/category/category';
 import {CookieService} from 'ng2-cookies';
 import {copy} from '../common/utils';
 import {BinaryObject} from './model/publish/binary-object';

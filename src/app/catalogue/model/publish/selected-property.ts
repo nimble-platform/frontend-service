@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-import { Property } from "../category/property";
-import { Category } from "../category/category";
+import { Property } from "../../../common/model/category/property";
+import { Category } from "../../../common/model/category/category";
 import { Text } from './text';
 
 export interface SelectedProperty {

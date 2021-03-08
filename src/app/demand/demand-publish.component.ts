@@ -21,7 +21,7 @@ import {DEFAULT_LANGUAGE, LANGUAGES} from '../catalogue/model/constants';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import {selectPreferredName} from '../common/utils';
-import {Category} from '../catalogue/model/category/category';
+import {Category} from '../common/model/category/category';
 import {Code} from '../catalogue/model/publish/code';
 import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';

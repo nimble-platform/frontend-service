@@ -21,7 +21,7 @@ import {CallStatus} from '../../common/call-status';
 import {DemandPublishService} from '../demand-publish-service';
 import {CategoryService} from '../../catalogue/category/category.service';
 import {CategoryModelUtils} from '../../catalogue/model/model-util/category-model-utils';
-import {Category} from '../../catalogue/model/category/category';
+import {Category} from '../../common/model/category/category';
 import {BPEService} from '../../bpe/bpe.service';
 import {UserService} from '../../user-mgmt/user.service';
 import {FEDERATIONID} from '../../catalogue/model/constants';
