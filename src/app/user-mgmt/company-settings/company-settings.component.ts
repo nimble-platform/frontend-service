@@ -32,6 +32,7 @@ type SelectedTab = "COMPANY_DATA"
     | "DELIVERY_TERMS"
     | "CERTIFICATES"
     | "CATEGORIES"
+    | "SUBSCRIPTIONS"
     | "PAYMENT";
 
 @Component({

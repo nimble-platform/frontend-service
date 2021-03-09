@@ -47,6 +47,8 @@ import {UserService} from '../user-mgmt/user.service';
 import {Address} from '../user-mgmt/model/address';
 import {Facet} from './model/facet';
 import {FacetOption} from './model/facet-option';
+import {CompanySubscriptionsComponent} from '../user-mgmt/company-settings/company-subscriptions.component';
+import {CompanySubscriptionService} from '../user-mgmt/company-subscription.service';
 
 
 @Component({
@@ -216,6 +218,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 private catalogueService: CatalogueService,
                 private whiteBlackListService: WhiteBlackListService,
                 public networkCompanyListService: NetworkCompanyListService,
+                public companySubscriptionService: CompanySubscriptionService,
                 private publishService: PublishService,
                 public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
@@ -1446,7 +1449,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     onSearchResultClicked(event): void {
         // if the page reference is publish, we don't let users navigating to product details
         // if the page reference is catalogue, we do not let users navigating to the company details
-        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue') {
+        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue' || this.pageRef === 'subscription') {
             event.preventDefault();
         }
     }
@@ -2090,6 +2093,29 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     // the end of methods for network functionality
 
+    // methods for subscription functionality
+
+    onToggleCompanySelectForSubscription(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if (this.companySubscriptionService.isCompanySelected(toggledCompany.id)) {
+                this.onRemoveSelectedCompanyFromSubscriptionList(toggledCompany);
+            } else {
+                this.companySubscriptionService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    isCompanySelectedForSubscription(id): boolean {
+        return this.companySubscriptionService.isCompanySelected(id);
+    }
+
+    onRemoveSelectedCompanyFromSubscriptionList(company: any): void {
+        this.companySubscriptionService.onRemoveSelectedCompany(company.id);
+    }
+    // the end of methods for subscription functionality
+
     // methods for white list/black list functionality
     isCompanySelected(vatNumber: string): boolean {
         return this.whiteBlackListService.isCompanySelected(vatNumber);
@@ -2116,9 +2142,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.router.navigate(['dashboard'], {queryParams: {tab: 'CATALOGUE', searchRef: 'true'}})
     }
 
-    onNavigate(toNetwork: boolean) {
-        if (toNetwork) {
+    onNavigate(tab: "NETWORK" | "SUBSCRIPTIONS" = null) {
+        if(tab === "NETWORK"){
             this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'NETWORK', searchRef: 'true'}})
+        } else if("SUBSCRIPTIONS"){
+            this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'SUBSCRIPTIONS', searchRef: 'true'}})
         } else {
             this.router.navigate(['/dashboard'], {queryParams: {tab: 'CATALOGUE', searchRef: 'true'}})
         }

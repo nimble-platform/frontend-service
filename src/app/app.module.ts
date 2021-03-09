@@ -67,6 +67,7 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {AddressMapService} from './common/address-map.service';
 
 import {PaymentService} from './bpe/payment/payment-service';
+import {CompanySubscriptionService} from './user-mgmt/company-subscription.service';
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -111,6 +112,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         WhiteBlackListService,
         PaymentService,
         NetworkCompanyListService,
+        CompanySubscriptionService,
         ExplorativeSearchService,
         SimpleSearchService,
         SearchContextService,

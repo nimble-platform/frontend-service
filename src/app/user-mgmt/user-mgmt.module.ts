@@ -48,6 +48,7 @@ import { EditTradingTermModalComponent } from './company-settings/edit-trading-t
 import {CompanyNetworkSettingsComponent} from './company-settings/company-network-settings.component';
 import {CompanyPaymentSettingsComponent} from './company-settings/company-payment-settings.component';
 import {AddressCountryComponent} from './subforms/address-country.component';
+import {CompanySubscriptionsComponent} from './company-settings/company-subscriptions.component';
 
 @NgModule({
     imports: [
@@ -77,6 +78,7 @@ import {AddressCountryComponent} from './subforms/address-country.component';
         CompanyDataSettingsComponent,
         CompanyDeliveryTermsComponent,
         CompanyCategoriesSettingsComponent,
+        CompanySubscriptionsComponent,
         CompanyTermsAndConditions,
         CompanyNetworkSettingsComponent,
         EditTradingTermModalComponent,

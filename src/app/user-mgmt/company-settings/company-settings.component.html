@@ -81,6 +81,11 @@
                     <span [innerHTML]="'Catalogue Categories' | translate"></span>
                 </a>
             </li>
+            <li *ngIf="viewMode=='full' && config.enableSubscriptions" class="nav-item">
+                <a href id="SUBSCRIPTIONS" class="nav-link" [ngClass]="{ active: selectedTab === 'SUBSCRIPTIONS'}" (click)="onSelectTab($event,'SUBSCRIPTIONS')">
+                    <span [innerHTML]="'Subscriptions' | translate"></span>
+                </a>
+            </li>
             <li *ngIf="viewMode=='full' && config.enableStripePayment" class="nav-item">
                 <a href id="PAYMENT" class="nav-link" [ngClass]="{ active: selectedTab === 'PAYMENT'}" (click)="onSelectTab($event,'PAYMENT')">
                     <span [innerHTML]="'Payment' | translate"></span>
@@ -140,6 +145,11 @@
     <div *ngIf="settings && selectedTab == 'CATEGORIES'">
         <company-categories-settings [settings]="settings">
         </company-categories-settings>
+    </div>
+    <!-- Company Subscriptions -->
+    <div *ngIf="settings && selectedTab == 'SUBSCRIPTIONS'">
+        <company-subscriptions [settings]="settings">
+        </company-subscriptions>
     </div>
 
     <!-- Payment -->

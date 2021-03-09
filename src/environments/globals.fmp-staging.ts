@@ -111,6 +111,7 @@ export const config = {
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
+    "enableSubscriptions": false,
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": true,

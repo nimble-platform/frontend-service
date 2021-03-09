@@ -39,6 +39,7 @@ import { Certificate } from "../catalogue/model/publish/certificate";
 import { copy } from '../common/utils';
 import {PeriodRange} from './model/period-range';
 import {AccountLink} from './model/account-link';
+import {Code} from '../catalogue/model/publish/code';
 
 @Injectable()
 export class UserService {
@@ -452,6 +453,14 @@ export class UserService {
                 rec_cat.splice(cat_idx, 1);
             settings.recentlyUsedProductCategories = rec_cat;
             return this.putSettings(settings, userId).then(response => response.recentlyUsedProductCategories)
+        });
+    }
+
+    saveSubscriptions(userId: string, categoryCodes:Code[],companyIds:string[]){
+        return this.getSettingsForUser(userId).then(settings => {
+            settings.subscribedProductCategories = categoryCodes;
+            settings.subscribedCompanyIds = companyIds;
+            return this.putSettings(settings, userId);
         });
     }
 
