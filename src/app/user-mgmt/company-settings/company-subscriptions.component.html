@@ -108,7 +108,8 @@
 
     <!-- Category Selection View -->
     <div *ngIf="viewMode == 'CATEGORY_SELECTION'" class="space-before">
-        <category-search [categoriesSelected]="subscribedCategories && subscribedCategories.length > 0">
+        <category-search [categoriesSelected]="subscribedCategories && subscribedCategories.length > 0"
+            [enableSelectionOfDifferentCategoryTypes]="true">
         </category-search>
         <hr class="actions-hr">
         <div class="col-3">

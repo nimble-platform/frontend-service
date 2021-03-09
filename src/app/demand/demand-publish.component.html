@@ -113,7 +113,7 @@
 </ng-container>
 
 <ng-container *ngIf="categorySearchPage">
-    <category-search [categoriesSelected]="selectedCategory != null"
+    <category-search [categoriesSelected]="selectedCategory != null" [enableSelectionOfDifferentCategoryTypes]="true"
                      [categoryCount]="'single'">
     </category-search>
     <hr class="actions-hr">

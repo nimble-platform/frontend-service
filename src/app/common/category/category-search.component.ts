@@ -53,6 +53,8 @@ export class CategorySearchComponent implements OnInit {
     // whether the categories are selected for the publishing
     @Input() categoriesSelected:boolean = false;
     @Input() titleTranslationKey:string = null;
+    // whether the selected categories can be a mix of product and service categories
+    @Input() enableSelectionOfDifferentCategoryTypes:boolean = false;
     @Output() onCategoryRemoved = new EventEmitter<string>();
     selectedTab: SelectedTab = "TREE";
 
@@ -123,7 +125,7 @@ export class CategorySearchComponent implements OnInit {
      * */
     disableCategorySelection(){
         // if there are some selected categories, enable the selection iff the type of category (i.e, Product or Service) is the same with the others
-        if(this.categoryService.selectedCategories.length !== 0){
+        if(!this.enableSelectionOfDifferentCategoryTypes && this.categoryService.selectedCategories.length !== 0){
             let isServiceCategory = this.categoryService.isServiceCategory(this.selectedCategoryWithDetails.rootCategoryUri);
 
             return !((this.categoryService.hasServiceCategories && isServiceCategory) || (!this.categoryService.hasServiceCategories && !isServiceCategory));
