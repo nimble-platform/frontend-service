@@ -480,4 +480,4 @@ export const query_settings_comp = {
 };
 
 // Stripe publishable key
-export const stripe_publishable_key = "pk_test_51Hqz4nIhfTtDDuPhnPfIRfdb7Wzg5ouRuKNxkxT90NlFSnFwNTKSUDAAXMSw15MLyk4LFJW5IJeFVAZ5biB1ksdB00a6ibmD7C";
+export const stripe_publishable_key = "pk_live_51Hqz4nIhfTtDDuPhnPel6fHYziCxcPLMEubqAcm3GREkyotTsfWdff5qnGZPEWbrSeUf5W6Bj05IFpGru917oz3600aWtJDSYt";
