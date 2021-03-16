@@ -1200,6 +1200,8 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 this.publishingStep = this.config.showLCPA ? "LCPA" : "Review";
                 break;
             case 'LCPA':
+                // set the non-public information of catalogue line for the review tab
+                this.catalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(this.catalogueLine);
                 this.publishingStep = "Review";
         }
     }
@@ -1208,6 +1210,10 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         // handle the case where the publishing step is Category
         if(this.publishingStep == "Category"){
             this.onCategorySelectionCompleted();
+        }
+        // set the non-public information of catalogue line for the review tab
+        if(step === 'Review'){
+            this.catalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(this.catalogueLine);
         }
         // set the current publishing step
         this.publishingStep = step;
