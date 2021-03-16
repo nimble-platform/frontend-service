@@ -210,6 +210,7 @@ export class ProductWrapper {
         if(propertyIndex !== -1){
             const nonPublicInformation = this.nonPublicInformation[propertyIndex];
             switch (nonPublicInformation.value.valueQualifier){
+                case "BOOLEAN":
                 case "STRING":
                     property.value = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) === -1);
                     break;

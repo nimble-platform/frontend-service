@@ -1253,6 +1253,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             let multiTypeValue:MultiTypeValue = new MultiTypeValue();
             multiTypeValue.valueQualifier = property.valueQualifier;
             switch (property.valueQualifier){
+                case "BOOLEAN":
                 case "STRING":
                     multiTypeValue.value = property.value;
                     break;
@@ -1313,6 +1314,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 let multiTypeValue = new MultiTypeValue();
                 multiTypeValue.valueQualifier = itemProperty.valueQualifier;
                 switch (multiTypeValue.valueQualifier){
+                    case "BOOLEAN":
                     case "STRING":
                         multiTypeValue.value = itemProperty.value;
                         for (let value of nonPublicInformation.value.value) {
@@ -1381,6 +1383,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             let multiTypeValue = new MultiTypeValue();
             multiTypeValue.valueQualifier = nonPublicInformationUI.value.valueQualifier;
             switch (multiTypeValue.valueQualifier){
+                case "BOOLEAN":
                 case "STRING":
                     for (let index of nonPublicInformationUI.indexes) {
                         multiTypeValue.value.push(new Text(nonPublicInformationUI.value.value[index].value,nonPublicInformationUI.value.value[index].languageID));
