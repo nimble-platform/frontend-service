@@ -1250,25 +1250,34 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
     onPropertyNonPublicClicked(property:ItemProperty, propertyValueIndex, checked:boolean){
         if(checked){
-            let multiTypeValue:MultiTypeValue = new MultiTypeValue();
-            multiTypeValue.valueQualifier = property.valueQualifier;
-            switch (property.valueQualifier){
-                case "BOOLEAN":
-                case "STRING":
-                    multiTypeValue.value = property.value;
-                    break;
-                case "QUANTITY":
-                    multiTypeValue.valueQuantity = property.valueQuantity;
-                    break;
-                case "NUMBER":
-                    multiTypeValue.valueDecimal = property.valueDecimal;
+            // check whether the property has any non-public values
+            let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.id);
+            // if yes, add the selected property index
+            if(nonPublicInformation){
+                nonPublicInformation.indexes.push(propertyValueIndex);
             }
-            let nonPublicInformationUI = new NonPublicInformationUi();
-            nonPublicInformationUI.id = property.id;
-            nonPublicInformationUI.value = multiTypeValue;
-            nonPublicInformationUI.indexes = [propertyValueIndex];
+            // otherwise, create a non-public information object for the property value
+            else{
+                let multiTypeValue:MultiTypeValue = new MultiTypeValue();
+                multiTypeValue.valueQualifier = property.valueQualifier;
+                switch (property.valueQualifier){
+                    case "BOOLEAN":
+                    case "STRING":
+                        multiTypeValue.value = property.value;
+                        break;
+                    case "QUANTITY":
+                        multiTypeValue.valueQuantity = property.valueQuantity;
+                        break;
+                    case "NUMBER":
+                        multiTypeValue.valueDecimal = property.valueDecimal;
+                }
+                let nonPublicInformationUI = new NonPublicInformationUi();
+                nonPublicInformationUI.id = property.id;
+                nonPublicInformationUI.value = multiTypeValue;
+                nonPublicInformationUI.indexes = [propertyValueIndex];
 
-            this.nonPublicInformationUIs.push(nonPublicInformationUI);
+                this.nonPublicInformationUIs.push(nonPublicInformationUI);
+            }
         } else{
             let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.id);
             nonPublicInformation.indexes.splice(nonPublicInformation.indexes.indexOf(propertyValueIndex),1);
