@@ -320,21 +320,38 @@ export class ProductWrapper {
 
     getPropertyWithNonPublicValues(itemProperty:ItemProperty){
         let property = copy(itemProperty);
+        // non public values of the property
+        let nonPublicValues:any[] = [];
+        // retrieve the non public information for the property
         const propertyIndex = this.nonPublicInformation.findIndex(nonPublicInformation => nonPublicInformation.id === itemProperty.id);
+        // retrieve the non-public values of property
         if(propertyIndex !== -1){
             const nonPublicInformation = this.nonPublicInformation[propertyIndex];
             switch (nonPublicInformation.value.valueQualifier){
                 case "BOOLEAN":
                 case "STRING":
-                    property.value = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) !== -1);
+                    nonPublicValues = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) !== -1);
                     break;
                 case "QUANTITY":
-                    property.valueQuantity = property.valueQuantity.filter(value => nonPublicInformation.value.valueQuantity.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.unitCode === nonPublicValue.unitCode) !== -1);
+                    nonPublicValues = property.valueQuantity.filter(value => nonPublicInformation.value.valueQuantity.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.unitCode === nonPublicValue.unitCode) !== -1);
                     break;
                 case "NUMBER":
-                    property.valueDecimal = property.valueDecimal.filter(value => nonPublicInformation.value.valueDecimal.indexOf(value) !== -1)
+                    nonPublicValues = property.valueDecimal.filter(value => nonPublicInformation.value.valueDecimal.indexOf(value) !== -1)
             }
         }
+        // set the non public values of properties
+        switch (itemProperty.valueQualifier){
+            case "BOOLEAN":
+            case "STRING":
+                property.value = nonPublicValues;
+                break;
+            case "QUANTITY":
+                property.valueQuantity = nonPublicValues;
+                break;
+            case "NUMBER":
+                property.valueDecimal = nonPublicValues;
+        }
+
         return property;
     }
 
