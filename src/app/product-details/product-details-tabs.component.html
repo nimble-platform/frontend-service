@@ -93,7 +93,7 @@
     <div *ngIf="selectedTab === 'DETAILS'" class="p-3 col-12">
         <ng-container *ngIf="isLoggedIn">
             <!-- The product/service does not have any details -->
-            <div *ngIf="wrapper.getPublicDimensions().length == 0 && wrapper.getPublicUniquePropertiesWithValue().length === 0 && wrapper.getAdditionalDocuments().length === 0">
+            <div *ngIf="wrapper.getDimensions(!productDetailsTabInProductPublishing).length == 0 && wrapper.getUniquePropertiesWithValue(!productDetailsTabInProductPublishing).length === 0 && wrapper.getAdditionalDocuments().length === 0">
                 <p class="p-1"><span
                         [innerHTML]="'This product / service does not seem to have any details.' | translate"></span>
                 </p>
@@ -102,21 +102,54 @@
             <div class="row p-1">
                 <!-- Properties including dimensions -->
                 <div class="col-6"
-                     *ngIf="wrapper.getPublicDimensions().length > 0 || wrapper.getPublicUniquePropertiesWithValue().length > 0">
+                     *ngIf="wrapper.getDimensions(!productDetailsTabInProductPublishing).length > 0 || wrapper.getUniquePropertiesWithValue(!productDetailsTabInProductPublishing).length > 0">
                     <h3><span [innerHTML]="'Properties' | translate"></span></h3>
 
                     <table class="table table-sm">
                         <tbody>
                         <!-- Dimensions -->
+
+                        <!-- Public Dimensions -->
                         <ng-container *ngIf="wrapper.getPublicDimensions().length > 0">
                             <tr *ngFor="let multiValuedDimension of wrapper.getPublicDimensionMultiValue()">
                                 <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
                                 <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>
                             </tr>
                         </ng-container>
+
+                        <!-- Non-Public Dimensions -->
+                        <ng-container *ngIf="productDetailsTabInProductPublishing && wrapper.getNonPublicDimensions().length > 0">
+                            <tr *ngFor="let multiValuedDimension of wrapper.getNonPublicDimensionMultiValue()" class="non-public-information">
+                                <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
+                                <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>
+                            </tr>
+                        </ng-container>
+
                         <!-- Properties -->
+
+                        <!-- Public Properties-->
                         <ng-container *ngIf=" wrapper.getPublicUniquePropertiesWithValue().length > 0">
                             <tr *ngFor="let property of wrapper.getPublicUniquePropertiesWithValue()">
+                                <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
+                                <td>
+                                        <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'">
+                                            {{ getPropertyValuesAsStrings(property).join(", ") }}
+                                        </span>
+                                    <span *ngIf="property.valueQualifier === 'BOOLEAN'">
+                                            <i class="fa boolean-type {{getPropertyValuesAsStrings(property)[0] == 'true' ? 'fa-check': 'fa-times'}}"
+                                               aria-hidden="true"></i>
+                                        </span>
+                                    <ng-container *ngIf="property.valueQualifier === 'FILE'">
+                                        <file-input presentationMode="view" [binaryObjects]="property.valueBinary"
+                                                    [multiple]="true" [small]="true"></file-input>
+                                    </ng-container>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <!-- Non-Public Properties-->
+                        <ng-container *ngIf="productDetailsTabInProductPublishing && wrapper.getNonPublicUniquePropertiesWithValue().length > 0">
+                            <tr *ngFor="let property of wrapper.getNonPublicUniquePropertiesWithValue()" class="non-public-information">
                                 <td><b>{{ getHumanReadablePropertyName(wrapper.getPropertyName(property)) }}: </b></td>
                                 <td>
                                         <span *ngIf="property.valueQualifier !== 'FILE' && property.valueQualifier !== 'BOOLEAN'">
@@ -164,33 +197,39 @@
             <div style="flex-grow:1;">
                 <h3 *ngIf="wrapper.getPricePerItem() != 'On demand' || wrapper.getFreeSample() != 'No'" class="p-1">
                     <span [innerHTML]="'Price' | translate"></span></h3>
-                <div *ngIf="wrapper.getPricePerItem() != 'On demand' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE) "
+                <div *ngIf="wrapper.getPricePerItem() != 'On demand' && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)) "
+                     [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.DEFAULT_PRICE)}"
                      class="p-1">
                     <b><span [innerHTML]="'Price:' | translate"></span>
                     </b> {{ wrapper.getPricePerItemAmountUI()|amountUiTranslatePipe }}
                 </div>
-                <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT) "
+                <div *ngIf="config.vatEnabled && wrapper.getVat() != '' && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.VAT)) "
+                     [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.VAT)}"
                      class="p-1">
                     <b><span [innerHTML]="'VAT:' | translate"></span></b> {{ wrapper.getVat() }}%
                 </div>
-                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY) "
+                <div *ngIf="wrapper.getMinimumOrderQuantityString() != 'Not specified' && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY)) "
+                     [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.MINIMUM_ORDER_QUANTITY)}"
                      class="p-1">
                     <b><span
                             [innerHTML]="'Minimum Order Quantity:' | translate"></span></b> {{ wrapper.getMinimumOrderQuantity()|quantityTranslatePipe }}
                 </div>
-                <div *ngIf="wrapper.getFreeSample() != 'No' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE) "
+                <div *ngIf="wrapper.getFreeSample() != 'No' && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.FREE_SAMPLE)) "
+                     [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.FREE_SAMPLE)}"
                      class="p-1">
                     <b><span [innerHTML]="'Free Sample:' | translate"></span></b>
                     <i class="fa boolean-type {{wrapper.getFreeSample() == 'Yes' ? 'fa-check': 'fa-times'}}"
                        aria-hidden="true"></i>
                 </div>
                 <ng-container
-                        *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)">
-                    <h3 class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
-                    <div class="p-1">
-                        <discount-details [catalogueLine]="wrapper.line"
-                                          [companyNegotiationSettings]="settings.negotiationSettings"
-                                          [readonly]="true"></discount-details>
+                        *ngIf="wrapper.line.priceOption && wrapper.line.priceOption.length > 0 && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES))">
+                    <div [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.DISCOUNT_CHARGES)}">
+                        <h3 class="p-1"><span [innerHTML]="'Discounts/Charges' | translate"></span></h3>
+                        <div class="p-1">
+                            <discount-details [catalogueLine]="wrapper.line"
+                                              [companyNegotiationSettings]="settings.negotiationSettings"
+                                              [readonly]="true"></discount-details>
+                        </div>
                     </div>
                 </ng-container>
             </div>
@@ -204,31 +243,34 @@
     <!-- Delivery & Trading Tab -->
     <div *ngIf="selectedTab === 'DELIVERY_TRADING'" class="p-3 col-12">
         <div class="d-flex" *ngIf="isLogistics === false">
-            <div *ngIf="wrapper.getIncoterms() != 'None' || wrapper.getWarrantyPeriodString() != 'Not specified' || wrapper.getSpecialTerms() != 'None' || wrapper.getDeliveryPeriodString() != 'None'"
+            <div *ngIf="wrapper.getIncoterms(productDetailsTabInProductPublishing) != 'None' || wrapper.getWarrantyPeriodString(productDetailsTabInProductPublishing) != 'Not specified' || wrapper.getSpecialTerms(productDetailsTabInProductPublishing) != 'None' || wrapper.getDeliveryPeriodString(productDetailsTabInProductPublishing) != 'None'"
+                 [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.INCOTERMS) && hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)
+                 && hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD) && hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)}"
                  class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Delivery Terms' | translate"></span></h3>
-                <div *ngIf="wrapper.getIncoterms() != 'None'"
+                <div *ngIf="wrapper.getIncoterms(productDetailsTabInProductPublishing) != 'None'" [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.INCOTERMS)}"
                      class="p-1">
                     <b><span
-                            [innerHTML]="'Incoterms:' | translate"></span></b> {{ wrapper.getIncoterms() | translate}}
+                            [innerHTML]="'Incoterms:' | translate"></span></b> {{ wrapper.getIncoterms(productDetailsTabInProductPublishing) | translate}}
                 </div>
-                <div *ngIf="wrapper.getSpecialTerms() != 'None'"
+                <div *ngIf="wrapper.getSpecialTerms(productDetailsTabInProductPublishing) != 'None'" [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)}"
                      class="p-1">
                     <b><span
-                            [innerHTML]="'Special Terms:' | translate"></span></b> {{ wrapper.getSpecialTerms() }}
+                            [innerHTML]="'Special Terms:' | translate"></span></b> {{ wrapper.getSpecialTerms(productDetailsTabInProductPublishing) }}
                 </div>
-                <div *ngIf="wrapper.getWarrantyPeriodString() != 'Not specified'"
+                <div *ngIf="wrapper.getWarrantyPeriodString(productDetailsTabInProductPublishing) != 'Not specified'" [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)}"
                      class="p-1">
                     <b><span
                             [innerHTML]="'Warranty Period:' | translate"></span></b> {{ wrapper.getWarrantyPeriod() | quantityTranslatePipe}}
                 </div>
-                <div *ngIf="wrapper.getDeliveryPeriodString() != 'None'"
+                <div *ngIf="wrapper.getDeliveryPeriodString(productDetailsTabInProductPublishing) != 'None'" [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)}"
                      class="p-1">
                     <b><span
                             [innerHTML]="'Delivery Period:' | translate"></span></b> {{ wrapper.getDeliveryPeriod() | quantityTranslatePipe}}
                 </div>
             </div>
-            <div *ngIf="wrapper.getPackaging() != 'Not specified' && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)"
+            <div *ngIf="wrapper.getPackaging() != 'Not specified' && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE))"
+                 [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.PACKAGING_TYPE) && hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE)}"
                  class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Packaging' | translate"></span></h3>
                 <div class="p-1">
@@ -236,7 +278,7 @@
                     </b> {{ wrapper.getPackagingAmountUI()|amountUiTranslatePipe }}
                 </div>
             </div>
-            <div *ngIf="wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE) " class="flex-item">
+            <div *ngIf="productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE) " class="flex-item"  [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.CUSTOMIZABLE)}">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Customization' | translate"></span></h3>
                 <div class="p-1">
                     <b><span [innerHTML]="'Customizable' | translate"></span>: </b>
@@ -244,7 +286,8 @@
                        aria-hidden="true"></i>
                 </div>
             </div>
-            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPARE_PART) "
+            <div *ngIf="product_filter_prod.indexOf('sparePart') != -1 && (productDetailsTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.SPARE_PART)) "
+                 [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.SPARE_PART)}"
                  class="flex-item">
                 <h3 class="pt-2 p-1"><span [innerHTML]="'Spare Part' | translate"></span></h3>
                 <div class="p-1">
@@ -256,7 +299,7 @@
 
     <!-- Certificates Tab -->
     <div *ngIf="selectedTab === 'CERTIFICATES'" class="p-3 col-12">
-        <product-details-certificates (certificateStatus)="getCertificateStatusTab($event)" [wrapper]="wrapper"
+        <product-details-certificates (certificateStatus)="getCertificateStatusTab($event)" [wrapper]="wrapper" [certificatesTabInProductPublishing]="productDetailsTabInProductPublishing"
                                       [settings]="settings">
         </product-details-certificates>
     </div>

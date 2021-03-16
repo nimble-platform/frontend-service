@@ -30,6 +30,7 @@ export class ProductDetailsCertificatesComponent implements OnInit {
 
     @Input() wrapper: ProductWrapper;
     @Input() settings: CompanySettings;
+    @Input() certificatesTabInProductPublishing:boolean = false;
     @Output() certificateStatus = new EventEmitter<boolean>();
 
     NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
@@ -61,5 +62,12 @@ export class ProductDetailsCertificatesComponent implements OnInit {
                 this.productArbitraryCertificates.push(cert);
             }
         });
+    }
+
+    hasNonPublicInformationClass(fieldId: string){
+        if(this.certificatesTabInProductPublishing){
+            return !this.wrapper.isPublicInformation(fieldId);
+        }
+        return false;
     }
 }

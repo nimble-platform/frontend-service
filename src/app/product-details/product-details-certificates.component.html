@@ -17,13 +17,17 @@
 <div class="p-1">
     <!-- Product / Service Certificates -->
     <ng-container *ngIf="wrapper.line.goodsItem.item.certificate.length !== 0">
-        <h3>{{'Product Certificates' | translate}}</h3>
-        <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)"
-                          tableName="Circular Economy (Environment / Sustainability)"
-                          [certificates]="productCircularEconomyCertificates"></certificate-view>
-        <certificate-view *ngIf="productArbitraryCertificates.length !== 0 && wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)"
-                          [tableName]="productCircularEconomyCertificates.length !==0 ? 'Other Certificates':null "
-                          [certificates]="productArbitraryCertificates"></certificate-view>
+        <h3 [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES) && hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)}">{{'Product Certificates' | translate}}</h3>
+        <div [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)}">
+            <certificate-view *ngIf="productCircularEconomyCertificates.length !== 0 && (certificatesTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES))"
+                              tableName="Circular Economy (Environment / Sustainability)"
+                              [certificates]="productCircularEconomyCertificates"></certificate-view>
+        </div>
+        <div [ngClass]="{'non-public-information':hasNonPublicInformationClass(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)}">
+            <certificate-view *ngIf="productArbitraryCertificates.length !== 0 && (certificatesTabInProductPublishing || wrapper.isPublicInformation(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES))"
+                              [tableName]="productCircularEconomyCertificates.length !==0 ? 'Other Certificates':null "
+                              [certificates]="productArbitraryCertificates"></certificate-view>
+        </div>
     </ng-container>
     <!-- Company Certificates -->
     <ng-container *ngIf="settings.certificates.length !== 0">

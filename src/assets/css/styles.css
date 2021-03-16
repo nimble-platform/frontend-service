@@ -755,3 +755,23 @@ ngb-pagination .page-item.active .page-link {
 .bold-text strong{
     font-weight: bold;
 }
+
+/*style for non-public information*/
+.non-public-information {
+    color: darkgrey !important;
+}
+
+.non-public-information > b {
+    font-weight: normal;
+}
+
+.non-public-information i.boolean-type.fa-check{
+    color: darkgrey !important;
+}
+.non-public-information i.boolean-type.fa-times{
+    color: darkgrey !important;
+}
+
+.non-public-information .btn-link {
+    color: darkgrey !important;
+}

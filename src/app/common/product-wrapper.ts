@@ -78,9 +78,23 @@ export class ProductWrapper {
 
     }
 
+    getUniquePropertiesWithValue(onlyPublicDimensions:boolean = true): ItemProperty[] {
+        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
+        if(onlyPublicDimensions){
+            itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 0);
+        }
+        return itemProperties;
+    }
+
     getPublicUniquePropertiesWithValue(): ItemProperty[] {
         let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
         itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 0);
+        return itemProperties;
+    }
+
+    getNonPublicUniquePropertiesWithValue(): ItemProperty[] {
+        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
+        itemProperties = itemProperties.map(value => this.getPropertyWithNonPublicValues(value)).filter(prop => getPropertyValues(prop).length > 0);
         return itemProperties;
     }
 
@@ -88,7 +102,23 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getPublicDimensions(): Dimension[] {
+    getDimensions(onlyPublicDimensions:boolean = true): Dimension[] {
+        if (!this.item) {
+            return [];
+        }
+        const ret = [];
+        this.item.dimension.forEach(prop => {
+            if (prop.attributeID && prop.measure.value) {
+                ret.push(prop);
+            }
+        })
+        if(onlyPublicDimensions){
+            return this.removeNonPublicDimensions(ret);
+        }
+        return ret;
+    }
+
+    getPublicDimensions(){
         if (!this.item) {
             return [];
         }
@@ -99,6 +129,39 @@ export class ProductWrapper {
             }
         })
         return this.removeNonPublicDimensions(ret);
+    }
+
+    getNonPublicDimensions(){
+        if (!this.item) {
+            return [];
+        }
+        const dimensions = [];
+        this.item.dimension.forEach(prop => {
+            if (prop.attributeID && prop.measure.value) {
+                dimensions.push(prop);
+            }
+        })
+
+        let nonPublicDimensions = [];
+
+        for (let dimension of dimensions) {
+            const nonPublicDimensionList = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
+            // the dimension type has some non-public values
+            if(nonPublicDimensionList.length > 0){
+                let isNonPublicDimensionValue = false;
+                for (let nonPublicDimension of nonPublicDimensionList) {
+                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
+                        isNonPublicDimensionValue = true;
+                        break;
+                    }
+                }
+                if(isNonPublicDimensionValue){
+                    nonPublicDimensions.push(dimension);
+                }
+            }
+        }
+
+        return nonPublicDimensions;
     }
 
     removeNonPublicDimensions(dimensions:Dimension[]){
@@ -140,6 +203,37 @@ export class ProductWrapper {
         }
 
         let publicDimensions = this.removeNonPublicDimensions(this.item.dimension);
+
+        for (let dimension of publicDimensions) {
+            if (!dimension.measure.value) {
+                continue;
+            }
+            let found: boolean = false;
+            for (let multiValuedDimension of multiValuedDimensions) {
+                if (multiValuedDimension.attributeID == dimension.attributeID) {
+                    multiValuedDimension.measure.push(dimension.measure);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID, [dimension.measure]));
+            }
+        }
+        return multiValuedDimensions;
+    }
+
+    // it creates MultiValuedDimensions using the item's dimensions
+    // if the item has no dimensions, then it creates them using the given list of dimension units.
+    getNonPublicDimensionMultiValue(dimensions: string[] = []): MultiValuedDimension[] {
+        let multiValuedDimensions: MultiValuedDimension[] = [];
+        // add the missing dimensions
+        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
+        if (missingDimensions.length > 0) {
+            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
+        }
+
+        let publicDimensions = this.getNonPublicDimensions();
 
         for (let dimension of publicDimensions) {
             if (!dimension.measure.value) {
@@ -224,6 +318,26 @@ export class ProductWrapper {
         return property;
     }
 
+    getPropertyWithNonPublicValues(itemProperty:ItemProperty){
+        let property = copy(itemProperty);
+        const propertyIndex = this.nonPublicInformation.findIndex(nonPublicInformation => nonPublicInformation.id === itemProperty.id);
+        if(propertyIndex !== -1){
+            const nonPublicInformation = this.nonPublicInformation[propertyIndex];
+            switch (nonPublicInformation.value.valueQualifier){
+                case "BOOLEAN":
+                case "STRING":
+                    property.value = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) !== -1);
+                    break;
+                case "QUANTITY":
+                    property.valueQuantity = property.valueQuantity.filter(value => nonPublicInformation.value.valueQuantity.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.unitCode === nonPublicValue.unitCode) !== -1);
+                    break;
+                case "NUMBER":
+                    property.valueDecimal = property.valueDecimal.filter(value => nonPublicInformation.value.valueDecimal.indexOf(value) !== -1)
+            }
+        }
+        return property;
+    }
+
     addDimension(attributeId: string) {
         let dimension: Dimension = new Dimension(attributeId);
         this.item.dimension.push(dimension);
@@ -258,8 +372,8 @@ export class ProductWrapper {
         return amountUI;
     }
 
-    getSpecialTerms(): string {
-        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)){
+    getSpecialTerms(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)){
             return 'None';
         }
         return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : 'None';
@@ -269,9 +383,9 @@ export class ProductWrapper {
         return this.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }
 
-    getDeliveryPeriodString(): string {
-        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)){
-            return 'Not specified';
+    getDeliveryPeriodString(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)){
+            return 'None';
         }
         return periodToString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
     }
@@ -280,16 +394,16 @@ export class ProductWrapper {
         return this.line.warrantyValidityPeriod.durationMeasure;
     }
 
-    getWarrantyPeriodString(): string {
-        if (!this.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD) || !this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
+    getWarrantyPeriodString(displayNonPublicInformation:boolean = false): string {
+        if ((!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)) || !this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
             return 'Not specified';
         }
 
         return `${this.line.warrantyValidityPeriod.durationMeasure.value} ${this.line.warrantyValidityPeriod.durationMeasure.unitCode}`;
     }
 
-    getIncoterms(): string {
-        if(!this.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)){
+    getIncoterms(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)){
             return 'None';
         }
         return this.goodsItem.deliveryTerms.incoterms || 'None';

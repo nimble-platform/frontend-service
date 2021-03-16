@@ -94,12 +94,15 @@ export class ProductDetailsTabsComponent implements OnInit {
         this.isLogistics = this.wrapper.getLogisticsStatus();
         this.isTransportService = this.wrapper.isTransportService();
         this.isLoggedIn = !!this.cookieService.get('user_id');
-        if (this.wrapper.getPublicDimensions().length == 0 && this.wrapper.getPublicUniquePropertiesWithValue().length == 0 && this.wrapper.getAdditionalDocuments().length == 0) {
+        if (this.wrapper.getDimensions(!this.productDetailsTabInProductPublishing).length == 0 && this.wrapper.getUniquePropertiesWithValue(!this.productDetailsTabInProductPublishing).length == 0
+            && this.wrapper.getAdditionalDocuments().length == 0) {
             this.haveDetails = false;
             this.selectedTab = this.getFirstTab();
         }
         if (!this.isLogistics) {
-            if (this.wrapper.getIncoterms() == 'None' && this.wrapper.getSpecialTerms() == 'None' && this.wrapper.getWarrantyPeriodString() == 'Not specified' && this.wrapper.getDeliveryPeriodString() == 'None' && this.wrapper.getPackaging() == 'Not specified') {
+            if (this.wrapper.getIncoterms(this.productDetailsTabInProductPublishing) == 'None' && this.wrapper.getSpecialTerms(this.productDetailsTabInProductPublishing) == 'None'
+                && this.wrapper.getWarrantyPeriodString(this.productDetailsTabInProductPublishing) == 'Not specified' && this.wrapper.getDeliveryPeriodString(this.productDetailsTabInProductPublishing) == 'None'
+                && this.wrapper.getPackaging() == 'Not specified') {
                 this.haveTransportServiceDetails = false;
                 this.selectedTab = this.getFirstTab();
             }
@@ -222,5 +225,12 @@ export class ProductDetailsTabsComponent implements OnInit {
                 return 'COMPANY';
             }
         }
+    }
+
+    hasNonPublicInformationClass(fieldId: string){
+        if(this.productDetailsTabInProductPublishing){
+            return !this.wrapper.isPublicInformation(fieldId);
+        }
+        return false;
     }
 }
