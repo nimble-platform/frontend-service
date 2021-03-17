@@ -13,10 +13,12 @@
  */
 
 import { Clause } from './clause';
+import {DocumentReference} from './document-reference';
 
 export class TradingPreferences {
     constructor(
-        public termOrCondition: Clause[] = []
+        public termOrCondition: Clause[] = [],
+        public documentReference: DocumentReference[] = []
     ) { }
 
 }

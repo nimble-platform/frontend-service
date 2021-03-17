@@ -267,6 +267,7 @@ export class CompanyRegistrationComponent implements OnInit {
                 null,
                 null,
                 null,
+                null,
                 null
             )
         );

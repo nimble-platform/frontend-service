@@ -21,6 +21,7 @@ import { CompanyDetails } from './company-details';
 import { CompanyTradeDetails } from './company-trade-details';
 import { CompanyNegotiationSettings } from './company-negotiation-settings';
 import {Code} from '../../catalogue/model/publish/code';
+import {DocumentReference} from '../../catalogue/model/publish/document-reference';
 
 export class CompanySettings {
     constructor(
@@ -33,7 +34,8 @@ export class CompanySettings {
         public tradeDetails: CompanyTradeDetails,
         public negotiationSettings: CompanyNegotiationSettings,
         public subscribedCompanyIds: string[],
-        public subscribedProductCategories: Code[]
+        public subscribedProductCategories: Code[],
+        public termsAndConditions: DocumentReference[]
     ) {
     }
 }

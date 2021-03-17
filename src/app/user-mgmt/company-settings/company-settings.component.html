@@ -125,7 +125,7 @@
 
     <!-- Terms and Conditions -->
     <div *ngIf="settings && selectedTab == 'TERMS_AND_CONDITIONS'">
-        <company-terms-and-conditions [settings]="settings">
+        <company-terms-and-conditions [settings]="settings" (onSaveEvent)="onSettingsUpdated()">
         </company-terms-and-conditions>
     </div>
 

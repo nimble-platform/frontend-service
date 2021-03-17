@@ -116,6 +116,7 @@ export const config = {
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,
+    "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": true,

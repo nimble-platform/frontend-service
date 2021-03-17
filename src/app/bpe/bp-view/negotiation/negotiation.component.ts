@@ -31,6 +31,8 @@ import {Quantity} from '../../../catalogue/model/publish/quantity';
 import {FEDERATIONID} from '../../../catalogue/model/constants';
 import {copy} from '../../../common/utils';
 import {ContractService} from '../contract-service';
+import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../../common/constants';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 @Component({
     selector: 'negotiation',
@@ -207,6 +209,15 @@ export class NegotiationComponent implements OnInit, OnDestroy {
                     this.primaryTermsSource[primaryTermsSourceIndex] = 'frame_contract';
                 }
             }
+        }
+
+        // set the company terms and conditions for rfq using the frame contract
+        if(this.frameContractQuotations.length && this.frameContractQuotations[0].additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).length){
+            this.rfq.additionalDocumentReference = this.rfq.additionalDocumentReference.filter(value => value.documentType !== COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE)
+
+            let documentReferences:DocumentReference[] = this.frameContractQuotations[0].additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+            UBLModelUtils.removeHjidFieldsFromObject(copy(documentReferences));
+            this.rfq.additionalDocumentReference.push(...documentReferences);
         }
 
         this.frameContractAndTermsCallStatus.callback(null, true);

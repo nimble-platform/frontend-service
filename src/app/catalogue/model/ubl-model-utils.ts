@@ -79,6 +79,7 @@ import { Address as UserMgmtAddress } from '../../user-mgmt/model/address';
 import { OrderLineReference } from './publish/order-line-reference';
 import { Catalogue } from './publish/catalogue';
 import {config} from '../../globals';
+import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../common/constants';
 
 export class UBLModelUtils {
 
@@ -240,13 +241,13 @@ export class UBLModelUtils {
         }
     }
 
-    public static createOrder(lineItems: LineItem[]): Order {
+    public static createOrder(lineItems: LineItem[],documentReferences:DocumentReference[] = []): Order {
         let orderLines: OrderLine[] = [];
         for (let lineItem of lineItems) {
             orderLines.push(new OrderLine(lineItem));
         }
 
-        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), orderLines);
+        return new Order(this.generateUUID(), [''], new Period(), new Address(), null, null, null, new MonetaryTotal(), orderLines,documentReferences);
     }
 
     public static createOrderWithRfqCopy(rfq: RequestForQuotation): Order {
@@ -254,7 +255,8 @@ export class UBLModelUtils {
         for (let rfqLine of rfq.requestForQuotationLine) {
             lineItems.push(rfqLine.lineItem);
         }
-        let order = UBLModelUtils.createOrder(lineItems);
+        let documentReferences:DocumentReference[] = rfq.additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+        let order = UBLModelUtils.createOrder(lineItems,documentReferences);
 
         // create contracts for Terms and Conditions
         let contracts = [];
@@ -278,7 +280,8 @@ export class UBLModelUtils {
         const orderReference: OrderReference = this.createOrderReference(copyOrder.id);
         const customerParty: CustomerParty = copyOrder.buyerCustomerParty;
         const supplierParty: SupplierParty = copyOrder.sellerSupplierParty;
-        const orderResponseSimple: OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), [''], "", acceptedIndicator, orderReference, supplierParty, customerParty);
+        let documentReferences:DocumentReference[] = copyOrder.additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+        const orderResponseSimple: OrderResponseSimple = new OrderResponseSimple(this.generateUUID(), [''], "", acceptedIndicator, orderReference, supplierParty, customerParty,documentReferences);
 
         this.removeHjidFieldsFromObject(orderResponseSimple);
         return orderResponseSimple;
@@ -450,8 +453,9 @@ export class UBLModelUtils {
 
         const documentReference: DocumentReference = new DocumentReference(rfq.id);
 
+        let documentReferences:DocumentReference[] = rfq.additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
         const quotation = new Quotation(this.generateUUID(), [""], new Code(), new Code(), 1, documentReference,
-            customerParty, supplierParty, quotationLines);
+            customerParty, supplierParty, quotationLines,documentReferences);
 
         this.removeHjidFieldsFromObject(quotation);
         return quotation;
@@ -1063,9 +1067,13 @@ export class UBLModelUtils {
     }
 
     public static areNotesOrFilesAttachedToDocument(document: RequestForQuotation | Quotation) {
-        // consider the documents which has a embedded binary objects
+        // consider the documents which has a embedded binary objects and are not the company terms and conditions
         // the others are just references to previous documents
-        let files = document.additionalDocumentReference.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        let files = document.additionalDocumentReference.filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         return (document.note.length == 1 && document.note[0] != "") || document.note.length > 1 || files.length > 0;
+    }
+
+    public static getCompanyTermsAndConditionFiles(documentReferences:DocumentReference[]):DocumentReference[]{
+        return documentReferences.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
     }
 }

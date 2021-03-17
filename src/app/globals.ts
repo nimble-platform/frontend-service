@@ -112,6 +112,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - docLink: Link to the documentation resources
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - enableSubscriptions: Boolean flag if the subscription functionality is enabled or not
+- enableTermsAndConditionsAsFile: Boolean flag if the users are allowed to upload files as company terms and conditions
 - enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
@@ -234,6 +235,7 @@ export const config = {
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,
+    "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": false,

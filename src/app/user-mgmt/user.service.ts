@@ -40,6 +40,7 @@ import { copy } from '../common/utils';
 import {PeriodRange} from './model/period-range';
 import {AccountLink} from './model/account-link';
 import {Code} from '../catalogue/model/publish/code';
+import {DocumentReference} from '../catalogue/model/publish/document-reference';
 
 @Injectable()
 export class UserService {
@@ -650,6 +651,46 @@ export class UserService {
                     this.mapOfUsers.get(delegateId).delete(userId);
                 }
             })
+            .catch(this.handleError)
+    }
+
+    saveTermsAndConditions(file: File, partyId: string, certID?: string): Promise<void> {
+        const url = `${this.url}/company-settings/${partyId}/termsAndConditions?id=${certID}`;
+        const token = 'Bearer ' + this.cookieService.get("bearer_token");
+        const headers_token = new Headers({ 'Authorization': token });
+        const form_data: FormData = new FormData();
+        form_data.append('file', file);
+        return this.http
+            .post(url, form_data, { headers: headers_token, withCredentials: true })
+            .toPromise()
+            .then(() => { })
+            .catch(this.handleError)
+    }
+
+    downloadTermsAndConditions(id: string) {
+        const url = `${this.url}/company-settings/termsAndConditions/${id}`;
+        window.open(url, "_blank");
+    }
+
+    downloadTermsAndConditionsObject(id: string): Promise<DocumentReference> {
+        const url = `${this.url}/company-settings/termsAndConditions/${id}/object`;
+        let headers = this.getAuthorizedHeaders();
+        return this.http
+            .get(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(res => {
+                return res.json();
+            })
+            .catch(this.handleError);
+    }
+
+    deleteTermsAndConditions(id: string, partyId: string): Promise<void> {
+        const url = `${this.url}/company-settings/${partyId}/termsAndConditions/${id}`;
+        let headers = this.getAuthorizedHeaders();
+        return this.http
+            .delete(url, { headers: headers, withCredentials: true })
+            .toPromise()
+            .then(() => { })
             .catch(this.handleError)
     }
 

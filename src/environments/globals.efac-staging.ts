@@ -118,6 +118,7 @@ export const config = {
     "enableOtherFiltersSearch": true,
     "enableStripePayment": true,
     "enableSubscriptions": true,
+    "enableTermsAndConditionsAsFile": true,
     "faviconPath": "./assets/favicon.ico",
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,

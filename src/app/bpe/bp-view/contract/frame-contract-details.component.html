@@ -80,8 +80,13 @@
         </div>
     </ng-container>
 
-    <terms-and-conditions *ngIf="shownTab == 'TERMS_AND_CONDITIONS'" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
-    </terms-and-conditions>
+    <ng-container *ngIf="shownTab == 'TERMS_AND_CONDITIONS'">
+        <terms-and-conditions *ngIf="!getCompanyTermsAndConditionFiles(quotationWrapper.quotation.additionalDocumentReference).length" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [termsAndConditions]="quotationWrapper.quotation.quotationLine[quotationWrapper.quotationLineIndex].lineItem.clause">
+        </terms-and-conditions>
+        <company-terms-and-conditions-file-input *ngIf="getCompanyTermsAndConditionFiles(quotationWrapper.quotation.additionalDocumentReference).length" [termsAndConditions]="getCompanyTermsAndConditionFiles(quotationWrapper.quotation.additionalDocumentReference)">
+
+        </company-terms-and-conditions-file-input>
+    </ng-container>
 
     <note-file-view *ngIf="shownTab == 'NOTES_AND_ADDITIONAL_FILES'" [notes]="quotationWrapper.quotation.note" [documents]="quotationWrapper.quotation.additionalDocumentReference" [label]="'Notes'|translate" [firstCol]="'col-2'" [lastCol]="'col-10'" [readonly]="true">
     </note-file-view>
