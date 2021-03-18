@@ -197,6 +197,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [],
     "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
     "showChat": false,

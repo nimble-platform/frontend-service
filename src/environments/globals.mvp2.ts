@@ -192,6 +192,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [
         {
             "title": "End-User License Agreement (EULA)",

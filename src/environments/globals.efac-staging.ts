@@ -288,6 +288,7 @@ export const config = {
     "productOfferingEnabled":true,
     "vatEnabled": false,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": true,
     "requiredAgreements": [
         {
             "title": "Privacy Policy",

@@ -847,6 +847,7 @@
   "Legal assessment": "Evaluación jurídica",
   "Legal Representative": "Representante legal",
   "Legal Representative Row": "<tr><td>Representante legal</td><td>Representante de la empresa en la plataforma. Por lo general, una sola persona. Tiene todos los derechos sobre la información de su empresa en la plataforma {{platformName}}. Puede configurar y modificar los datos y detalles de la empresa. Invita y gestiona los diferentes roles de los usuarios de la empresa. No recibe avisos ni correos sobre colaboraciones comerciales. Para ello debería tener además otro rol.</td></tr>",
+  "Legal Representative Row As Company Admin": "<tr><td>Administrador de la Empresa</td><td>Por lo general, una sola persona. Tiene todos los derechos sobre la información de su empresa en la plataforma {{platformName}}. Puede configurar y modificar los datos y detalles de la empresa. Invita y gestiona los diferentes roles de los usuarios de la empresa. No recibe avisos ni correos sobre colaboraciones comerciales. Para ello debería tener además otro rol.</td></tr>",
   "Legal Services": "Servicios Jurídicos",
   "legal_representative": "Representante legal",
   "Legislation": "Legislación",

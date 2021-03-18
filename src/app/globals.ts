@@ -144,6 +144,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - productOfferingEnabled: Boolean flag if the product offering functionality is enabled
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
+- replaceLegalRepresentativeWithCompanyAdmin: Boolean flag if the legal representative role is renamed to company admin.
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
 	* title: Title to be displayed on the UI
 	* src: Link to the agreement document
@@ -352,6 +353,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [
         {
             "title": "End-User License Agreement (EULA)",
