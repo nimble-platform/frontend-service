@@ -110,7 +110,7 @@
                         <!-- Dimensions -->
 
                         <!-- Public Dimensions -->
-                        <ng-container *ngIf="wrapper.getPublicDimensions().length > 0">
+                        <ng-container *ngIf="wrapper.getDimensions(true).length > 0">
                             <tr *ngFor="let multiValuedDimension of wrapper.getPublicDimensionMultiValue()">
                                 <td><b>{{ multiValuedDimension.attributeID | translate }}: </b></td>
                                 <td>{{getMultiValuedDimensionAsString(multiValuedDimension.measure)}}</td>

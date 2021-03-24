@@ -102,6 +102,7 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
+    // methods to handle product dimensions
     getDimensions(onlyPublicDimensions:boolean = true): Dimension[] {
         if (!this.item) {
             return [];
@@ -116,19 +117,6 @@ export class ProductWrapper {
             return this.removeNonPublicDimensions(ret);
         }
         return ret;
-    }
-
-    getPublicDimensions(){
-        if (!this.item) {
-            return [];
-        }
-        const ret = [];
-        this.item.dimension.forEach(prop => {
-            if (prop.attributeID && prop.measure.value) {
-                ret.push(prop);
-            }
-        })
-        return this.removeNonPublicDimensions(ret);
     }
 
     getNonPublicDimensions(){
@@ -281,6 +269,7 @@ export class ProductWrapper {
         }
         return multiValuedDimensions;
     }
+    // the end of methods to handle product dimensions
 
     addNonPublicInformation(nonPublicInformation:NonPublicInformation){
         this.nonPublicInformation.push(nonPublicInformation)
