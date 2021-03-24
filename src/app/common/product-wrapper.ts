@@ -183,75 +183,40 @@ export class ProductWrapper {
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getPublicDimensionMultiValue(dimensions: string[] = []): MultiValuedDimension[] {
-        let multiValuedDimensions: MultiValuedDimension[] = [];
         // add the missing dimensions
-        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
-        if (missingDimensions.length > 0) {
-            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
-        }
+        this.addMissingItemDimensions(dimensions);
 
         let publicDimensions = this.removeNonPublicDimensions(this.item.dimension);
-
-        for (let dimension of publicDimensions) {
-            if (!dimension.measure.value) {
-                continue;
-            }
-            let found: boolean = false;
-            for (let multiValuedDimension of multiValuedDimensions) {
-                if (multiValuedDimension.attributeID == dimension.attributeID) {
-                    multiValuedDimension.measure.push(dimension.measure);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID, [dimension.measure]));
-            }
-        }
-        return multiValuedDimensions;
+        return this.createMultiValuedDimensions(false,publicDimensions);
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getNonPublicDimensionMultiValue(dimensions: string[] = []): MultiValuedDimension[] {
-        let multiValuedDimensions: MultiValuedDimension[] = [];
         // add the missing dimensions
-        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
-        if (missingDimensions.length > 0) {
-            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
-        }
+        this.addMissingItemDimensions(dimensions);
 
-        let publicDimensions = this.getNonPublicDimensions();
-
-        for (let dimension of publicDimensions) {
-            if (!dimension.measure.value) {
-                continue;
-            }
-            let found: boolean = false;
-            for (let multiValuedDimension of multiValuedDimensions) {
-                if (multiValuedDimension.attributeID == dimension.attributeID) {
-                    multiValuedDimension.measure.push(dimension.measure);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID, [dimension.measure]));
-            }
-        }
-        return multiValuedDimensions;
+        let nonPublicDimensions = this.getNonPublicDimensions();
+        return this.createMultiValuedDimensions(false,nonPublicDimensions);
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getDimensionMultiValue(includeDimensionsWithNullValues: boolean = true, dimensions: string[] = []): MultiValuedDimension[] {
-        let multiValuedDimensions: MultiValuedDimension[] = [];
         // add the missing dimensions
-        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
-        if (missingDimensions.length > 0) {
-            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
-        }
-        for (let dimension of this.item.dimension) {
+        this.addMissingItemDimensions(dimensions);
+        return this.createMultiValuedDimensions(includeDimensionsWithNullValues,this.item.dimension);
+    }
+
+    /**
+     * Converts the given list of {@link Dimension}s to the list of {@link MultiValuedDimension}s.
+     * @param includeDimensionsWithNullValues whether the dimensions with null values are included in the response or not
+     * @param dimensions the list of {@link Dimension}s
+     * @return the list of {@link MultiValuedDimension}s.
+     * */
+    private createMultiValuedDimensions(includeDimensionsWithNullValues:boolean = true, dimensions:Dimension[]){
+        let multiValuedDimensions: MultiValuedDimension[] = [];
+        for (let dimension of dimensions) {
             if (!includeDimensionsWithNullValues && !dimension.measure.value) {
                 continue;
             }
@@ -268,6 +233,18 @@ export class ProductWrapper {
             }
         }
         return multiValuedDimensions;
+    }
+
+    /**
+     * Creates the missing item dimensions based on the given list of dimensions.
+     * @param dimensions the list of available dimensions
+     * */
+    private addMissingItemDimensions(dimensions: string[]){
+        // add the missing dimensions
+        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
+        if (missingDimensions.length > 0) {
+            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
+        }
     }
     // the end of methods to handle product dimensions
 
