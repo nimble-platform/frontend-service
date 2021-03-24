@@ -71,13 +71,6 @@ export class ProductWrapper {
         return this.line.nonPublicInformation;
     }
 
-    getPublicPropertiesWithListOfValues(): ItemProperty[] {
-        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 1);
-        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 1);
-        return itemProperties;
-
-    }
-
     getUniquePropertiesWithValue(onlyPublicDimensions:boolean = true): ItemProperty[] {
         let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
         if(onlyPublicDimensions){
@@ -86,9 +79,14 @@ export class ProductWrapper {
         return itemProperties;
     }
 
-    getPublicUniquePropertiesWithValue(): ItemProperty[] {
-        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
-        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 0);
+    /**
+     * Finds the public unique properties having the values more than the specified number.
+     * @param count the number of property values
+     * @return the public unique item properties having the values more than the specified number.
+     * */
+    getPublicUniquePropertiesWithValue(count:number = 0): ItemProperty[] {
+        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > count);
+        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > count);
         return itemProperties;
     }
 
