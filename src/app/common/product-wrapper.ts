@@ -114,7 +114,7 @@ export class ProductWrapper {
             }
         })
         if(onlyPublicDimensions){
-            return this.removeNonPublicDimensions(ret);
+            return this.filterDimensions(ret,true);
         }
         return ret;
     }
@@ -130,54 +130,7 @@ export class ProductWrapper {
             }
         })
 
-        let nonPublicDimensions = [];
-
-        for (let dimension of dimensions) {
-            const nonPublicDimensionList = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
-            // the dimension type has some non-public values
-            if(nonPublicDimensionList.length > 0){
-                let isNonPublicDimensionValue = false;
-                for (let nonPublicDimension of nonPublicDimensionList) {
-                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
-                        isNonPublicDimensionValue = true;
-                        break;
-                    }
-                }
-                if(isNonPublicDimensionValue){
-                    nonPublicDimensions.push(dimension);
-                }
-            }
-        }
-
-        return nonPublicDimensions;
-    }
-
-    removeNonPublicDimensions(dimensions:Dimension[]){
-
-        let publicDimensions = [];
-
-        for (let dimension of dimensions) {
-            const nonPublicDimensions = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
-            // the dimension type has some non-public values
-            if(nonPublicDimensions.length > 0){
-                let isNonPublicDimensionValue = false;
-                for (let nonPublicDimension of nonPublicDimensions) {
-                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
-                        isNonPublicDimensionValue = true;
-                        break;
-                    }
-                }
-                if(!isNonPublicDimensionValue){
-                    publicDimensions.push(dimension);
-                }
-            }
-            // the dimension type is public
-            else{
-                publicDimensions.push(dimension);
-            }
-        }
-
-        return publicDimensions;
+        return this.filterDimensions(dimensions,false);
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
@@ -186,7 +139,7 @@ export class ProductWrapper {
         // add the missing dimensions
         this.addMissingItemDimensions(dimensions);
 
-        let publicDimensions = this.removeNonPublicDimensions(this.item.dimension);
+        let publicDimensions = this.filterDimensions(this.item.dimension,true);
         return this.createMultiValuedDimensions(false,publicDimensions);
     }
 
@@ -206,6 +159,46 @@ export class ProductWrapper {
         // add the missing dimensions
         this.addMissingItemDimensions(dimensions);
         return this.createMultiValuedDimensions(includeDimensionsWithNullValues,this.item.dimension);
+    }
+
+    /**
+     * Filters the given dimensions based on the {@param isPublic} parameter.
+     * @param dimensions the list of dimensions
+     * @param isPublic whether the public or non-public dimensions are filtered
+     * @return the public dimensions if {@param isPublic} is true, otherwise, return non-public dimensions
+     * */
+    private filterDimensions(dimensions: Dimension[], isPublic:boolean){
+        let publicDimensions = [];
+        let nonPublicDimensions = [];
+
+        for (let dimension of dimensions) {
+            const nonPublicDimensionList = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
+            // the dimension type has some non-public values
+            if(nonPublicDimensionList.length > 0){
+                let isNonPublicDimensionValue = false;
+                for (let nonPublicDimension of nonPublicDimensionList) {
+                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
+                        isNonPublicDimensionValue = true;
+                        break;
+                    }
+                }
+                if(!isNonPublicDimensionValue){
+                    publicDimensions.push(dimension);
+                } else{
+                    nonPublicDimensions.push(dimension);
+                }
+            }
+            // the dimension type is public
+            else{
+                publicDimensions.push(dimension);
+            }
+        }
+
+        if(isPublic){
+            return publicDimensions;
+        }
+
+        return nonPublicDimensions;
     }
 
     /**
