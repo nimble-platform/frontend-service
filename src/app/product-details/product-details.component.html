@@ -44,6 +44,7 @@
         <product-details-tabs [wrapper]="productWrapper" [settings]="settings" [tabToOpen]="tabToOpen" (tabStatus)="setTab($event)">
         </product-details-tabs>
     </div>
+    <!-- Right panel displaying the product summary and action buttons-->
     <div class="col-3">
         <!-- Order Workflow For Product -->
         <div *ngIf="isLogistics === false" class="p-3 border border-dark border-bottom-0">
@@ -211,7 +212,11 @@
                 </ng-container>
             </ng-container>
 
-            <!-- Action Button -->
+            <!-- Action Buttons -->
+            <button *ngIf="enableTenderAndBidManagementToolIntegration" class="btn btn-primary pt-2 w-100 space-after"
+                    (click)="onOrganizeBulkPurchase()">
+                <span>{{'Organize Bulk Purchase' | translate}}</span>
+            </button>
             <button *ngIf="companyWorkflowMap.get('Negotiation')"
                     class="btn btn-primary pt-2 w-100"
                     (click)="onNegotiate(termsSelectBoxValue)"

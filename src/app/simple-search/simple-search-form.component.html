@@ -139,6 +139,16 @@
 
             <div class="row">
                 <div *ngIf="size==0" class="col-12">
+                    <!-- Button to initiate a business opportunity -->
+                    <div *ngIf="enableTenderAndBidManagementToolIntegration && searchTopic=='prod'" class="row space-after alert-danger" style="padding: 15px;flex-wrap: nowrap">
+                        <div style="flex-grow: 1;align-self: center"
+                             [innerHTML]="'Could not find what you are looking for ? Try to initiate a business opportunity.'|translate">
+                        </div>
+                        <div class="btn btn-primary"
+                             (click)="onInitiateBusinessOpportunity()">
+                            <span>{{'Initiate Business Opportunity' | translate}}</span>
+                        </div>
+                    </div>
                     <span [innerHTML]="'No search results' | translate"></span><br/>
                     <button class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span
                             [innerHTML]="'Reset Search' | translate"></span></button>
@@ -150,6 +160,16 @@
 
                 <!-- Search headers -->
                 <div *ngIf="size>0" class="col-8">
+                    <!-- Button to initiate a business opportunity -->
+                    <div *ngIf="enableTenderAndBidManagementToolIntegration && searchTopic=='prod'" class="row space-after alert-danger" style="padding: 15px;flex-wrap: nowrap">
+                        <div style="flex-grow: 1;align-self: center"
+                             [innerHTML]="'Could not find what you are looking for ? Try to initiate a business opportunity.'|translate">
+                        </div>
+                        <div class="btn btn-primary"
+                                (click)="onInitiateBusinessOpportunity()">
+                            <span>{{'Initiate Business Opportunity' | translate}}</span>
+                        </div>
+                    </div>
                     <!-- Pagination -->
                     <div class="justify-content-center pagination">
                         <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5"

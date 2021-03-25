@@ -101,6 +101,8 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     enableOtherFiltersSearch = myGlobals.config.enableOtherFiltersSearch;
     showTrustScore = myGlobals.config.showTrustScore;
+    enableTenderAndBidManagementToolIntegration = myGlobals.config.enableTenderAndBidManagementToolIntegration;
+    smeClusterCreateOpportunityEndpoint = myGlobals.smeClusterCreateOpportunityEndpoint;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
     // content of the tooltip for product search
@@ -2421,5 +2423,69 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
             return index === 0 ? match.toLowerCase() : match.toUpperCase();
         });
+    }
+
+    /**
+     * Navigates users to SME cluster to initiate a business opportunity for the search product.
+     * We pass the search query, selected category and other filters to SME cluster.
+     * */
+    onInitiateBusinessOpportunity(){
+        // selected category name
+        let categoryName = null;
+        // filter queries
+        let fq = null;
+        // search query
+        let q = null;
+
+        // if the search index is Name, the search query is the name of product
+        if(this.searchIndex === "Name"){
+            // set the selected category name
+            for(let categories of this.cat_levels){
+                for(let category of categories){
+                    if(category.id === this.catID){
+                        categoryName = encodeURIComponent(category.preferredName);
+                        break;
+                    }
+                }
+            }
+            // set the search query
+            if(this.model.q && this.model.q != ""){
+                q = encodeURIComponent((this.model.q));
+            }
+
+        }
+        // if search index is Category, the search query is the name of category
+        else{
+            // set the selected category name
+            if(this.model.q && this.model.q != ""){
+                categoryName = encodeURIComponent((this.model.q));
+            }
+        }
+        // set the selected facet queries
+        let facetQueryParam = this.facetQuery.map(fq => this.getFacetQueryName(fq) + ":" + this.getFacetQueryValue(fq));
+        if(facetQueryParam.length > 0){
+            fq = encodeURIComponent(facetQueryParam.join("_SEP_"));
+        }
+        // create the url to SME cluster
+        let url = this.smeClusterCreateOpportunityEndpoint;
+        if(q){
+            url +=`?q=${q}`
+        }
+        if(fq){
+            if(q){
+                url +=`&fq=${fq}`
+            } else{
+                url +=`?fq=${fq}`
+            }
+        }
+        if(categoryName){
+            if(q || fq){
+                url +=`&category=${categoryName}`
+            } else{
+                url +=`?category=${categoryName}`
+            }
+        }
+        // navigate to the url
+        window.open(url,'_blank')
     }
 }

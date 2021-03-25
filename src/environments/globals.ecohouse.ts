@@ -58,6 +58,8 @@ export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
 export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
 
 // Platform Configuration
 
@@ -115,6 +117,7 @@ export const config = {
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,

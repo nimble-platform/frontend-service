@@ -57,6 +57,8 @@ export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/
 export const tntAnalysisEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/tracking-analysis/';
 export const tntIoTBlockchainEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/iot-bc-api/api/verify';
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
 
 // Platform Configuration
 
@@ -114,6 +116,7 @@ export const config = {
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,

@@ -108,6 +108,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     selectPreferredValue = selectPreferredValue;
     onOrderQuantityKeyPressed = validateNumberInput;
     abs = Math.abs;
+    enableTenderAndBidManagementToolIntegration = myGlobals.config.enableTenderAndBidManagementToolIntegration;
+    smeClusterCreateOpportunityEndpoint = myGlobals.smeClusterCreateOpportunityEndpoint;
 
     constructor(private bpeService: BPEService,
                 private bpDataService: BPDataService,
@@ -245,6 +247,13 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     /*
      * Event Handlers
      */
+
+    /**
+     * Navigates users to SME cluster to organize a bulk purchase for the product.
+     * */
+    onOrganizeBulkPurchase(): void{
+        window.open(`${this.smeClusterCreateOpportunityEndpoint}?catalogueId=${this.catalogueId}&productId=${this.line.id}`,'_blank')
+    }
 
     onNegotiate(termsSource): void {
         this.navigateToBusinessProcess('Negotiation', termsSource);

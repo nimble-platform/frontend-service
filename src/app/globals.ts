@@ -84,6 +84,9 @@ export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
 export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
+
 
 // Platform Configuration
 /*
@@ -112,6 +115,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - docLink: Link to the documentation resources
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - enableSubscriptions: Boolean flag if the subscription functionality is enabled or not
+- enableTenderAndBidManagementToolIntegration: Boolean flag if the tender and bid management integration is enabled.
 - enableTermsAndConditionsAsFile: Boolean flag if the users are allowed to upload files as company terms and conditions
 - enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
@@ -236,6 +240,7 @@ export const config = {
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
