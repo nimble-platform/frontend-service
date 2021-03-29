@@ -113,7 +113,8 @@ export class CredentialsFormComponent implements OnInit {
                 this.cookieService.set("user_email", res.email);
                 this.cookieService.set("bearer_token", res.accessToken);
                 // get demand last seen response for the user
-                this.demandService.getDemandLastSeenResponse();
+                if(myGlobals.config.demandsEnabled)
+                    this.demandService.getDemandLastSeenResponse();
                 // Setting cookie path to root to facilitate the iframe base login
                 if (myGlobals.config.showChat) {
                     this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');

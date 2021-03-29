@@ -326,7 +326,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
 
         // get demand last seen response for the user
-        if(this.isLoggedIn){
+        if(this.isLoggedIn && this.config.demandsEnabled){
             this.demandService.getDemandLastSeenResponse();
         }
 
