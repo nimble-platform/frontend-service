@@ -268,17 +268,19 @@
             </button>
 
         </div>
-        <div *ngIf="this.appComponent.checkRoles('bp')" class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
-            <div *ngIf="companyWorkflowMap.get('Item_Information_Request')">
-                <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
-                    <span [innerHTML]="'Request Information' | translate"></span>
-                </button>
-            </div>
-            <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics && companyWorkflowMap.get('Ppap')">
-                <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
-                    <span [innerHTML]="'Start Ppap' | translate"></span>
-                </button>
-            </div>
+        <div class="pb-3 pl-3 pr-3 pt-0 border border-dark border-top-0">
+            <ng-container *ngIf="this.appComponent.checkRoles('bp')">
+                <div *ngIf="companyWorkflowMap.get('Item_Information_Request')">
+                    <button class="btn btn-secondary w-100" (click)="onRequestInformation()">
+                        <span [innerHTML]="'Request Information' | translate"></span>
+                    </button>
+                </div>
+                <div *ngIf="config.showPPAP && isPpapAvailable() && !isLogistics && companyWorkflowMap.get('Ppap')">
+                    <button class="btn btn-secondary w-100 mt-3" (click)="onStartPpap()">
+                        <span [innerHTML]="'Start Ppap' | translate"></span>
+                    </button>
+                </div>
+            </ng-container>
         </div>
     </div>
 </div>
