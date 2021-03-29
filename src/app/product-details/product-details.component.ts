@@ -397,7 +397,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     isBpButtonDisabled(): boolean {
         if (this.isLoggedIn) {
             if (!this.appComponent.checkRoles('bp') || !this.quantityValueFormControl.valid) {
-                return false;
+                return true;
             }
         }
         return false;
