@@ -2147,7 +2147,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     onNavigate(tab: "NETWORK" | "SUBSCRIPTIONS" = null) {
         if(tab === "NETWORK"){
             this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'NETWORK', searchRef: 'true'}})
-        } else if("SUBSCRIPTIONS"){
+        } else if(tab === "SUBSCRIPTIONS"){
             this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'SUBSCRIPTIONS', searchRef: 'true'}})
         } else {
             this.router.navigate(['/dashboard'], {queryParams: {tab: 'CATALOGUE', searchRef: 'true'}})
