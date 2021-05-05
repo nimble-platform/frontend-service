@@ -149,8 +149,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
-        // initialize country service after setting the default language of platform
-        CountryUtil.initialize(this.translate);
         this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
             this.translations = res;
         });
@@ -260,7 +258,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         return txt;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        // initialize country service after setting the default language of platform
+        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
+        // from CountryUtil
+        await CountryUtil.initialize(this.translate);
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
