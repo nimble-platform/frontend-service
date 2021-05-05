@@ -33,7 +33,7 @@ export class CountryUtil implements OnDestroy {
     }
 
     static initialize(translateService: TranslateService) {
-        translateService.get(COUNTRY_CODES).takeUntil(CountryUtil.ngUnsubscribe).subscribe(translations => {
+        return translateService.get(COUNTRY_CODES).toPromise().then(translations => {
             const countryJson = [];
             const countryList = [];
             for (let country of COUNTRY_CODES) {
