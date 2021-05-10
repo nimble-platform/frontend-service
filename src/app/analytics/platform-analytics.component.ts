@@ -130,7 +130,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     ngOnInit(): void {
 
         this.selectedTab = this.config.kibanaEnabled && !this.hideLogAnalytics? "LOG" : "DB";
-        if (this.config.kibanaEnabled) {
+        if (this.config.kibanaEnabled && !this.hideLogAnalytics) {
             let tmpDashboards = this.config.kibanaConfig.dashboards;
             for (let i = 0; i < tmpDashboards.length; i++) {
                 let full_url = myGlobals.kibana_endpoint + tmpDashboards[i].url;
