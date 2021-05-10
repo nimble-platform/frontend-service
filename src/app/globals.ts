@@ -156,6 +156,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
+- showBusinessProcessBreakdownForPlatformAnalytics: Boolean flag if the business process breakdown functionality is available for the platform analytics.
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
@@ -369,6 +370,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,
+    "showBusinessProcessBreakdownForPlatformAnalytics": false,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,

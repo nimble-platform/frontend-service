@@ -24,6 +24,7 @@ import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGrap
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
 import { TranslateService } from '@ngx-translate/core';
+import {BusinessProcessCountModalComponent} from './modal/business-process-count-modal.component';
 
 @Component({
     selector: "platform-analytics",
@@ -66,6 +67,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     categoriesCallStatus: CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
+    showBusinessProcessBreakdownForPlatformAnalytics = myGlobals.config.showBusinessProcessBreakdownForPlatformAnalytics
     getMultilingualLabel = selectNameFromLabelObject;
     config = myGlobals.config;
     dashboards = [];
@@ -109,6 +111,9 @@ export class PlatformAnalyticsComponent implements OnInit {
     months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 
+    // process count modal
+    @ViewChild(BusinessProcessCountModalComponent)
+    public processCountModal: BusinessProcessCountModalComponent;
 
     public secureSrc = "";
 
@@ -315,4 +320,10 @@ export class PlatformAnalyticsComponent implements OnInit {
         this.selectedTab = id;
     }
 
+    /**
+     * Opens the process count modal
+     * */
+    openProcessCountModal() {
+        this.processCountModal.open();
+    }
 }

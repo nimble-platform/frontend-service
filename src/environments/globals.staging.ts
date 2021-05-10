@@ -243,6 +243,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,
+    "showBusinessProcessBreakdownForPlatformAnalytics": false,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,

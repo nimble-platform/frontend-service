@@ -39,6 +39,7 @@ import {UBLModelUtils} from '../catalogue/model/ubl-model-utils';
 import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import {FederatedCollaborationGroupMetadata} from './model/federated-collaboration-group-metadata';
 import {CollaborationGroupResponse} from './model/collaboration-group-response';
+import {PlatformCompanyProductCount} from './model/platform-company-product-count';
 
 @Injectable()
 export class BPEService {
@@ -257,6 +258,20 @@ export class BPEService {
             .get(url, { headers: this.headers })
             .toPromise()
             .then(res => res.json()[0])
+            .catch(this.handleError);
+    }
+
+    getProcessStatisticsForPlatform(offset:number = 0,limit:number = 10,startDate:string = null, endDate:string = null): Promise<PlatformCompanyProductCount> {
+        let url = `${this.url}/statistics/total-number/business-process/break-down/role?offset=${offset}&limit=${limit}`;
+        if(startDate)
+            url += `&startDate=${startDate}`
+        if (endDate)
+            url += `&endDate=${endDate}`
+
+        return this.http
+            .get(url, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .then(res => res.json())
             .catch(this.handleError);
     }
 

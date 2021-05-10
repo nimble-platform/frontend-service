@@ -104,6 +104,7 @@
                     <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total No of Business Processes' | translate"></span></h6>
                     <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
+                    <span *ngIf="showBusinessProcessBreakdownForPlatformAnalytics && bp_count>0" style="text-decoration:underline;font-weight: bold;cursor: pointer" (click)="openProcessCountModal()">{{'See details'|translate}}</span>
                 </div>
             </div>
             <div class="col-1"></div>
@@ -252,3 +253,7 @@
     </div>
 
 </div>
+
+<!-- Process Count Modal-->
+<process-count-modal>
+</process-count-modal>

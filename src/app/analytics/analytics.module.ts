@@ -30,6 +30,7 @@ import { ChatComponent } from './chat.component';
 import { HttpClientModule } from "@angular/common/http";
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PlatformMembersComponent } from './platform-members.component';
+import {BusinessProcessCountModalComponent} from './modal/business-process-count-modal.component';
 
 @NgModule({
     imports: [
@@ -52,7 +53,8 @@ import { PlatformMembersComponent } from './platform-members.component';
         MembersComponent,
         PlatformMembersComponent,
         ChatComponent,
-        PerformanceAnalyticsComponent
+        PerformanceAnalyticsComponent,
+        BusinessProcessCountModalComponent
     ],
     exports: [
         PlatformAnalyticsComponent,
