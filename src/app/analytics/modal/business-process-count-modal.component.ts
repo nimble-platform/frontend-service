@@ -70,7 +70,7 @@ export class BusinessProcessCountModalComponent {
     /**
      * Handles the pagination
      * */
-    onChangePage(pageNumber: number = 1, startDate: string = null, endDate: string = null) {
+    onChangePage(pageNumber: number = 1) {
         // reset the modal data
         this.platformCompanyProductCount = null;
         // set the offset based on the selected page
@@ -82,9 +82,9 @@ export class BusinessProcessCountModalComponent {
 
         // retrieve the process counts for companies
         this.retrieveProcessCountStatisticsCallStatus.submit();
-        this.bpeService.getProcessStatisticsForPlatform(this.offset, this.pageSize, startDate, endDate).then(platformCompanyProductCount => {
+        this.bpeService.getProcessStatisticsForPlatform(this.offset, this.pageSize, this.formatDate(this.startDate), this.formatDate(this.endDate)).then(platformCompanyProductCount => {
             // check whether the date filter is applied
-            this.isDateFilterApplied = !!(startDate || endDate);
+            this.isDateFilterApplied = !!(this.startDate || this.endDate);
             this.platformCompanyProductCount = platformCompanyProductCount;
             // set end of results
             this.end = pageNumber * this.pageSize > platformCompanyProductCount.totalCompanyCount ? platformCompanyProductCount.totalCompanyCount : pageNumber * this.pageSize;
@@ -118,7 +118,7 @@ export class BusinessProcessCountModalComponent {
     }
 
     onFilterByDate() {
-        this.onChangePage(1, this.formatDate(this.startDate), this.formatDate(this.endDate))
+        this.onChangePage(1)
     }
 
     /**
