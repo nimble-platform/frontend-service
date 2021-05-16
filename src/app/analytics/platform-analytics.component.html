@@ -100,6 +100,8 @@
         <div class="row justify-content-center">
             <div class="card col-3">
                 <div class="card-body text-center">
+                     <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'totalBusinessProcessToolTip')"><i
+                             class="fa fa-question-circle"></i></span>
                     <h4 *ngIf="bp_count>=0" class="card-title"><b>{{bp_count}}</b></h4>
                     <h4 *ngIf="bp_count<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total No of Business Processes' | translate"></span></h6>
@@ -127,6 +129,8 @@
         <div class="row justify-content-center">
             <div class="card col-3">
                 <div class="card-body text-center">
+                    <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'tradingVolumeInCollaborationsToolTip')"><i
+                            class="fa fa-question-circle"></i></span>
                     <h4 *ngIf="trade_count>=0" class="card-title"><b>{{trade_count}}€</b></h4>
                     <h4 *ngIf="trade_count<0" class="card-title"><b>???</b></h4>
                     <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Trading Volume' | translate"></span></h6>
@@ -156,6 +160,8 @@
                     <div class="row justify-content-center">
                         <div class="card col-9" style="height: 170px;">
                             <div class="card-body text-center">
+                                <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeToolTip')"><i
+                                        class="fa fa-question-circle"></i></span>
                                 <h4 *ngIf="collab_time" class="card-title"><b>{{collab_time}}</b></h4>
                                 <h4 *ngIf="!collab_time" class="card-title"><b>???</b></h4>
                                 <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time' | translate"></span></h6>
@@ -167,6 +173,8 @@
                 <div class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
+                            <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeMonthlyToolTip')"><i
+                                    class="fa fa-question-circle"></i></span>
                             <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
@@ -180,6 +188,8 @@
                     <div class="row justify-content-center">
                         <div class="card col-9" style="height: 170px;">
                             <div class="card-body text-center">
+                                <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeInPurchaseToolTip')"><i
+                                        class="fa fa-question-circle"></i></span>
                                 <h4 *ngIf="collab_time_buy" class="card-title"><b>{{collab_time_buy}}</b></h4>
                                 <h4 *ngIf="!collab_time_buy" class="card-title"><b>???</b></h4>
                                 <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in purchases' | translate"></span></h6>
@@ -191,6 +201,8 @@
                 <div class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
+                            <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeMonthlyInPurchaseToolTip')"><i
+                                    class="fa fa-question-circle"></i></span>
                             <ngx-charts-line-chart *ngIf="showAverageCollaborationTimePurchaseChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimePurchaseChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimePurchaseChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
@@ -204,6 +216,8 @@
                     <div class="row justify-content-center">
                         <div class="card col-9" style="height: 170px;">
                             <div class="card-body text-center">
+                                <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeInSalesToolTip')"><i
+                                        class="fa fa-question-circle"></i></span>
                                 <h4 *ngIf="collab_time_sell" class="card-title"><b>{{collab_time_sell}}</b></h4>
                                 <h4 *ngIf="!collab_time_sell" class="card-title"><b>???</b></h4>
                                 <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average collaboration time in sales' | translate"></span></h6>
@@ -215,6 +229,8 @@
                 <div class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
+                            <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageCollaborationTimeMonthlyInSalesToolTip')"><i
+                                    class="fa fa-question-circle"></i></span>
                             <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeSalesChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeSalesChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeSalesChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
@@ -230,6 +246,8 @@
                 <div class="row justify-content-center">
                     <div class="card col-9" style="height: 170px;">
                         <div class="card-body text-center">
+                            <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageResponseTimeToolTip')"><i
+                                    class="fa fa-question-circle"></i></span>
                             <h4 *ngIf="avg_res_time" class="card-title"><b>{{avg_res_time}}</b></h4>
                             <h4 *ngIf="!avg_res_time" class="card-title"><b>???</b></h4>
                             <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Average response time (Request Information)' | translate"></span></h6>
@@ -241,6 +259,8 @@
             <div class="col-8">
                 <div class="row justify-content-center">
                     <div class="col-9">
+                        <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'averageResponseTimeMonthlyToolTip')"><i
+                                class="fa fa-question-circle"></i></span>
                         <ngx-charts-line-chart *ngIf="showAverageResponseChart" [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [showGridLines]="showGridLines" [autoScale]="autoScale" (select)="onSelect($event)">
                         </ngx-charts-line-chart>
                     </div>
@@ -257,3 +277,15 @@
 <!-- Process Count Modal-->
 <process-count-modal>
 </process-count-modal>
+
+<!-- Tooltip modal -->
+<ng-template #tooltip let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" [innerHTML]="tooltipHTML">
+    </div>
+</ng-template>

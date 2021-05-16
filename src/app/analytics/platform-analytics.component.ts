@@ -25,6 +25,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
 import { TranslateService } from '@ngx-translate/core';
 import {BusinessProcessCountModalComponent} from './modal/business-process-count-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: "platform-analytics",
@@ -73,6 +74,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     dashboards = [];
     selectedTab;
 
+    tooltipHTML: string;
     view: any[] = [700, 450];
     // collab time
     collab_time = null;
@@ -121,6 +123,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
         private categoryService: CategoryService,
+        private modalService: NgbModal,
         private userService: UserService,
         private sanitizer: DomSanitizer,
         private translate: TranslateService,
@@ -325,5 +328,10 @@ export class PlatformAnalyticsComponent implements OnInit {
      * */
     openProcessCountModal() {
         this.processCountModal.open();
+    }
+
+    showToolTip(content,key) {
+        this.tooltipHTML = this.translate.instant(key);
+        this.modalService.open(content);
     }
 }

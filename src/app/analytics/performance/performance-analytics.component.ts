@@ -24,6 +24,7 @@ import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGrap
 import { CookieService } from "ng2-cookies";
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from "@angular/platform-browser";
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: "performance-analytics",
@@ -163,10 +164,13 @@ export class PerformanceAnalyticsComponent implements OnInit {
     dashboards = [];
     graphsa = [];
 
+    tooltipHTML: string;
+
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
         private cookieService: CookieService,
         private categoryService: CategoryService,
+        private modalService: NgbModal,
         private translate: TranslateService,
         private sanitizer: DomSanitizer
     ) {
@@ -445,5 +449,10 @@ export class PerformanceAnalyticsComponent implements OnInit {
         } else if (id == "Collaboration") {
             this.getCollabStats();
         }
+    }
+
+    showToolTip(content,key) {
+        this.tooltipHTML = this.translate.instant(key);
+        this.modalService.open(content);
     }
 }

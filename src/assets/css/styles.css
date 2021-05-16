@@ -444,6 +444,12 @@ ngb-pagination .page-item.active .page-link {
     cursor: pointer;
 }
 
+.tooltip-icon-with-right-space {
+    position: absolute;
+    right: 2%;
+    cursor: pointer;
+}
+
 .text-std, .text-std:focus, .text-std:hover {
     color: #292b2c !important;
     text-decoration: none !important;
