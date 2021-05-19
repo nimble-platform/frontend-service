@@ -16,8 +16,18 @@
 
 <div *ngIf="!initCallStatus.isLoading()">
     <div class="space-after">
-        <h4 class="space-before space-after">{{'Stripe Connect'|translate}}</h4>
-        <p class="space-after">{{'Connect your Stripe account to start accepting customer payments instantly and directly into your bank account.'|translate}}</p>
+        <div class="d-flex justify-content-between">
+            <div>
+                <h4 class="space-before space-after">{{'Stripe Connect'|translate}}</h4>
+                <p class="space-after">{{'Connect your Stripe account to start accepting customer payments instantly and directly into your bank account.'|translate}}</p>
+            </div>
+            <!-- Stripe badge -->
+            <div class="d-flex justify-content-center">
+                <a href="https://stripe.com/payments" target="_blank">
+                    <img [src]="'assets/stripe-badge.png'" style="max-height: 130px" >
+                </a>
+            </div>
+        </div>
 
         <call-status [callStatus]="connectStripeCallStatus"></call-status>
         <button *ngIf="!stripeLoginLink && !connectStripeCallStatus.isAllSuccessful()" class="btn btn-primary"
