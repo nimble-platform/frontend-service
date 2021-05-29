@@ -237,7 +237,7 @@
         <!-- Certificates -->
         <div class="row space-before" [hidden]="publishingStep != 'Certificates'">
             <div class="col-12">
-                <product-certificates-tab [catalogueLine]="catalogueLine" [wrapper]="productWrapper" [disabled]="isLoading()">
+                <product-certificates-tab [certificates]="catalogueLine.goodsItem.item.certificate" [wrapper]="productWrapper" [disabled]="isLoading()">
                 </product-certificates-tab>
             </div>
         </div>
