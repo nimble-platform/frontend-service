@@ -50,6 +50,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
     demandCategories: FacetValue[];
     buyerCountryFacet: Facet = null;
     deliveryCountryFacet: Facet = null;
+    circularEconomyCertificatesFacet: Facet = null;
+    otherCertificatesFacet: Facet = null;
 
     /*
      query parameters
@@ -57,6 +59,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
     searchTerm = '';
     selectedCategory: string;
     deliveryCountry: string;
+    circularEconomyCertificates: string;
+    otherCertificates: string;
     buyerCountry: string;
     page = 0;
     pageSize = 10;
@@ -110,6 +114,14 @@ export class DemandListComponent implements OnInit, OnDestroy {
 
             if (params['deliveryCountry']) {
                 this.deliveryCountry = params['deliveryCountry'];
+            }
+
+            if (params['circularEconomyCertificates']) {
+                this.circularEconomyCertificates = params['circularEconomyCertificates'];
+            }
+
+            if (params['otherCertificates']) {
+                this.otherCertificates = params['otherCertificates'];
             }
 
             this.getDemands();
@@ -169,6 +181,10 @@ export class DemandListComponent implements OnInit, OnDestroy {
             queryParams.deliveryCountry = CountryUtil.getISObyCountry(facetSelection.selectedValue);
         } else if (facetSelection.facet === 'Buyer Country') {
             queryParams.buyerCountry = CountryUtil.getISObyCountry(facetSelection.selectedValue);
+        } else if(facetSelection.facet === 'Sustainability / Environment Certificates'){
+            queryParams.circularEconomyCertificates = facetSelection.selectedValue
+        } else if(facetSelection.facet === 'Demand Certificates'){
+            queryParams.otherCertificates = facetSelection.selectedValue
         }
         this.router
             .navigate([], {
@@ -202,7 +218,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
         this.demandCategories = [];
 
         const companyId = this.companyDemands ? this.cookieService.get('company_id') : null;
-        this.demandService.getDemands(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize)
+        this.demandService.getDemands(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry, this.page - 1, this.pageSize,this.circularEconomyCertificates,this.otherCertificates)
             .then(demands => {
                 this.totalCount = demands.totalCount;
                 if (this.totalCount === 0) {
@@ -285,6 +301,20 @@ export class DemandListComponent implements OnInit, OnDestroy {
         this.buyerCountryFacet = buyerCountryFacet;
         // replace country iso codes with country names
         this.buyerCountryFacet.facetValues.forEach(value => value.value = CountryUtil.getCountryByISO(value.value));
+
+        // circular economy certificates
+        const circularEconomyCertificatesFacet = facets.find(facetResponse => facetResponse.facetName === 'Sustainability / Environment Certificates');
+        if (this.circularEconomyCertificates) {
+            circularEconomyCertificatesFacet.facetValues.find(facetValue => this.circularEconomyCertificates.includes(facetValue.value)).selected = true;
+        }
+        this.circularEconomyCertificatesFacet = circularEconomyCertificatesFacet;
+
+        // other certificates
+        const otherCertificatesFacet = facets.find(facetResponse => facetResponse.facetName === 'Demand Certificates');
+        if (this.otherCertificates) {
+            otherCertificatesFacet.facetValues.find(facetValue => this.otherCertificates.includes(facetValue.value)).selected = true;
+        }
+        this.otherCertificatesFacet = otherCertificatesFacet;
     }
 
     private getCompanyNameFromIds(): void {

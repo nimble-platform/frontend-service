@@ -98,6 +98,12 @@
         <img *ngIf="demand.image" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" class="offset-3 image"/>
     </div>
 
+    <!-- Certificates -->
+    <div class="w-75">
+        <product-certificates-tab [certificates]="demand.certificate" [disabled]="callStatus.isLoading()">
+        </product-certificates-tab>
+    </div>
+
     <!-- publish button -->
     <div class="d-flex flex-row-reverse w-75 space-before">
         <div class="ml-4" [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">

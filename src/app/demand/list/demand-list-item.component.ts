@@ -30,6 +30,8 @@ import {Party} from '../../catalogue/model/publish/party';
 import {CountryUtil} from '../../common/country-util';
 import {AppComponent} from '../../app.component';
 import {TranslateService} from '@ngx-translate/core';
+import * as myGlobals from '../../globals';
+import {Certificate} from '../../catalogue/model/publish/certificate';
 
 @Component({
     selector: 'demand-list-item',
@@ -43,6 +45,10 @@ export class DemandListItemComponent {
     @Input() companyData: any;
     @Output() onDemandDeleted: EventEmitter<void> = new EventEmitter<void>();
 
+    // circular economy and arbitrary certificates of demand
+    circularEconomyCertificates: Certificate[] = [];
+    arbitraryCertificates: Certificate[] = [];
+
     isLoggedIn: boolean;
     buyerParty: Party;
     userCompanyId: string;
@@ -55,6 +61,10 @@ export class DemandListItemComponent {
     getCountryByISO = CountryUtil.getCountryByISO;
     // flag if the demand is new for the user or not (in other words, the demand is already seen by the user or not)
     isNewDemand:boolean = true;
+    // flag if the certificates are displayed
+    displayCertificates:boolean = false;
+
+    config = myGlobals.config;
 
     constructor(
         private demandService: DemandService,
@@ -78,6 +88,16 @@ export class DemandListItemComponent {
         }
         if (this.isLoggedIn) {
             this.getOwnerCompanyDetails();
+        }
+        // initialize circular economy and arbitrary demand certificates if they exist
+        if(this.demand.certificate && this.demand.certificate.length){
+            this.demand.certificate.forEach(cert => {
+                if (cert.certificateType === this.config.circularEconomy.certificateGroup) {
+                    this.circularEconomyCertificates.push(cert);
+                } else {
+                    this.arbitraryCertificates.push(cert);
+                }
+            });
         }
     }
 

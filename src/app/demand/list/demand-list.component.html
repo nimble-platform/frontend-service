@@ -35,6 +35,8 @@
         </ng-container>
         <search-facet *ngIf="!companyDemands && buyerCountryFacet" [facet]="buyerCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
         <search-facet *ngIf="deliveryCountryFacet" [facet]="deliveryCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="otherCertificatesFacet" [facet]="otherCertificatesFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="circularEconomyCertificatesFacet" [facet]="circularEconomyCertificatesFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
     </div>
     <div class="result-column ml-3">
         <call-status *ngIf="searchCallStatus" [large]="true" [callStatus]="searchCallStatus"></call-status>

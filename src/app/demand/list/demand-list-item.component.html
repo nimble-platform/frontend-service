@@ -12,7 +12,7 @@
    limitations under the License.
  -->
 <div class="card" [ngClass]="{'new-demand':isNewDemand}">
-    <div class="card-body d-flex">
+    <div class="card-body d-flex" [ngStyle]="{'padding-bottom': displayCertificates? '0':'initial'}">
         <div class="col-2">
             <div style="text-align:center">
                 <img *ngIf="!demand.image" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
@@ -41,6 +41,10 @@
                                 <div class="col-7">
                                     <div>{{demand.dueDate}}</div>
                                 </div>
+                            </div>
+                            <!-- Button to show/hide demand certificates -->
+                            <div *ngIf="demand.certificate && demand.certificate.length" class="row no-gutters">
+                                <a style="color:#007bff;cursor: pointer" (click)="displayCertificates = !displayCertificates">{{(displayCertificates ?'Hide certificates' : 'Show certificates') | translate}}</a>
                             </div>
                         </div>
                         <div class="col-5">
@@ -78,6 +82,22 @@
                     </ngb-rating>
                 </div>
                 <div *ngIf="companyData.id !== userCompanyId" class="btn btn-primary">{{'Contact' | translate}}</div>
+            </div>
+        </div>
+    </div>
+    <!-- Demand certificates -->
+    <div *ngIf="demand.certificate && demand.certificate.length && displayCertificates" class="card-body d-flex" style="padding-top: 0">
+        <div class="col-2">
+
+        </div>
+        <div class="col-10">
+            <div class="col">
+                <certificate-view *ngIf="circularEconomyCertificates.length !== 0"
+                                  [certificates]="circularEconomyCertificates"
+                                  tableName="Circular Economy (Environment / Sustainability)"></certificate-view>
+                <certificate-view *ngIf="arbitraryCertificates.length !== 0"
+                                  [tableName]="circularEconomyCertificates.length !==0 ? 'Other Certificates':null "
+                                  [certificates]="arbitraryCertificates"></certificate-view>
             </div>
         </div>
     </div>

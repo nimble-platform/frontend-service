@@ -78,7 +78,8 @@ import {SinglePublishComponent} from './publish/single-publish.component';
         CatalogueLinePanelComponent,
         NoteFileViewComponent,
         FavouriteViewComponent,
-        CompareViewComponent
+        CompareViewComponent,
+        ProductCertificatesTabComponent
     ],
     providers: [PublishDeactivateGuardService, LogisticPublishDeactivateGuardService]
 })

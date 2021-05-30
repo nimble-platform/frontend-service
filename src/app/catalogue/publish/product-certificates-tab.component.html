@@ -14,7 +14,7 @@
    limitations under the License.
  -->
 
-<div *ngIf="nonPublicInformationFunctionalityEnabled" class="row space-after">
+<div *ngIf="nonPublicInformationFunctionalityEnabled && wrapper" class="row space-after">
     <div class="col-10"></div>
     <div class="col-2">
         <b>{{'Non Public ?'|translate}}</b>
@@ -26,14 +26,14 @@
 
 <h5 class="space-before"><span [innerHTML]="'Circular Economy (Environment / Sustainability)' | translate"></span></h5>
 <div class="form-group row">
-    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+    <div class="{{nonPublicInformationFunctionalityEnabled && wrapper ? 'col-10' : 'col-12'}}">
         <table class="table table-striped table-bordered mb-0 mt-2 certificate-table" style="table-layout: fixed; width: 100%;">
             <colgroup>
                 <col style="width: 150%;">
                 <col style="width: 150%;">
                 <col style="width: 150%;">
                 <col style="width: 150%;">
-                <col style="width: auto;">
+                <col style="width: 100%;">
             </colgroup>
             <tr>
                 <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
@@ -66,13 +66,13 @@
             </tr>
         </table>
     </div>
-    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex mt-2">
+    <div *ngIf="nonPublicInformationFunctionalityEnabled && wrapper" class="col-2 d-flex mt-2">
         <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.CIRCULAR_ECONOMY_CERTIFICATES)">
     </div>
 </div>
 
 <div class="row actions-row">
-    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}} d-flex justify-content-end">
+    <div class="{{nonPublicInformationFunctionalityEnabled && wrapper ? 'col-10' : 'col-12'}} d-flex justify-content-end">
         <button class="btn btn-outline-primary" [disabled]="disabled" (click)="onAddCertificate(addCertModal, 'circularEconomy')"><span [innerHTML]="'Add Certificate' | translate"></span>
         </button>
     </div>
@@ -80,14 +80,14 @@
 
 <h5 class="space-before"><span [innerHTML]="'Other Certificates' | translate"></span></h5>
 <div class="form-group row">
-    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
+    <div class="{{nonPublicInformationFunctionalityEnabled && wrapper ? 'col-10' : 'col-12'}}">
         <table class="table table-striped table-bordered mb-0 mt-2 certificate-table" style="table-layout: fixed; width: 100%;">
             <colgroup>
                 <col style="width: 150%;">
                 <col style="width: 150%;">
                 <col style="width: 150%;">
                 <col style="width: 150%;">
-                <col style="width: auto;">
+                <col style="width: 100%;">
             </colgroup>
             <tr>
                 <th><span [innerHTML]="'Certificate Type' | translate"></span></th>
@@ -120,13 +120,13 @@
             </tr>
         </table>
     </div>
-    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="col-2 d-flex mt-2">
+    <div *ngIf="nonPublicInformationFunctionalityEnabled && wrapper" class="col-2 d-flex mt-2">
         <input type="checkbox" (change)="onNonPublicClicked(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES,$event.target.checked)" [checked]="isNonPublicChecked(NON_PUBLIC_FIELD_ID.OTHER_PRODUCT_CERTIFICATES)">
     </div>
 </div>
 
 <div class="row actions-row">
-    <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}} d-flex justify-content-end">
+    <div class="{{nonPublicInformationFunctionalityEnabled && wrapper ? 'col-10' : 'col-12'}} d-flex justify-content-end">
         <button class="btn btn-outline-primary" [disabled]="disabled" (click)="onAddCertificate(addCertModal, 'arbitrary')"><span [innerHTML]="'Add Certificate' | translate"></span>
         </button>
     </div>

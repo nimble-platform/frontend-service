@@ -781,3 +781,11 @@ ngb-pagination .page-item.active .page-link {
 .non-public-information .btn-link {
     color: darkgrey !important;
 }
+
+demand-publish product-certificates-tab span {
+    font-size: initial;
+}
+
+demand-list-item certificate-view span {
+    font-size: initial;
+}

@@ -43,7 +43,7 @@ import { NON_PUBLIC_FIELD_ID } from "../model/constants";
 export class ProductCertificatesTabComponent implements OnInit {
 
     @Input() certificates:Certificate[] = [];
-    @Input() wrapper: ProductWrapper;
+    @Input() wrapper: ProductWrapper = null;
     @Input() disabled: boolean;
 
     NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
