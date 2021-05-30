@@ -69,7 +69,7 @@ export class DemandService {
     }
 
     public getDemandFacets(searchTerm: string = null, partyId: string = null, categoryUri: string = null,
-                           buyerCountry: string = null, deliveryCountry: string = null): Promise<Facet[]> {
+                           buyerCountry: string = null, deliveryCountry: string = null, circularEconomyCertificates: string = null, otherCertificates: string = null): Promise<Facet[]> {
         let url = catalogue_endpoint + `/demand-facets`;
         let conditionExist = false;
         if (!!searchTerm) {
@@ -104,8 +104,26 @@ export class DemandService {
             let operator = '&';
             if (!conditionExist) {
                 operator = '?';
+                conditionExist = true;
             }
             url += `${operator}deliveryCountry=${deliveryCountry}`;
+        }
+        // backend service takes a list of string for circular economy and other certificates, however, we pass only a single string for now
+        if (circularEconomyCertificates) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}circularEconomyCertificates=${circularEconomyCertificates}`;
+        }
+        if (otherCertificates) {
+            let operator = '&';
+            if (!conditionExist) {
+                operator = '?';
+                conditionExist = true;
+            }
+            url += `${operator}otherCertificates=${otherCertificates}`;
         }
         // due date
         let operator = conditionExist ? '&' : "?";

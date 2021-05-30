@@ -199,6 +199,8 @@ export class DemandListComponent implements OnInit, OnDestroy {
         this.deliveryCountry = null;
         this.selectedCategory = null;
         this.searchTerm = null;
+        this.circularEconomyCertificates = null;
+        this.otherCertificates = null;
 
         let queryParams: any = {page: 1, tab: 'DEMANDS'};
         this.router
@@ -266,7 +268,7 @@ export class DemandListComponent implements OnInit, OnDestroy {
             }).catch(e => {
             this.searchCallStatus.error(this.translate.instant('Failed to get demands'), e);
         });
-        this.demandService.getDemandFacets(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry)
+        this.demandService.getDemandFacets(this.searchTerm, companyId, this.selectedCategory, this.buyerCountry, this.deliveryCountry, this.circularEconomyCertificates,this.otherCertificates)
             .then(facets => {
                 this.setFacetData(facets);
             });
