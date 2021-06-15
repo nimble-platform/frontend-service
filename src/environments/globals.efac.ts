@@ -399,6 +399,7 @@ export const config = {
     "whiteBlackListForCatalogue":true,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
+    "smeFederationIDP": "SME",
     "legislationSettings": {
         "enabled": false,
         "authMode": "nimble",

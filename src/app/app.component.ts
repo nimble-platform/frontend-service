@@ -209,11 +209,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         // this.submitCallStatus.callback("Login Successful");
     }
 
-    generateFederationURL(catalogueId, id) {
+    generateFederationURL(catalogueId, id, federationIDP:string) {
+        const idp = federationIDP === "efs" ? myGlobals.config.federationIDP: myGlobals.config.smeFederationIDP
         let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
         let clientID = "?client_id=" + myGlobals.config.federationClientID;
         let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
-        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + idp;
 
         if (catalogueId != null && id != null) {
             let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
@@ -277,8 +278,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         let catalogueId = this.getQueryParameter('catalogueId');
         let id = this.getQueryParameter('id');
 
-        if (federatedLogin != undefined && federatedLogin == "efs") {
-            window.location.href = this.generateFederationURL(catalogueId, id);
+        if (federatedLogin != undefined && (federatedLogin == "efs" || federatedLogin == "sme")) {
+            window.location.href = this.generateFederationURL(catalogueId, id,federatedLogin);
         }
 
         if (code != null) {

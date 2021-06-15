@@ -183,6 +183,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - whiteBlackListForCatalogue: Boolean flag if the white list/ black list functionality is available
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
+- smeFederationIDP: SME Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
 - demo: Allows to toggle demo account functionality and its relevant settings on the login page
 */
@@ -444,6 +445,7 @@ export const config = {
     "whiteBlackListForCatalogue":false,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
+    "smeFederationIDP": "SME",
     "legislationSettings": {
         "enabled": true,
         "authMode": "nimble",

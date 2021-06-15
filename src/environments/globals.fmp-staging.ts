@@ -372,6 +372,7 @@ export const config = {
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
+    "smeFederationIDP": "sampleIDP",
     "legislationSettings": {
         "enabled": true,
         "authMode": "nimble",
