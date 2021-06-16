@@ -115,6 +115,7 @@ export const config = {
     "displayCategoryCounts":false,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs_es/",
+    "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
     "enableSubscriptions": false,

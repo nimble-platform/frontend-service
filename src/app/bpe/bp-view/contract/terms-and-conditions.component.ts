@@ -26,6 +26,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {NegotiationClauseService} from '../negotiation/negotiation-clause-service';
 import {Subject} from 'rxjs';
 import {CountryUtil} from '../../../common/country-util';
+import * as myGlobals from '../../../globals';
 
 
 @Component({
@@ -46,6 +47,7 @@ export class TermsAndConditionsComponent implements OnInit, OnDestroy {
     @Input() componentIndex:number = 0; // keeps the order of item included in the negotiation
     _originalTermAndConditionClauses: Clause[] = null; // original terms and conditions of the object
     _termsAndConditions: Clause[] = []; // updated terms and conditions of the object
+    config = myGlobals.config;
 
     // Outputs
     @Output() onIncotermChanged = new EventEmitter();
