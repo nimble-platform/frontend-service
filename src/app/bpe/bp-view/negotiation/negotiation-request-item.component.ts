@@ -342,11 +342,13 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = [];
 
             // set the type of company terms and conditions files
-            let documentReferences = copy(this.wrapper.sellerSettings.company.salesTerms.documentReference);
-            for (let documentReference of documentReferences) {
-                documentReference.documentType = COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE;
+            if(this.wrapper.sellerSettings.company.salesTerms && this.wrapper.sellerSettings.company.salesTerms.documentReference){
+                let documentReferences = copy(this.wrapper.sellerSettings.company.salesTerms.documentReference);
+                for (let documentReference of documentReferences) {
+                    documentReference.documentType = COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE;
+                }
+                this.setTermsAndConditionsFiles(documentReferences);
             }
-            this.setTermsAndConditionsFiles(documentReferences);
         }
 
         this.counterOfferTermsSource = termSource;
