@@ -147,5 +147,17 @@ node('nimble-jenkins-slave') {
         stage('Deploy - Efac') {
            sh 'ssh efac-prod "cd /srv/nimble-efac/ && ./run-efac-prod.sh restart-single frontend-service"'
         }
+
+        stage('Build Application - EFAC-SME') {
+            sh 'mvn clean install -Denv=efac-sme'
+        }
+
+        stage('Build Docker - EFAC-SME') {
+            sh 'docker build -t nimbleplatform/frontend-service:efac-sme ./target'
+        }
+
+        stage('Push Docker - EFAC-SME') {
+            sh 'docker push nimbleplatform/frontend-service:efac-sme'
+        }
     }
 }
