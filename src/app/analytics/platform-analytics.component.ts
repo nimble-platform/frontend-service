@@ -35,7 +35,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 export class PlatformAnalyticsComponent implements OnInit {
     hideLogAnalytics = myGlobals.config.hideLogAnalytics;
     user_count = -1;
-    comp_count = -1;
+    // keeps the number of registered companies
+    registered_company_count = -1;
     bp_count = -1;
     trade_count = -1;
     green = 0;
@@ -66,6 +67,7 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
     categoriesCallStatus: CallStatus = new CallStatus();
+    companyCallStatus:CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
     showBusinessProcessBreakdownForPlatformAnalytics = myGlobals.config.showBusinessProcessBreakdownForPlatformAnalytics
@@ -143,11 +145,12 @@ export class PlatformAnalyticsComponent implements OnInit {
         }
         this.callStatus.submit();
         this.getCatTree();
+        // get registered company count
+        this.getRegisteredCompanyCount();
         this.analyticsService
             .getPlatAnalytics()
             .then(res => {
                 this.user_count = res.identity.totalUsers;
-                this.comp_count = res.identity.totalCompanies;
                 this.bp_count = Math.round(res.businessProcessCount.state.approved + res.businessProcessCount.state.waiting + res.businessProcessCount.state.denied);
                 this.green = res.businessProcessCount.state.approved;
                 this.yellow = res.businessProcessCount.state.waiting;
@@ -250,6 +253,19 @@ export class PlatformAnalyticsComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
+    /**
+     * Sets registered company count i.e. {@link registered_company_count}
+     * */
+    private getRegisteredCompanyCount(){
+        this.simpleSearchService.getComp("*", [], [], null, null, "lowercaseLegalName asc","Name", null,false, true)
+            .then(res => {
+                this.registered_company_count = res.totalElements;
+                this.companyCallStatus.callback("Successfully loaded companies", true);
+            })
+            .catch(error => {
+                this.companyCallStatus.error("Error while loading companies", error);
+            });
+    }
 
     private getCatTree(): void {
         this.categoriesCallStatus.submit();
