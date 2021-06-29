@@ -20,7 +20,7 @@ import { CallStatus } from "../common/call-status";
 import { SimpleSearchService } from '../simple-search/simple-search.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
-import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGraphs} from '../common/utils';
+import {getTimeLabel, populateValueObjectForMonthGraphs} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
 import { TranslateService } from '@ngx-translate/core';
@@ -57,9 +57,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     trade_green_perc_str = "0%";
     trade_yellow_perc_str = "0%";
     trade_red_perc_str = "0%";
-    cat_loading = true;
     cat_levels = [];
-    cat_level = -2;
     cat = "";
     product_count = 0;
     service_count = 0;
@@ -71,7 +69,6 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     product_cat_mix = myGlobals.product_cat_mix;
     showBusinessProcessBreakdownForPlatformAnalytics = myGlobals.config.showBusinessProcessBreakdownForPlatformAnalytics
-    getMultilingualLabel = selectNameFromLabelObject;
     config = myGlobals.config;
     dashboards = [];
     selectedTab;
@@ -144,7 +141,7 @@ export class PlatformAnalyticsComponent implements OnInit {
             this.dashboards = tmpDashboards;
         }
         this.callStatus.submit();
-        this.getCatTree();
+        this.getProductAndServiceCounts();
         // get registered company count
         this.getRegisteredCompanyCount();
         this.analyticsService
@@ -267,71 +264,48 @@ export class PlatformAnalyticsComponent implements OnInit {
             });
     }
 
-    private getCatTree(): void {
-        this.categoriesCallStatus.submit();
-        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", myGlobals.config.defaultSearchIndex)
-            .then(res => {
-                // if res.facets are null, it means that there is no product in the index
-                if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
-                    this.categoriesCallStatus.callback("Categories loaded.", true);
-                } else {
-                    // before starting to build category tree, we have to get categories to retrieve their names
-                    this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                    //this.categoriesCallStatus.callback("Categories loaded.", true);
-                }
-            })
-            .catch(error => {
-                this.categoriesCallStatus.error("Error while loading category tree.", error);
+    /**
+     * Sets the product and service counts i.e. {@link product_count} and {@link service_count}
+     * */
+    private getProductAndServiceCounts(): void {
+        // first get the categories to get the number of services
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(res => {
+
+            // catalogue count
+            const catalogPromise: Promise<any> = this.simpleSearchService.get(
+                '*',
+                ['catalogueId'],
+                [],
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
+
+            const facetQuery: string[] = [];
+            for (let cat of res) {
+                facetQuery.push(`-commodityClassficationUri:\"${cat}\"`);
+            }
+            const servicePromise: Promise<any> = this.simpleSearchService.get(
+                '*',
+                [],
+                facetQuery,
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
+
+            Promise.all([catalogPromise, servicePromise]).then(([catalogResult, notServiceResult]) => {
+                const totalItemCount: number = catalogResult.totalElements;
+                this.product_count = notServiceResult.totalElements;
+                this.service_count = totalItemCount - this.product_count;
+
+                this.loadedps = true;
             });
-    }
-
-
-    private async buildCatTree(categoryCounts: any[]) {
-        // retrieve the labels for the category uris included in the categoryCounts field
-        let categoryUris: string[] = [];
-        for (let categoryCount of categoryCounts) {
-            categoryUris.push(categoryCount.label);
-        }
-        this.cat_loading = true;
-        var indexCategories = await this.categoryService.getCategories(categoryUris);
-        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
-
-        let rootCategories = [];
-        categoryUris.forEach(categoryUri => {
-            if(categoryDisplayInfo[categoryUri] && categoryDisplayInfo[categoryUri].isRoot){
-                rootCategories.push(categoryUri);
-            }
-        })
-
-        // set product and service counts
-        this.product_count = 0;
-        this.service_count = 0;
-        rootCategories.forEach(rootCategoryUri => {
-            if(this.categoryService.isServiceCategory(rootCategoryUri)){
-                this.service_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
-            } else{
-                this.product_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
-            }
-        })
-
-        this.loadedps = true;
-        this.cat_loading = false;
-
-
-        this.categoriesCallStatus.callback("Categories loaded.", true);
-
-
-    }
-
-    getCategoryDisplayInfo(categories: any): any {
-        let labelMap = {};
-        for (let category of categories.result) {
-            labelMap[category.uri] = {};
-            labelMap[category.uri].label = category.label;
-            labelMap[category.uri].code = category.code;
-            labelMap[category.uri].isRoot = category.allParents == null ? true : false;
-        }
-        return labelMap;
+        });
     }
 
     onSelectTab(event: any, id: any): void {
