@@ -14,125 +14,141 @@
 
 <div *ngIf="defaultTermsAndConditions">
 
-    <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId}}</h3>
-    <!-- Default Clauses -->
-    <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
-    <div class="row">
-        <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
-            <label>
-                <input id="{{'default-'+clause.id}}" type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)" [checked]="isClauseSelected(clause.id)">
-                {{getClauseName(clause)}}
-            </label>
-        </div>
+    <!-- File input is not available for the catalogue contracts -->
+    <div *ngIf="!catalogueId && enableTermsAndConditionsAsFile" class="space-after">
+        <button class="btn btn-link pl-0" type="button" (click)="onTermsAndConditionsTypeChanged()">
+            {{(showFileInput ? 'termsAndConditionsClauseInput': 'termsAndConditionsFileInput')|translate}}
+        </button>
     </div>
 
-    <br>
-
-    <!-- Edit clauses -->
-    <h5><span [innerHTML]="'Edit clauses:' | translate"></span></h5>
-    <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
-        <!-- Clause Id-->
-        <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
-            {{getClauseName(clause)}}
-        </button>
-        <!-- Button to delete clause -->
-        <button class="btn btn-danger btn-sm" (click)="onRemoveClause(clause)">&times;</button>
-        <!-- Card representing the clause-->
-        <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
-            <!-- Clause Id-->
-            <div class="card-header">
-                {{getClauseName(clause)}}
+    <!-- Terms and conditions as a list of Clauses -->
+    <ng-container *ngIf="!showFileInput">
+        <h3 *ngIf="catalogueId" class="space-after"><span [innerHTML]="'You are editing terms and conditions for your catalog:' | translate"></span>{{catalogueId == 'default'? ('Main Catalogue'|translate): catalogueId}}</h3>
+        <!-- Default Clauses -->
+        <h5><span [innerHTML]="'Choose clauses:' | translate"></span></h5>
+        <div class="row">
+            <div class="col-3" *ngFor="let clause of defaultTermsAndConditions;let i=index">
+                <label>
+                    <input id="{{'default-'+clause.id}}" type="checkbox" (change)="onClauseSelection(clause,$event.target.checked)" [checked]="isClauseSelected(clause.id)">
+                    {{getClauseName(clause)}}
+                </label>
             </div>
-            <!-- Clause Contents -->
-            <div *ngFor="let clauseContent of clause.content;let j=index" style="display: flex">
-                <div class="card inner-card flex-fill">
-                    <!-- Content Title-->
-                    <div class="card-header">
-                        <text-input [label]="'Clause Title' | translate" [(text)]="clause.clauseTitle[j].value" [labelClass]="'col-2'" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-9'" [availableLanguages]="getAvailableLanguagesForClauseContent(clause.content)" [(languageId)]="clause.clauseTitle[j].languageID" [languageIdClass]="'col-1'" (languageIdChange)="clause.clauseTitle[j].languageID = $event;clauseContent.languageID = $event">
-                        </text-input>
-                    </div>
-                    <!-- Content-->
-                    <span id="{{clause.id + '-' + clauseContent.languageID}}" class="card-body" contenteditable="true" (input)="onContentUpdated(clause,$event,j)">
+        </div>
+
+        <br>
+
+        <!-- Edit clauses -->
+        <h5><span [innerHTML]="'Edit clauses:' | translate"></span></h5>
+        <div *ngFor="let clause of termsAndConditions;let i=index" class="space-after">
+            <!-- Clause Id-->
+            <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showSection.set(clause.id,!showSection.get(clause.id));setSectionText(clause)">
+                {{getClauseName(clause)}}
+            </button>
+            <!-- Button to delete clause -->
+            <button class="btn btn-danger btn-sm" (click)="onRemoveClause(clause)">&times;</button>
+            <!-- Card representing the clause-->
+            <div class="card" [hidden]="!showSection.get(clause.id)" style="font-size: 0.9rem">
+                <!-- Clause Id-->
+                <div class="card-header">
+                    {{getClauseName(clause)}}
+                </div>
+                <!-- Clause Contents -->
+                <div *ngFor="let clauseContent of clause.content;let j=index" style="display: flex">
+                    <div class="card inner-card flex-fill">
+                        <!-- Content Title-->
+                        <div class="card-header">
+                            <text-input [label]="'Clause Title' | translate" [(text)]="clause.clauseTitle[j].value" [labelClass]="'col-2'" [rows]="1" [maxLength]="2047" [rowClass]="'m-0'" [valueClass]="'col-9'" [availableLanguages]="getAvailableLanguagesForClauseContent(clause.content)" [(languageId)]="clause.clauseTitle[j].languageID" [languageIdClass]="'col-1'" (languageIdChange)="clause.clauseTitle[j].languageID = $event;clauseContent.languageID = $event">
+                            </text-input>
+                        </div>
+                        <!-- Content-->
+                        <span id="{{clause.id + '-' + clauseContent.languageID}}" class="card-body" contenteditable="true" (input)="onContentUpdated(clause,$event,j)">
 
                     </span>
-                </div>
-                <div style="margin: auto 10px auto auto;">
-                    <button class="btn btn-danger btn-sm" (click)="onRemoveClauseContent(clause,j)">{{'Delete'|translate}}</button>
-                </div>
-            </div>
-            <div *ngIf="LANGUAGES.length != clause.content.length" style="text-align: center;margin-bottom: 10px">
-                <!-- Button to add clause content -->
-                <button class="btn btn-danger btn-sm" (click)="onAddClauseContent(clause)">+</button>
-            </div>
-            <!-- Trading Terms -->
-            <div class="card-footer">
-                <div class="row" *ngFor="let tradingTerm of clause.tradingTerms">
-                    <!-- Trading Term id-->
-                    <div class="col-2">
-                        <input type="text" class="form-control" [(ngModel)]="tradingTerm.id" readonly>
                     </div>
-                    <!-- Trading Term values-->
-                    <div class="col-10">
-                        <table>
-                            <tbody>
-                            <tr>
-                                <!-- STRING data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
-                                    <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
-                                </td>
-                                <!-- QUANTITY data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
-                                    <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
-                                    </quantity-input>
-                                </td>
-                                <!-- NUMBER data type-->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
-                                    <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
-                                </td>
-                                <!-- CODE data type -->
-                                <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                        <option *ngFor="let option of INCOTERMS" [value]="option">{{option | translate}}</option>
-                                    </select>
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                        <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option | translate}}</option>
-                                    </select>
-                                    <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
-                                        <option *ngFor="let option of COUNTRY_JSON" [value]="option.iso">{{option.name}}</option>
-                                    </select>
-                                </td>
-                                <!-- Button to delete trading term-->
-                                <td class="align-right" style="vertical-align:middle">
-                                    <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
-                                    <button class="btn btn-danger" type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div style="margin: auto 10px auto auto;">
+                        <button class="btn btn-danger btn-sm" (click)="onRemoveClauseContent(clause,j)">{{'Delete'|translate}}</button>
                     </div>
                 </div>
-                <!-- Button to add trading term -->
-                <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="onAddTradingTerm(clause)">
-                    <span [innerHTML]="'Add Trading Term' | translate"></span>
-                </button>
+                <div *ngIf="LANGUAGES.length != clause.content.length" style="text-align: center;margin-bottom: 10px">
+                    <!-- Button to add clause content -->
+                    <button class="btn btn-danger btn-sm" (click)="onAddClauseContent(clause)">+</button>
+                </div>
+                <!-- Trading Terms -->
+                <div class="card-footer">
+                    <div class="row" *ngFor="let tradingTerm of clause.tradingTerms">
+                        <!-- Trading Term id-->
+                        <div class="col-2">
+                            <input type="text" class="form-control" [(ngModel)]="tradingTerm.id" readonly>
+                        </div>
+                        <!-- Trading Term values-->
+                        <div class="col-10">
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <!-- STRING data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'STRING'" style="vertical-align:middle">
+                                        <input [(ngModel)]="tradingTerm.value.value[0].value" class="form-control" type="text" name="{{tradingTerm.id}}" />
+                                    </td>
+                                    <!-- QUANTITY data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'QUANTITY'" style="vertical-align:middle">
+                                        <quantity-input [quantity]="tradingTerm.value.valueQuantity[0]">
+                                        </quantity-input>
+                                    </td>
+                                    <!-- NUMBER data type-->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'NUMBER'" style="vertical-align:middle">
+                                        <input type="number" class="form-control value-input" [ngModel]="tradingTerm.value.valueDecimal[0]" (change)="setValueDecimal(tradingTerm, 0, $event)">
+                                    </td>
+                                    <!-- CODE data type -->
+                                    <td *ngIf="tradingTerm.value.valueQualifier === 'CODE'" style="vertical-align:middle">
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'INCOTERMS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of INCOTERMS" [value]="option">{{option | translate}}</option>
+                                        </select>
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'PAYMENT_MEANS_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of PAYMENT_TERMS" [value]="option">{{option | translate}}</option>
+                                        </select>
+                                        <select *ngIf="tradingTerm.value.valueCode[0].listID == 'COUNTRY_LIST'" class="form-control custom-select" [(ngModel)]="tradingTerm.value.valueCode[0].value">
+                                            <option *ngFor="let option of COUNTRY_JSON" [value]="option.iso">{{option.name}}</option>
+                                        </select>
+                                    </td>
+                                    <!-- Button to delete trading term-->
+                                    <td class="align-right" style="vertical-align:middle">
+                                        <button class="btn btn-outline-primary ml-1" (click)="onEditTradingTerm(clause,tradingTerm)"><span [innerHTML]="'Edit' | translate"></span></button>
+                                        <button class="btn btn-danger" type="button" (click)="onRemoveTradingTerm(clause,tradingTerm)">&times;</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Button to add trading term -->
+                    <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="onAddTradingTerm(clause)">
+                        <span [innerHTML]="'Add Trading Term' | translate"></span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Button to add clause -->
-    <button class="btn btn-danger btn-sm" (click)="onAddClause()">+</button>
+        <!-- Button to add clause -->
+        <button class="btn btn-danger btn-sm" (click)="onAddClause()">+</button>
 
-    <!-- Actions -->
-    <div class="row actions-row space-before">
-        <div class="{{catalogueId ? 'col-8': 'col-10'}} call-status-col">
-            <call-status [callStatus]="initPageStatus"></call-status>
+        <!-- Actions -->
+        <div class="row actions-row space-before">
+            <div class="{{catalogueId ? 'col-8': 'col-10'}} call-status-col">
+                <call-status [callStatus]="initPageStatus"></call-status>
+            </div>
+            <div *ngIf="catalogueId" class="col-2">
+                <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
+            </div>
         </div>
-        <div *ngIf="catalogueId" class="col-2">
-            <button class="btn btn-secondary action" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-primary action" (click)="onSave()"><span [innerHTML]="'Save' | translate"></span></button>
-        </div>
-    </div>
+    </ng-container>
+    <!-- Terms and conditions as a list of files -->
+    <ng-container *ngIf="showFileInput">
+        <company-terms-and-conditions-file-input (onSaveEvent)="onSaveEvent.emit()" [settings]="settings">
+        </company-terms-and-conditions-file-input>
+    </ng-container>
+
 </div>
 
 <edit-trading-term-modal [settings]="settings"></edit-trading-term-modal>

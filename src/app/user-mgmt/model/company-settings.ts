@@ -20,6 +20,8 @@ import { CompanyDescription } from './company-description';
 import { CompanyDetails } from './company-details';
 import { CompanyTradeDetails } from './company-trade-details';
 import { CompanyNegotiationSettings } from './company-negotiation-settings';
+import {Code} from '../../catalogue/model/publish/code';
+import {DocumentReference} from '../../catalogue/model/publish/document-reference';
 
 export class CompanySettings {
     constructor(
@@ -30,6 +32,10 @@ export class CompanySettings {
         public preferredProductCategories: string[],
         public recentlyUsedProductCategories: string[],
         public tradeDetails: CompanyTradeDetails,
-        public negotiationSettings: CompanyNegotiationSettings
-    ) { }
+        public negotiationSettings: CompanyNegotiationSettings,
+        public subscribedCompanyIds: string[],
+        public subscribedProductCategories: Code[],
+        public termsAndConditions: DocumentReference[]
+    ) {
+    }
 }

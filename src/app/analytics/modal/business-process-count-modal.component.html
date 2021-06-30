@@ -1,0 +1,68 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   In collaboration with
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+
+<ng-template #modal let-d="dismiss">
+    <form novalidate>
+        <div class="modal-header">
+            <h4 class="modal-title"><span [innerHTML]="'Business Processes by Company' | translate"></span></h4>
+            <button (click)="d('')" aria-label="Close" class="close" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div *ngIf="platformCompanyProductCount && partyMap" class="modal-body">
+            <div style="display: flex;justify-content: space-between">
+                <span [innerHTML]="'Filter on date'" style="align-self: center; font-weight: bold"></span>
+                <date-input [(date)]="startDate"></date-input>
+                <span [innerHTML]="'between'" style="align-self: center"></span>
+                <date-input [(date)]="endDate"></date-input>
+            </div>
+            <div class="d-flex justify-content-end space-before">
+                <button (click)="onResetFilter()" *ngIf="startDate || endDate" class="btn btn-secondary mb-2"><span
+                        [innerHTML]="'Reset' | translate"></span></button>
+                <button (click)="onFilterByDate()" [disabled]="!startDate && !endDate"
+                        class="btn btn-primary action mb-2 space-left">{{'Filter'|translate}}</button>
+            </div>
+            <div class="space-before space-after">
+                <span [innerHTML]="'Showing results' | translate"></span> {{ start }} - {{ end }} <span
+                    [innerHTML]="'of' | translate"></span> {{ platformCompanyProductCount.totalCompanyCount }}
+            </div>
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th><span [innerHTML]="'Company Name' | translate"></span></th>
+                    <th><span [innerHTML]="'Total Business Process Count' | translate"></span></th>
+                    <th><span [innerHTML]="'Total Purchase Count' | translate"></span></th>
+                    <th><span [innerHTML]="'Total Sales Count' | translate"></span></th>
+                </tr>
+                <tr *ngFor="let companyProcessCount of platformCompanyProductCount.companyProcessCounts">
+                    <td><a (click)="navigateToCompanyPage(companyProcessCount)"
+                           class="text-link">{{partyMap.get(companyProcessCount.partyId)}}</a>
+                    </td>
+                    <td>{{companyProcessCount.purchasesCount + companyProcessCount.salesCount}}</td>
+                    <td>{{companyProcessCount.purchasesCount}}</td>
+                    <td>{{companyProcessCount.salesCount}}</td>
+                </tr>
+            </table>
+            <div class="justify-content-center pagination">
+                <ngb-pagination (pageChange)="onChangePage($event)"
+                                [(collectionSize)]="platformCompanyProductCount.totalCompanyCount"
+                                [(page)]="page" [boundaryLinks]="true"
+                                [maxSize]="5" [pageSize]="pageSize"></ngb-pagination>
+            </div>
+        </div>
+        <call-status [callStatus]="retrieveProcessCountStatisticsCallStatus"></call-status>
+    </form>
+</ng-template>

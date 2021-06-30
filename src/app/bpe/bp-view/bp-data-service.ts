@@ -66,6 +66,8 @@ import { Price } from '../../catalogue/model/publish/price';
 import { DespatchLine } from '../../catalogue/model/publish/despatch-line';
 import { Shipment } from '../../catalogue/model/publish/shipment';
 import { GoodsItem } from '../../catalogue/model/publish/goods-item';
+import {DocumentReference} from '../../catalogue/model/publish/document-reference';
+import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../common/constants';
 
 @Injectable()
 export class BPDataService {
@@ -407,6 +409,17 @@ export class BPDataService {
             rfqLine.lineItem.quantity = modifiedLines[i].goodsItem.quantity;
         }
 
+        // set company terms and conditions as additional document reference
+        const sellerSettings = this.getCompanySettings();
+        if(sellerSettings && sellerSettings.termsAndConditions && sellerSettings.termsAndConditions.length){
+            let termsAndConditions:DocumentReference[] = copy(sellerSettings.termsAndConditions);
+            UBLModelUtils.removeHjidFieldsFromObject(termsAndConditions);
+            // set document type
+            for (let termsAndCondition of termsAndConditions) {
+                termsAndCondition.documentType = COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE;
+            }
+            rfq.additionalDocumentReference.push(...termsAndConditions);
+        }
         this.requestForQuotation = rfq;
         return Promise.resolve(rfq);
     }
@@ -443,7 +456,9 @@ export class BPDataService {
         for (let quotationLine of copyQuotation.quotationLine) {
             lineItems.push(quotationLine.lineItem);
         }
-        this.order = UBLModelUtils.createOrder(lineItems);
+        // find the company terms and conditions
+        let documentReferences:DocumentReference[] = copyQuotation.additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+        this.order = UBLModelUtils.createOrder(lineItems,documentReferences);
         let size = copyRfq.requestForQuotationLine.length;
         for (let i = 0; i < size; i++) {
             this.order.orderLine[i].lineItem.deliveryTerms.deliveryLocation.address = copyRfq.requestForQuotationLine[i].lineItem.deliveryTerms.deliveryLocation.address;
@@ -479,6 +494,8 @@ export class BPDataService {
         const copyQuotation = copy(this.copyQuotation);
         this.requestForQuotation = UBLModelUtils.createRequestForQuotation(this.copyQuotation.quotationLine.map(quotationLine => quotationLine.lineItem));
         this.requestForQuotation.delivery = copyQuotation.quotationLine[0].lineItem.delivery[0];
+        // set company terms and conditions
+        this.requestForQuotation.additionalDocumentReference = copyQuotation.additionalDocumentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
 
         UBLModelUtils.removeHjidFieldsFromObject(this.requestForQuotation);
     }

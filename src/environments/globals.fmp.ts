@@ -57,6 +57,8 @@ export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
 export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
 
 // Platform Configuration
 
@@ -111,8 +113,14 @@ export const config = {
     "delegationEnabled": false,
     "demandsEnabled": true,
     "displayCategoryCounts":false,
+    "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs_es/",
+    "enableActionButtonsForTermsAndConditions":false,
+    "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
+    "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
+    "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": true,
@@ -197,6 +205,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": false,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [
         {
             "title": "Privacy Policy",
@@ -211,6 +220,7 @@ export const config = {
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":false,
+    "showBusinessProcessBreakdownForPlatformAnalytics": true,
     "showCompanyMembers": true,
     "showCompanyDetailsInPlatformMembers":true,
     "showExplorative": false,
@@ -328,7 +338,7 @@ export const config = {
     ],
     "supportMail": "nimbleFMP@aidimme.es",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
     },
     "showLoginFederation": false,
@@ -341,6 +351,7 @@ export const config = {
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
+    "smeFederationIDP": "sampleIDP",
     "legislationSettings": {
         "enabled": true,
         "authMode": "nimble",

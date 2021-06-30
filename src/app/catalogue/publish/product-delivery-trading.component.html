@@ -27,12 +27,10 @@
 <div class="row">
     <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
         <quantity-input [label]="'Warranty Period' | translate"
-                        [definition]="warrantyPeriodRangeDefinition"
                         [disabled]="disabled"
                         [quantityUnits]="wrapper.negotiationSettings.warrantyPeriodUnits"
                         rowClass="space-before"
                         [quantity]="wrapper.line.warrantyValidityPeriod.durationMeasure"
-                        (onQuantityUnitChange)="setWarrantyPeriodRangeDefinition()"
                         [periodRanges]="companyNegotiationSettings.warrantyPeriodRanges"
                         [periodUnits]="companyNegotiationSettings.warrantyPeriodUnits"
                         [parentForm]="formGroup"
@@ -61,11 +59,9 @@
 <div class="row">
     <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-10' : 'col-12'}}">
         <quantity-input [label]="'Delivery Period' | translate"
-                        [definition]="deliveryPeriodRangeDefinition"
                         [disabled]="disabled"
                         [quantityUnits]="wrapper.negotiationSettings.deliveryPeriodUnits"
                         rowClass="space-before" [quantity]="wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure"
-                        (onQuantityUnitChange)="setDeliveryPeriodRangeDefinition()"
                         [periodRanges]="companyNegotiationSettings.deliveryPeriodRanges"
                         [periodUnits]="companyNegotiationSettings.deliveryPeriodUnits"
                         [parentForm]="formGroup"

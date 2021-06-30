@@ -75,6 +75,7 @@ export class OrderItemComponent implements OnInit {
     processMetadata: ThreadEventMetadata;
 
     getPartyId = UBLModelUtils.getPartyId;
+    getCompanyTermsAndConditionFiles = UBLModelUtils.getCompanyTermsAndConditionFiles
 
     selectedPanel: string;
     selectedTCTab: 'CUSTOM_TERMS' | 'CLAUSES' = 'CUSTOM_TERMS';

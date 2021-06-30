@@ -444,6 +444,12 @@ ngb-pagination .page-item.active .page-link {
     cursor: pointer;
 }
 
+.tooltip-icon-with-right-space {
+    position: absolute;
+    right: 2%;
+    cursor: pointer;
+}
+
 .text-std, .text-std:focus, .text-std:hover {
     color: #292b2c !important;
     text-decoration: none !important;
@@ -746,4 +752,40 @@ ngb-pagination .page-item.active .page-link {
     display: inline-block;
     overflow: hidden;
     color: red;
+}
+
+/*style for bold text*/
+.bold-text{
+    font-weight: bold;
+}
+.bold-text strong{
+    font-weight: bold;
+}
+
+/*style for non-public information*/
+.non-public-information {
+    color: darkgrey !important;
+}
+
+.non-public-information > b {
+    font-weight: normal;
+}
+
+.non-public-information i.boolean-type.fa-check{
+    color: darkgrey !important;
+}
+.non-public-information i.boolean-type.fa-times{
+    color: darkgrey !important;
+}
+
+.non-public-information .btn-link {
+    color: darkgrey !important;
+}
+
+demand-publish product-certificates-tab span {
+    font-size: initial;
+}
+
+demand-list-item certificate-view span {
+    font-size: initial;
 }

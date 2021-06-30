@@ -143,7 +143,7 @@ export class EditPropertyModalComponent implements OnInit {
 
     getDefinition(): string {
         if (!this.selectedProperty) {
-            return "No definition."
+            return this.translate.instant("No definition.")
         }
         for (const prop of this.selectedProperty.properties) {
             if (prop.definition && prop.definition !== "") {
@@ -151,7 +151,7 @@ export class EditPropertyModalComponent implements OnInit {
             }
         }
 
-        return "No definition."
+        return this.translate.instant("No definition.")
     }
 
     get prettyName(): string {

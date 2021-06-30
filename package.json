@@ -124,7 +124,7 @@
         "sass-loader": "~7.1",
         "style-loader": "~0.23",
         "to-string-loader": "~1.1",
-        "typescript": "~3.1",
+        "typescript": "~3.2",
         "uglifyjs-webpack-plugin": "~2.0",
         "webpack": "~4.29",
         "webpack-cli": "~3.2",

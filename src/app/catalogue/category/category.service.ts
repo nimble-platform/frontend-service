@@ -18,10 +18,10 @@
 
 import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
-import {Category} from '../model/category/category';
+import {Category} from '../../common/model/category/category';
 import * as myGlobals from '../../globals';
 import {Code} from '../model/publish/code';
-import {ParentCategories} from '../model/category/parent-categories';
+import {ParentCategories} from '../../common/model/category/parent-categories';
 import {findCategoryInArray, getAuthorizedHeaders, selectPreferredName, sortCategories} from '../../common/utils';
 import {CookieService} from 'ng2-cookies';
 import {UserService} from '../../user-mgmt/user.service';
@@ -43,8 +43,6 @@ export class CategoryService {
     constructor(private http: Http,
         private userService: UserService,
         private cookieService: CookieService) {
-        // get service categories for available taxonomies
-        this.getServiceCategoriesForAvailableTaxonomies();
     }
 
     getCategoriesByName(keyword: string, taxonomyId: string, isLogistics: boolean): Promise<Category[]> {
@@ -171,19 +169,12 @@ export class CategoryService {
     }
 
     /**
-     * Returns whether the category is a service category or not for the given parent categories
-     * @param parentCategories the parent categories
-     * @return true if the category whose parents are given is a service category, otherwise, returns false
+     * Returns whether the category is a service category or not for the given root category uri
+     * @return true if the root category is a service category, otherwise, returns false
+     * @param rootCategoryUri
      * */
-    isServiceCategory(parentCategories){
-        let isServiceCategory = false;
-        for(let parentCategory of parentCategories){
-            if(this.serviceCategories.indexOf(parentCategory.id) != -1){
-                isServiceCategory = true;
-                break;
-            }
-        }
-        return isServiceCategory;
+    isServiceCategory(rootCategoryUri:string){
+        return this.serviceCategories.indexOf(rootCategoryUri) !== -1;
     }
 
     getRootCategories(taxonomyIds: string[]): Promise<Category[]> {
@@ -245,12 +236,12 @@ export class CategoryService {
     }
 
     // methods to handle selected categories
-    addSelectedCategory(category: Category,parentCategories): void {
+    addSelectedCategory(category: Category): void {
         // Only add if category is not null and doesn't exist in selected categories
         if (category != null && this.selectedCategories.findIndex(c => c.id == category.id) == -1) {
             // check the first selected category is service or not
             if(this.selectedCategories.length == 0){
-                this.hasServiceCategories = this.isServiceCategory(parentCategories);
+                this.hasServiceCategories = this.isServiceCategory(category.rootCategoryUri);
             }
             this.selectedCategories.push(category);
             sortCategories(this.selectedCategories);

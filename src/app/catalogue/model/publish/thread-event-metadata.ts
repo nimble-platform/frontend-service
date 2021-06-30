@@ -42,6 +42,7 @@ export class ThreadEventMetadata {
         public status?: ThreadEventStatus,
         public statusText?: string,
         public actionText?: string,
-        public formerStep?: boolean
+        public formerStep?: boolean,
+        public responseStatus?: string // whether the request is accepted,rejected or updated
     ) { }
 }

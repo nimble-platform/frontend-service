@@ -57,6 +57,8 @@ export const tntMasterDataEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/
 export const tntAnalysisEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/tracking-analysis/';
 export const tntIoTBlockchainEndpoint = 'http://nimble-dev.ikap.biba.uni-bremen.de/iot-bc-api/api/verify';
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
 
 // Platform Configuration
 
@@ -109,8 +111,14 @@ export const config = {
     "delegationEnabled": true,
     "demandsEnabled": false,
     "displayCategoryCounts":true,
+    "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableActionButtonsForTermsAndConditions":false,
+    "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
+    "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
+    "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": false,
@@ -225,6 +233,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [
         {
             "title": "End-User License Agreement (EULA)",
@@ -235,6 +244,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,
+    "showBusinessProcessBreakdownForPlatformAnalytics": false,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
@@ -295,7 +305,7 @@ export const config = {
     ],
     "supportMail": "nimble-support@salzburgresearch.at",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
     },
     "showLoginFederation": false,
@@ -308,6 +318,7 @@ export const config = {
     "whiteBlackListForCatalogue":false,
     "federationClientID": "sample-client",
     "federationIDP": "sampleIDP",
+    "smeFederationIDP": "sampleIDP",
     "legislationSettings": {
         "enabled": false,
         "authMode": "nimble",

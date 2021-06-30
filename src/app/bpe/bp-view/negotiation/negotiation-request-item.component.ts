@@ -27,7 +27,11 @@ import {ThreadEventMetadata} from '../../../catalogue/model/publish/thread-event
 import * as myGlobals from '../../../globals';
 import {DigitalAgreement} from '../../../catalogue/model/publish/digital-agreement';
 import {UnitService} from '../../../common/unit-service';
-import {FRAME_CONTRACT_DURATION_TERM_NAME, frameContractDurationUnitListId} from '../../../common/constants';
+import {
+    COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE,
+    FRAME_CONTRACT_DURATION_TERM_NAME,
+    frameContractDurationUnitListId
+} from '../../../common/constants';
 import {Quantity} from '../../../catalogue/model/publish/quantity';
 import {Quotation} from '../../../catalogue/model/publish/quotation';
 import {Clause} from '../../../catalogue/model/publish/clause';
@@ -40,6 +44,7 @@ import {AbstractControl, FormControl, Validators} from '@angular/forms';
 import {ChildFormBase} from '../../../common/validation/child-form-base';
 import {ValidatorFn} from '@angular/forms/src/directives/validators';
 import {stepValidator, ValidationService} from '../../../common/validation/validators';
+import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 
 enum FIXED_NEGOTIATION_TERMS {
     DELIVERY_PERIOD = 'deliveryPeriod',
@@ -86,6 +91,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
     // form controls
     orderQuantityFormControl: FormControl;
 
+    getCompanyTermsAndConditionFiles = UBLModelUtils.getCompanyTermsAndConditionFiles;
     /**
      * View control fields
      */
@@ -308,6 +314,7 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = copy(quotationWrapper.tradingTerms);
             this.wrapper.rfqDataMonitoringRequested = quotationWrapper.dataMonitoringPromised;
 
+            this.setTermsAndConditionsFiles(quotationWrapper.quotation.additionalDocumentReference);
         } else if (termSource == 'product_defaults') {
             if (this.resetUpdatesChecked || !this.dirtyNegotiationFields[FIXED_NEGOTIATION_TERMS.DELIVERY_PERIOD]) {
                 this.wrapper.rfqDeliveryPeriod = copy(this.wrapper.originalLineDeliveryPeriod);
@@ -333,6 +340,15 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.clause = copy(this.defaultTermsAndConditions);
             // }
             this.rfq.requestForQuotationLine[this.wrapper.lineIndex].lineItem.tradingTerms = [];
+
+            // set the type of company terms and conditions files
+            if(this.wrapper.sellerSettings.company.salesTerms && this.wrapper.sellerSettings.company.salesTerms.documentReference){
+                let documentReferences = copy(this.wrapper.sellerSettings.company.salesTerms.documentReference);
+                for (let documentReference of documentReferences) {
+                    documentReference.documentType = COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE;
+                }
+                this.setTermsAndConditionsFiles(documentReferences);
+            }
         }
 
         this.counterOfferTermsSource = termSource;
@@ -340,6 +356,15 @@ export class NegotiationRequestItemComponent extends ChildFormBase implements On
         setImmediate(() => this.enableDirtyUpdate = true);
         // uncheck the reset updates input after a term source is selected
         this.resetUpdatesChecked = false;
+    }
+
+    setTermsAndConditionsFiles(documentReference:DocumentReference[]){
+        // remove the company terms and conditions files from rfq
+        this.rfq.additionalDocumentReference = this.rfq.additionalDocumentReference.filter(value => value.documentType !== COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+        // add the given company terms and conditions files
+        let documentReferences:DocumentReference[] = documentReference.filter(value => value.documentType === COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE);
+        UBLModelUtils.removeHjidFieldsFromObject(copy(documentReferences));
+        this.rfq.additionalDocumentReference.push(...documentReferences);
     }
 
     onPriceConditionsChange(): void {

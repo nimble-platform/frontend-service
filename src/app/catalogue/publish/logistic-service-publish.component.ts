@@ -37,7 +37,7 @@ import { ItemProperty } from '../model/publish/item-property';
 import { TransportationService } from '../model/publish/transportation-service';
 import { Catalogue } from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
-import { Category } from '../model/category/category';
+import { Category } from '../../common/model/category/category';
 import { PublishingPropertyService } from './publishing-property.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";

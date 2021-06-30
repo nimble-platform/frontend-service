@@ -16,7 +16,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 import {CookieService} from 'ng2-cookies';
 import * as myGlobals from '../globals';
 import {Router} from '@angular/router';
-import {Category} from '../catalogue/model/category/category';
+import {Category} from '../common/model/category/category';
 import {createText, selectPreferredName} from '../common/utils';
 import {CategoryBoxUiModel} from './model/category-box-ui.model';
 import {SimpleSearchService} from '../simple-search/simple-search.service';

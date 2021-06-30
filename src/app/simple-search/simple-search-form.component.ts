@@ -26,7 +26,7 @@ import {copy, getPropertyKey, roundToTwoDecimals, selectNameFromLabelObject} fro
 import {CallStatus} from '../common/call-status';
 import {CURRENCIES, DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 import {CategoryService} from '../catalogue/category/category.service';
-import {Category} from '../catalogue/model/category/category';
+import {Category} from '../common/model/category/category';
 import {CatalogueService} from '../catalogue/catalogue.service';
 import {PublishService} from '../catalogue/publish-and-aip.service';
 import {ShoppingCartDataService} from '../bpe/shopping-cart/shopping-cart-data-service';
@@ -47,6 +47,8 @@ import {UserService} from '../user-mgmt/user.service';
 import {Address} from '../user-mgmt/model/address';
 import {Facet} from './model/facet';
 import {FacetOption} from './model/facet-option';
+import {CompanySubscriptionsComponent} from '../user-mgmt/company-settings/company-subscriptions.component';
+import {CompanySubscriptionService} from '../user-mgmt/company-subscription.service';
 
 
 @Component({
@@ -97,7 +99,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     collapsiblePropertyFacets = myGlobals.config.collapsiblePropertyFacets;
     displayCategoryCounts = myGlobals.config.displayCategoryCounts;
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
+    enableOtherFiltersSearch = myGlobals.config.enableOtherFiltersSearch;
     showTrustScore = myGlobals.config.showTrustScore;
+    enableTenderAndBidManagementToolIntegration = myGlobals.config.enableTenderAndBidManagementToolIntegration;
+    smeClusterCreateOpportunityEndpoint = myGlobals.smeClusterCreateOpportunityEndpoint;
     searchIndexes = ['Name', 'Category'];
     searchTopic = null;
     // content of the tooltip for product search
@@ -215,6 +220,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 private catalogueService: CatalogueService,
                 private whiteBlackListService: WhiteBlackListService,
                 public networkCompanyListService: NetworkCompanyListService,
+                public companySubscriptionService: CompanySubscriptionService,
                 private publishService: PublishService,
                 public shoppingCartDataService: ShoppingCartDataService,
                 private translateService: TranslateService,
@@ -514,7 +520,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             debounceTime(200),
             distinctUntilChanged(),
             switchMap(term =>
-                this.simpleSearchService.getSuggestions(term, ('{LANG}_' + this.product_name), this.searchIndex)
+                this.simpleSearchService.getSuggestions(term, this.searchIndex)
             )
         ).pipe(map(suggestions => {
             // for the category search, suggestions include category label and uri
@@ -1445,7 +1451,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     onSearchResultClicked(event): void {
         // if the page reference is publish, we don't let users navigating to product details
         // if the page reference is catalogue, we do not let users navigating to the company details
-        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue') {
+        if (this.pageRef === 'publish' || this.pageRef === 'network' || this.pageRef === 'offering' || this.pageRef === 'catalogue' || this.pageRef === 'subscription') {
             event.preventDefault();
         }
     }
@@ -2089,6 +2095,29 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     // the end of methods for network functionality
 
+    // methods for subscription functionality
+
+    onToggleCompanySelectForSubscription(toggledCompany: any, event): void {
+        event.preventDefault();
+        // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
+        setTimeout(() => {
+            if (this.companySubscriptionService.isCompanySelected(toggledCompany.id)) {
+                this.onRemoveSelectedCompanyFromSubscriptionList(toggledCompany);
+            } else {
+                this.companySubscriptionService.onAddSelectedCompany(toggledCompany)
+            }
+        });
+    }
+
+    isCompanySelectedForSubscription(id): boolean {
+        return this.companySubscriptionService.isCompanySelected(id);
+    }
+
+    onRemoveSelectedCompanyFromSubscriptionList(company: any): void {
+        this.companySubscriptionService.onRemoveSelectedCompany(company.id);
+    }
+    // the end of methods for subscription functionality
+
     // methods for white list/black list functionality
     isCompanySelected(vatNumber: string): boolean {
         return this.whiteBlackListService.isCompanySelected(vatNumber);
@@ -2115,9 +2144,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.router.navigate(['dashboard'], {queryParams: {tab: 'CATALOGUE', searchRef: 'true'}})
     }
 
-    onNavigate(toNetwork: boolean) {
-        if (toNetwork) {
+    onNavigate(tab: "NETWORK" | "SUBSCRIPTIONS" = null) {
+        if(tab === "NETWORK"){
             this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'NETWORK', searchRef: 'true'}})
+        } else if(tab === "SUBSCRIPTIONS"){
+            this.router.navigate(['/user-mgmt/company-settings'], {queryParams: {tab: 'SUBSCRIPTIONS', searchRef: 'true'}})
         } else {
             this.router.navigate(['/dashboard'], {queryParams: {tab: 'CATALOGUE', searchRef: 'true'}})
         }
@@ -2315,8 +2346,22 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 this.companyFilter.facets.splice(circularEconomyFacetIndex,1);
             }
         }
+        // set the facets names for other filters
+        // they are used in the filter search component
+        if(this.productOtherFilter.facets.length){
+            this.productOtherFilter.facetNames = this.productOtherFilter.facets.map(facet => facet.realName);
+        }
     }
 
+    /**
+     * Changes the visibility of other filter facets.
+     * @param facetNames facet names which are filtered and visible to the user
+     * */
+    onOtherFilterFacetsFiltered(facetNames): void {
+        this.productOtherFilter.facets.forEach(facet => {
+            facet.visible = facetNames.indexOf(facet.realName) !== -1 ;
+        })
+    }
     /**
      * Checks whether a facet identifying a specific company such brand name or legal name is selected
      */
@@ -2378,5 +2423,69 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
             return index === 0 ? match.toLowerCase() : match.toUpperCase();
         });
+    }
+
+    /**
+     * Navigates users to SME cluster to initiate a business opportunity for the search product.
+     * We pass the search query, selected category and other filters to SME cluster.
+     * */
+    onInitiateBusinessOpportunity(){
+        // selected category name
+        let categoryName = null;
+        // filter queries
+        let fq = null;
+        // search query
+        let q = null;
+
+        // if the search index is Name, the search query is the name of product
+        if(this.searchIndex === "Name"){
+            // set the selected category name
+            for(let categories of this.cat_levels){
+                for(let category of categories){
+                    if(category.id === this.catID){
+                        categoryName = encodeURIComponent(category.preferredName);
+                        break;
+                    }
+                }
+            }
+            // set the search query
+            if(this.model.q && this.model.q != ""){
+                q = encodeURIComponent((this.model.q));
+            }
+
+        }
+        // if search index is Category, the search query is the name of category
+        else{
+            // set the selected category name
+            if(this.model.q && this.model.q != ""){
+                categoryName = encodeURIComponent((this.model.q));
+            }
+        }
+        // set the selected facet queries
+        let facetQueryParam = this.facetQuery.map(fq => this.getFacetQueryName(fq) + ":" + this.getFacetQueryValue(fq));
+        if(facetQueryParam.length > 0){
+            fq = encodeURIComponent(facetQueryParam.join("_SEP_"));
+        }
+        // create the url to SME cluster
+        let url = this.smeClusterCreateOpportunityEndpoint;
+        if(q){
+            url +=`?q=${q}`
+        }
+        if(fq){
+            if(q){
+                url +=`&fq=${fq}`
+            } else{
+                url +=`?fq=${fq}`
+            }
+        }
+        if(categoryName){
+            if(q || fq){
+                url +=`&category=${categoryName}`
+            } else{
+                url +=`?category=${categoryName}`
+            }
+        }
+        // navigate to the url
+        window.open(url,'_blank')
     }
 }

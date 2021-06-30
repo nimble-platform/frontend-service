@@ -258,6 +258,11 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
                 this.completeHistory = events;
                 this.history = events.slice(1, events.length);
                 this.lastEvent = events[0];
+                // do not let sellers to finish Negotiation process if they updated the quotation
+                // only buyers can finish the collaboration in this case
+                if(this.lastEvent.processType === 'Negotiation' && this.lastEvent.responseStatus === NEGOTIATION_RESPONSES.TERMS_UPDATED && !this.lastEvent.buyer){
+                    this.showFinishCollaborationButton = false;
+                }
                 // Update History in order to remove pending orders
                 this.updateHistory(this.history);
 
@@ -567,6 +572,8 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
             }
             // messages if the responder party responded already
         } else {
+            // set the response status
+            event.responseStatus = response.documentStatus;
             switch (processType) {
                 case "Order":
                     if (response.documentStatus == "true") {

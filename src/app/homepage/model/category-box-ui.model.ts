@@ -13,7 +13,7 @@
  */
 
 
-import {Category} from '../../catalogue/model/category/category';
+import {Category} from '../../common/model/category/category';
 
 export class CategoryBoxUiModel {
     img: string;

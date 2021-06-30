@@ -15,23 +15,29 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { Category } from "../model/category/category";
-import { CategoryService } from "./category.service";
-import { CookieService } from "ng2-cookies";
-import { UserService } from "../../user-mgmt/user.service";
-import { PublishService } from "../publish-and-aip.service";
-import { CallStatus } from "../../common/call-status";
-import {findCategoryInArray, sanitizeDataTypeName, selectPreferredName, selectPreferredValues} from '../../common/utils';
-import { ParentCategories } from "../model/category/parent-categories";
-import { sortCategories, scrollToDiv } from "../../common/utils";
-import { Property } from "../model/category/property";
+import {ActivatedRoute, Router} from '@angular/router';
+import {Category} from '../model/category/category';
+import {CookieService} from 'ng2-cookies';
+import {UserService} from '../../user-mgmt/user.service';
+import {CallStatus} from '../../common/call-status';
+import {
+    findCategoryInArray,
+    sanitizeDataTypeName,
+    scrollToDiv,
+    selectPreferredName,
+    selectPreferredValues,
+    sortCategories
+} from '../../common/utils';
+import {ParentCategories} from '../model/category/parent-categories';
+import {Property} from '../model/category/property';
 import * as myGlobals from '../../globals';
-import { AppComponent } from "../../app.component";
-import { Text } from '../model/publish/text';
-import { Observable } from "rxjs/Observable";
-import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
-import { SimpleSearchService } from "../../simple-search/simple-search.service";
+import {AppComponent} from '../../app.component';
+import {Observable} from 'rxjs/Observable';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {SimpleSearchService} from '../../simple-search/simple-search.service';
+import {CategoryService} from '../../catalogue/category/category.service';
+import {PublishService} from '../../catalogue/publish-and-aip.service';
+import {Text} from '../../catalogue/model/publish/text';
 
 const productType = "product";
 type SelectedTab = "TREE"
@@ -47,6 +53,8 @@ export class CategorySearchComponent implements OnInit {
     // whether the categories are selected for the publishing
     @Input() categoriesSelected:boolean = false;
     @Input() titleTranslationKey:string = null;
+    // whether the selected categories can be a mix of product and service categories
+    @Input() enableSelectionOfDifferentCategoryTypes:boolean = false;
     @Output() onCategoryRemoved = new EventEmitter<string>();
     selectedTab: SelectedTab = "TREE";
 
@@ -117,8 +125,8 @@ export class CategorySearchComponent implements OnInit {
      * */
     disableCategorySelection(){
         // if there are some selected categories, enable the selection iff the type of category (i.e, Product or Service) is the same with the others
-        if(this.categoryService.selectedCategories.length !== 0){
-            let isServiceCategory = this.categoryService.isServiceCategory(this.pathToSelectedCategories.parents);
+        if(!this.enableSelectionOfDifferentCategoryTypes && this.categoryService.selectedCategories.length !== 0){
+            let isServiceCategory = this.categoryService.isServiceCategory(this.selectedCategoryWithDetails.rootCategoryUri);
 
             return !((this.categoryService.hasServiceCategories && isServiceCategory) || (!this.categoryService.hasServiceCategories && !isServiceCategory));
         }
@@ -358,7 +366,7 @@ export class CategorySearchComponent implements OnInit {
             this.categoryService.selectedCategories = [];
         }
 
-        this.categoryService.addSelectedCategory(category,this.pathToSelectedCategories.parents);
+        this.categoryService.addSelectedCategory(category);
     }
 
     getCategoryTree(category: Category, scrollToDivId = null) {

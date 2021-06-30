@@ -40,6 +40,7 @@ export class FrameContractDetailsComponent implements OnInit {
     @Input() frameContractQuotationId: string;
     quotationWrapper: QuotationWrapper;
     frameContract: DigitalAgreement;
+    getCompanyTermsAndConditionFiles = UBLModelUtils.getCompanyTermsAndConditionFiles;
 
     shownTab: string = 'MAIN_TERMS';
     frameContractRetrievalCallStatus: CallStatus = new CallStatus();

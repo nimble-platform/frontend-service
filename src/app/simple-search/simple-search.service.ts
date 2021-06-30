@@ -45,6 +45,8 @@ export class SimpleSearchService {
     product_nonfilter_data_type = myGlobals.product_nonfilter_data_type;
     party_filter_main = myGlobals.party_filter_main;
     party_filter_trust = myGlobals.party_filter_trust;
+    party_legal_name = myGlobals.product_vendor_name;
+    party_brand_name = myGlobals.product_vendor_brand_name;
     product_configurable = myGlobals.product_configurable;
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
@@ -196,8 +198,14 @@ export class SimpleSearchService {
         let url = null;
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
+            let querySettings = {
+                'fields': [this.party_legal_name, ('{LANG}_' + this.party_brand_name)],
+                'boosting': false,
+                'boostingFactors': {}
+            };
+            let queryRes = this.buildQueryString(query, querySettings, true, true);
             url = this.eFactoryIndexingEndpoint + `/party/search`;
-            searchObject.q = 'hasRegisteredUser:true';
+            searchObject.q =  'hasRegisteredUser:true AND ' + queryRes.queryStr;
             searchObject.fq = [];
             // EFPF companies might not have lowercaseLegalName field, so, replace it with legalName
             sort = sort.replace("lowercaseLegalName","legalName");
@@ -287,20 +295,31 @@ export class SimpleSearchService {
             .catch(this.handleError);
     }
 
-    getSuggestions(query: string, item_field: string, search_index: string) {
+    getSuggestions(query: string, search_index: string) {
         let querySettings = {
-            'fields': [item_field],
+            'fields': ['{LANG}_' + this.product_name],
             'boosting': false,
             'boostingFactors': {}
         };
-        let queryRes = this.buildQueryString(query, querySettings, true, true, search_index != 'Category');
-        let url = this.url + `/item/search`;
-        if (this.delegated) {
-            url = this.delegate_url + `/item/search`;
-        }
+        // base url
+        let baseUrl = this.url;
+        // path to search index
+        let pathToSearchIndex = `/item/search`;
+        let queryRes;
         if (search_index == 'Category') {
-            url = this.url + `/class/search`;
+            // change the path
+            pathToSearchIndex = `/class/search`;
+            queryRes = this.buildQueryString(query, querySettings, true, true, false);
+            // modify query such that the suggestions include only the categories which are used to annotate some products
+            queryRes.queryStr = "("+queryRes.queryStr+") AND item.commodityClassficationUri:* ";
+        } else{
+            queryRes = this.buildQueryString(query, querySettings, true, true, true);
         }
+        if (this.delegated) {
+            baseUrl = this.delegate_url;
+        }
+        // create the url for request
+        const url = baseUrl + pathToSearchIndex;
         let searchObject: any = {};
         searchObject.rows = 0;
         searchObject.q = queryRes.queryStr;

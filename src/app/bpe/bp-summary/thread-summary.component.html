@@ -19,7 +19,6 @@
         <!-- Title bar -->
         <div class="row">
             <div class="col-12 d-flex thread-entry-header">
-                <!--<div class="col-12 d-flex thread-entry-header" (click)="expanded = !expanded">-->
                 <div *ngIf="!titleEvent" class="header-label mr-auto d-flex w-100">
                     <div class="row w-100 m-0">
                         <div class="col pl-2 pr-2">
@@ -62,11 +61,6 @@
                             <div *ngIf="titleEvent && showDataChannelButton && !enableDataChannelButton" class="inline" data-toggle="tooltip" data-placement="top" [title]="'Waiting for trading partner...' | translate" (click)="alertWait()">
                                 <i class="fa fa-exchange-alt p-1 pointer" aria-hidden="true"></i>
                             </div>
-                            <!--
-                          <div *ngIf="titleEvent && processInstanceGroup.archived" class="inline" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                              <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
-                          </div>
-                          -->
                             <div *ngIf="titleEvent && showRateCollaborationButton && sellerNegoSettings" class="inline" (click)="rateCollaborationSuccess(addSuccessRatingModal)" data-toggle="tooltip" data-placement="top" [title]="'Rate this collaboration' | translate">
                                 <i class="fa fa-star p-1 pointer" aria-hidden="true"></i>
                             </div>
@@ -84,37 +78,13 @@
                             </div>
                         </div>
                     </div>
-                    <!--
-                    <span class="clickable" (click)="navigateToSearchDetails()">{{titleEvent.product.name}}</span> (Trading partner: <span class="clickable" (click)="navigateToCompanyDetails()">{{titleEvent.tradingPartner}}</span>) <span *ngIf="processInstanceGroup.status == 'CANCELLED'"><i>- Collaboration cancelled</i></span> <span *ngIf="processInstanceGroup.status != 'CANCELLED'"><i>- {{titleEvent.statusText}}</i></span>
-                    -->
                 </div>
-                <!--
-                <div *ngIf="titleEvent && showDataChannelButton" data-toggle="tooltip" data-placement="top" title="Open Data Channel">
-                    <i class="fa fa-exchange-alt p-2 pointer" aria-hidden="true" [routerLink]="[channelLink]"></i>
-                </div>
-                <div *ngIf="titleEvent && processInstanceGroup.archived" (click)="deleteGroup()" data-toggle="tooltip" data-placement="top" title="Delete Permanently">
-                    <i class="fa fa-trash-alt p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="titleEvent && showRateCollaborationButton" (click)="rateCollaboration(addSuccessRatingModal,addCancelRatingModal)" data-toggle="tooltip" data-placement="top" title="Rate this collaboration">
-                    <i class="fa fa-star p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="titleEvent && showCancelCollaborationButton" (click)="openCancelCollaborationModal()" data-toggle="tooltip" data-placement="top" title="Cancel the collaboration">
-                    <i class="fa fa-times p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="!expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Show details">
-                    <i class="fa fa-angle-double-down p-2 pointer" aria-hidden="true"></i>
-                </div>
-                <div *ngIf="expanded" (click)="expanded = !expanded" data-toggle="tooltip" data-placement="top" title="Hide details">
-                    <i class="fa fa-angle-double-up p-2 pointer" aria-hidden="true"></i>
-                </div>
-                -->
             </div>
         </div>
 
         <div *ngIf="expanded">
             <!-- Titles for the rows -->
             <div class="row thread-entry-heading">
-                <!--<div class="col-2"><strong>Customer</strong></div>-->
                 <div class="col-2"><strong><span [innerHTML]="'Type' | translate"></span></strong></div>
                 <div class="col-3"><strong><span [innerHTML]="'Request Date' | translate"></span></strong></div>
                 <div class="col-3"><strong><span [innerHTML]="'Response Date' | translate"></span></strong></div>

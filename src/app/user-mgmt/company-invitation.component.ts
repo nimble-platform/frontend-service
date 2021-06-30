@@ -200,7 +200,10 @@ export class CompanyInvitationComponent implements OnInit {
             tooltip += this.translate.instant("Company Admin Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("external_representative") != -1)
             tooltip += this.translate.instant("External Representative Row",{platformName:this.config.platformNameInMail});
-        tooltip += this.translate.instant("Legal Representative Row",{platformName:this.config.platformNameInMail});
+        if(this.config.replaceLegalRepresentativeWithCompanyAdmin)
+            tooltip += this.translate.instant("Legal Representative Row As Company Admin",{platformName:this.config.platformNameInMail});
+        else
+            tooltip += this.translate.instant("Legal Representative Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("monitor") != -1)
             tooltip += this.translate.instant("Monitor Row",{platformName:this.config.platformNameInMail});
         if (this.config.supportedRoles.indexOf("publisher") != -1)

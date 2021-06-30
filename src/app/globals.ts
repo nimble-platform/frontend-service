@@ -84,6 +84,9 @@ export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
 export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
+
 
 // Platform Configuration
 /*
@@ -108,8 +111,14 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - delegationEnabled: Boolean flag if the federation feature is available for the instance
 - demandsEnabled: Boolean flag if the demand functionality is enabled
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
+- displayProductIdInOverview: Boolean flag if the product id is displayed in the product overview
 - docLink: Link to the documentation resources
+- enableActionButtonsForTermsAndConditions: Boolean flag if the actions buttons are visible for terms and conditions. If it is true, an update/view button displayed next to the clause name.
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
+- enableSubscriptions: Boolean flag if the subscription functionality is enabled or not
+- enableTenderAndBidManagementToolIntegration: Boolean flag if the tender and bid management integration is enabled.
+- enableTermsAndConditionsAsFile: Boolean flag if the users are allowed to upload files as company terms and conditions
+- enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
 - hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
@@ -140,6 +149,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - productOfferingEnabled: Boolean flag if the product offering functionality is enabled
 - vatEnabled: Boolean flag if VAT rates shall be included in price calculations
 - projectsEnabled: Boolean flag if project management is available on the dashboard
+- replaceLegalRepresentativeWithCompanyAdmin: Boolean flag if the legal representative role is renamed to company admin.
 - requiredAgreements: Array of JSON objects defining the terms a user has to agree to upon registration. Each entry uses the following structure:
 	* title: Title to be displayed on the UI
 	* src: Link to the agreement document
@@ -147,6 +157,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - showChat: Boolean flag if the chat is available on the instance
 - showAgent: Boolean flag if the agent configuration is available on the instance
 - showBusinessKeywordsInCompanyDetails: Boolean flag if the business keywords are visible in the company details page
+- showBusinessProcessBreakdownForPlatformAnalytics: Boolean flag if the business process breakdown functionality is available for the platform analytics.
 - showCompanyMembers: Boolean flag if all company members shall be eligible to see the list of company members
 - showCompanyDetailsInPlatformMembers: Boolean flag if the company details are shown when the company is selected in platform members page
 - showExplorative: Boolean flag if the explorative search feature is enabled on the instance
@@ -173,6 +184,7 @@ export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 - whiteBlackListForCatalogue: Boolean flag if the white list/ black list functionality is available
 - federationClientID: Keycloak client ID used for the federated login
 - federationIDP: Keycloak IDP used for the federated login
+- smeFederationIDP: SME Keycloak IDP used for the federated login
 - legislationSettings: Allows to toggle the legislation feature and define its relevant settings (furniture use case)
 - demo: Allows to toggle demo account functionality and its relevant settings on the login page
 */
@@ -226,8 +238,14 @@ export const config = {
     "delegationEnabled": true,
     "demandsEnabled": false,
     "displayCategoryCounts":true,
+    "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableActionButtonsForTermsAndConditions":false,
+    "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
+    "enableSubscriptions": false,
+    "enableTenderAndBidManagementToolIntegration": false,
+    "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "hideContactInformationInCompanyDetails": false,
@@ -344,6 +362,7 @@ export const config = {
     "productOfferingEnabled":false,
     "vatEnabled": true,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": false,
     "requiredAgreements": [
         {
             "title": "End-User License Agreement (EULA)",
@@ -354,6 +373,7 @@ export const config = {
     "showChat": true,
     "showAgent": true,
     "showBusinessKeywordsInCompanyDetails":true,
+    "showBusinessProcessBreakdownForPlatformAnalytics": false,
     "showCompanyMembers": false,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": true,
@@ -414,7 +434,7 @@ export const config = {
     ],
     "supportMail": "nimble-support@salzburgresearch.at",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
     },
     "showLoginFederation": true,
@@ -427,6 +447,7 @@ export const config = {
     "whiteBlackListForCatalogue":false,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
+    "smeFederationIDP": "SME",
     "legislationSettings": {
         "enabled": true,
         "authMode": "nimble",

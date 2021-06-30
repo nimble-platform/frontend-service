@@ -46,8 +46,6 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
     NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
     private DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD,NON_PUBLIC_FIELD_ID.INCOTERMS,NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD,NON_PUBLIC_FIELD_ID.SPECIAL_TERMS,NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE,NON_PUBLIC_FIELD_ID.PACKAGING_TYPE,NON_PUBLIC_FIELD_ID.CUSTOMIZABLE,NON_PUBLIC_FIELD_ID.SPARE_PART]
 
-    warrantyPeriodRangeDefinition:string = null;
-    deliveryPeriodRangeDefinition:string = null;
     product_filter_prod = myGlobals.product_filter_prod;
     constructor(private translate: TranslateService,
                 userService: UserService) {
@@ -67,27 +65,6 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
         if (this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure &&
             !this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.value) {
             this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure = TermsAndConditionUtils.getDeliveryPeriod(this.companyNegotiationSettings);
-        }
-
-        this.setWarrantyPeriodRangeDefinition();
-        this.setDeliveryPeriodRangeDefinition();
-    }
-
-    setWarrantyPeriodRangeDefinition(){
-        this.warrantyPeriodRangeDefinition = "";
-        const index = this.companyNegotiationSettings.warrantyPeriodUnits.indexOf(this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode);
-        if(index != -1){
-            let range = this.companyNegotiationSettings.warrantyPeriodRanges[index];
-            this.warrantyPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(this.wrapper.line.warrantyValidityPeriod.durationMeasure.unitCode)});
-        }
-    }
-
-    setDeliveryPeriodRangeDefinition(){
-        this.deliveryPeriodRangeDefinition = "";
-        const index = this.companyNegotiationSettings.deliveryPeriodUnits.indexOf(this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode);
-        if(index != -1){
-            let range = this.companyNegotiationSettings.deliveryPeriodRanges[index];
-            this.deliveryPeriodRangeDefinition = this.translate.instant("min max range",{start:range.start,end:range.end,unit:this.translate.instant(this.wrapper.line.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure.unitCode)});
         }
     }
 

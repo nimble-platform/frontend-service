@@ -36,6 +36,7 @@ import {MultiValuedDimension} from '../catalogue/model/publish/multi-valued-dime
 import {DiscountPriceWrapper} from './discount-price-wrapper';
 import {AmountUI} from '../catalogue/model/ui/amount-ui';
 import {NonPublicInformation} from '../catalogue/model/publish/non-public-information';
+import {NON_PUBLIC_FIELD_ID} from '../catalogue/model/constants';
 
 /**
  * Wrapper class for Catalogue line.
@@ -70,16 +71,28 @@ export class ProductWrapper {
         return this.line.nonPublicInformation;
     }
 
-    getPublicPropertiesWithListOfValues(): ItemProperty[] {
-        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 1);
-        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 1);
+    getUniquePropertiesWithValue(onlyPublicDimensions:boolean = true): ItemProperty[] {
+        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
+        if(onlyPublicDimensions){
+            itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 0);
+        }
         return itemProperties;
-
     }
 
-    getPublicUniquePropertiesWithValue(): ItemProperty[] {
+    /**
+     * Finds the public unique properties having the values more than the specified number.
+     * @param count the number of property values
+     * @return the public unique item properties having the values more than the specified number.
+     * */
+    getPublicUniquePropertiesWithValue(count:number = 0): ItemProperty[] {
+        let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > count);
+        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > count);
+        return itemProperties;
+    }
+
+    getNonPublicUniquePropertiesWithValue(): ItemProperty[] {
         let itemProperties = this.getUniquePropertiesWithFilter(prop => getPropertyValues(prop).length > 0);
-        itemProperties = itemProperties.map(value => this.removeNonPublicItemPropertyValues(value)).filter(prop => getPropertyValues(prop).length > 0);
+        itemProperties = itemProperties.map(value => this.getPropertyWithNonPublicValues(value)).filter(prop => getPropertyValues(prop).length > 0);
         return itemProperties;
     }
 
@@ -87,86 +100,114 @@ export class ProductWrapper {
         return this.getUniquePropertiesWithFilter(() => true);
     }
 
-    getDimensions(includingNullValues: boolean = true): Dimension[] {
+    // methods to handle product dimensions
+    getDimensions(onlyPublicDimensions:boolean = true): Dimension[] {
         if (!this.item) {
             return [];
         }
         const ret = [];
         this.item.dimension.forEach(prop => {
-            if (includingNullValues) {
-                if (prop.attributeID) {
-                    ret.push(prop);
-                }
-            } else {
-                if (prop.attributeID && prop.measure.value) {
-                    ret.push(prop);
-                }
+            if (prop.attributeID && prop.measure.value) {
+                ret.push(prop);
             }
         })
-        return this.removeNonPublicDimensions(ret);
+        if(onlyPublicDimensions){
+            return this.filterDimensions(ret,true);
+        }
+        return ret;
     }
 
-    removeNonPublicDimensions(dimensions:Dimension[]){
-
-        let publicDimensions = [];
-
-        for (let dimension of dimensions) {
-            const nonPublicDimensions = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
-            if(nonPublicDimensions.length > 0){
-                for (let nonPublicDimension of nonPublicDimensions) {
-                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) === -1){
-                        publicDimensions.push(dimension);
-                        break;
-                    }
-                }
-
-            }
+    getNonPublicDimensions(){
+        if (!this.item) {
+            return [];
         }
+        const dimensions = [];
+        this.item.dimension.forEach(prop => {
+            if (prop.attributeID && prop.measure.value) {
+                dimensions.push(prop);
+            }
+        })
 
-        return publicDimensions;
+        return this.filterDimensions(dimensions,false);
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getPublicDimensionMultiValue(dimensions: string[] = []): MultiValuedDimension[] {
-        let multiValuedDimensions: MultiValuedDimension[] = [];
         // add the missing dimensions
-        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
-        if (missingDimensions.length > 0) {
-            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
-        }
+        this.addMissingItemDimensions(dimensions);
 
-        let publicDimensions = this.removeNonPublicDimensions(this.item.dimension);
+        let publicDimensions = this.filterDimensions(this.item.dimension,true);
+        return this.createMultiValuedDimensions(false,publicDimensions);
+    }
 
-        for (let dimension of publicDimensions) {
-            if (!dimension.measure.value) {
-                continue;
-            }
-            let found: boolean = false;
-            for (let multiValuedDimension of multiValuedDimensions) {
-                if (multiValuedDimension.attributeID == dimension.attributeID) {
-                    multiValuedDimension.measure.push(dimension.measure);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                multiValuedDimensions.push(new MultiValuedDimension(dimension.attributeID, [dimension.measure]));
-            }
-        }
-        return multiValuedDimensions;
+    // it creates MultiValuedDimensions using the item's dimensions
+    // if the item has no dimensions, then it creates them using the given list of dimension units.
+    getNonPublicDimensionMultiValue(dimensions: string[] = []): MultiValuedDimension[] {
+        // add the missing dimensions
+        this.addMissingItemDimensions(dimensions);
+
+        let nonPublicDimensions = this.getNonPublicDimensions();
+        return this.createMultiValuedDimensions(false,nonPublicDimensions);
     }
 
     // it creates MultiValuedDimensions using the item's dimensions
     // if the item has no dimensions, then it creates them using the given list of dimension units.
     getDimensionMultiValue(includeDimensionsWithNullValues: boolean = true, dimensions: string[] = []): MultiValuedDimension[] {
-        let multiValuedDimensions: MultiValuedDimension[] = [];
         // add the missing dimensions
-        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
-        if (missingDimensions.length > 0) {
-            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
+        this.addMissingItemDimensions(dimensions);
+        return this.createMultiValuedDimensions(includeDimensionsWithNullValues,this.item.dimension);
+    }
+
+    /**
+     * Filters the given dimensions based on the {@param isPublic} parameter.
+     * @param dimensions the list of dimensions
+     * @param isPublic whether the public or non-public dimensions are filtered
+     * @return the public dimensions if {@param isPublic} is true, otherwise, return non-public dimensions
+     * */
+    private filterDimensions(dimensions: Dimension[], isPublic:boolean){
+        let publicDimensions = [];
+        let nonPublicDimensions = [];
+
+        for (let dimension of dimensions) {
+            const nonPublicDimensionList = this.nonPublicInformation.filter(nonPublicInformation => nonPublicInformation.id === dimension.attributeID);
+            // the dimension type has some non-public values
+            if(nonPublicDimensionList.length > 0){
+                let isNonPublicDimensionValue = false;
+                for (let nonPublicDimension of nonPublicDimensionList) {
+                    if(nonPublicDimension.value.valueQuantity.findIndex(value => value.value === dimension.measure.value && value.unitCode === dimension.measure.unitCode) !== -1){
+                        isNonPublicDimensionValue = true;
+                        break;
+                    }
+                }
+                if(!isNonPublicDimensionValue){
+                    publicDimensions.push(dimension);
+                } else{
+                    nonPublicDimensions.push(dimension);
+                }
+            }
+            // the dimension type is public
+            else{
+                publicDimensions.push(dimension);
+            }
         }
-        for (let dimension of this.item.dimension) {
+
+        if(isPublic){
+            return publicDimensions;
+        }
+
+        return nonPublicDimensions;
+    }
+
+    /**
+     * Converts the given list of {@link Dimension}s to the list of {@link MultiValuedDimension}s.
+     * @param includeDimensionsWithNullValues whether the dimensions with null values are included in the response or not
+     * @param dimensions the list of {@link Dimension}s
+     * @return the list of {@link MultiValuedDimension}s.
+     * */
+    private createMultiValuedDimensions(includeDimensionsWithNullValues:boolean = true, dimensions:Dimension[]){
+        let multiValuedDimensions: MultiValuedDimension[] = [];
+        for (let dimension of dimensions) {
             if (!includeDimensionsWithNullValues && !dimension.measure.value) {
                 continue;
             }
@@ -184,6 +225,19 @@ export class ProductWrapper {
         }
         return multiValuedDimensions;
     }
+
+    /**
+     * Creates the missing item dimensions based on the given list of dimensions.
+     * @param dimensions the list of available dimensions
+     * */
+    private addMissingItemDimensions(dimensions: string[]){
+        // add the missing dimensions
+        let missingDimensions = dimensions.filter(unit => this.item.dimension.findIndex(dimension => dimension.attributeID == unit.charAt(0).toUpperCase() + unit.slice(1)) == -1);
+        if (missingDimensions.length > 0) {
+            this.item.dimension = this.item.dimension.concat(UBLModelUtils.createDimensions(missingDimensions));
+        }
+    }
+    // the end of methods to handle product dimensions
 
     addNonPublicInformation(nonPublicInformation:NonPublicInformation){
         this.nonPublicInformation.push(nonPublicInformation)
@@ -207,6 +261,7 @@ export class ProductWrapper {
         if(propertyIndex !== -1){
             const nonPublicInformation = this.nonPublicInformation[propertyIndex];
             switch (nonPublicInformation.value.valueQualifier){
+                case "BOOLEAN":
                 case "STRING":
                     property.value = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) === -1);
                     break;
@@ -217,6 +272,43 @@ export class ProductWrapper {
                     property.valueDecimal = property.valueDecimal.filter(value => nonPublicInformation.value.valueDecimal.indexOf(value) === -1)
             }
         }
+        return property;
+    }
+
+    getPropertyWithNonPublicValues(itemProperty:ItemProperty){
+        let property = copy(itemProperty);
+        // non public values of the property
+        let nonPublicValues:any[] = [];
+        // retrieve the non public information for the property
+        const propertyIndex = this.nonPublicInformation.findIndex(nonPublicInformation => nonPublicInformation.id === itemProperty.id);
+        // retrieve the non-public values of property
+        if(propertyIndex !== -1){
+            const nonPublicInformation = this.nonPublicInformation[propertyIndex];
+            switch (nonPublicInformation.value.valueQualifier){
+                case "BOOLEAN":
+                case "STRING":
+                    nonPublicValues = property.value.filter(value => nonPublicInformation.value.value.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.languageID === nonPublicValue.languageID) !== -1);
+                    break;
+                case "QUANTITY":
+                    nonPublicValues = property.valueQuantity.filter(value => nonPublicInformation.value.valueQuantity.findIndex(nonPublicValue => value.value === nonPublicValue.value && value.unitCode === nonPublicValue.unitCode) !== -1);
+                    break;
+                case "NUMBER":
+                    nonPublicValues = property.valueDecimal.filter(value => nonPublicInformation.value.valueDecimal.indexOf(value) !== -1)
+            }
+        }
+        // set the non public values of properties
+        switch (itemProperty.valueQualifier){
+            case "BOOLEAN":
+            case "STRING":
+                property.value = nonPublicValues;
+                break;
+            case "QUANTITY":
+                property.valueQuantity = nonPublicValues;
+                break;
+            case "NUMBER":
+                property.valueDecimal = nonPublicValues;
+        }
+
         return property;
     }
 
@@ -254,7 +346,10 @@ export class ProductWrapper {
         return amountUI;
     }
 
-    getSpecialTerms(): string {
+    getSpecialTerms(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.SPECIAL_TERMS)){
+            return 'None';
+        }
         return this.goodsItem.deliveryTerms.specialTerms.length > 0 && this.goodsItem.deliveryTerms.specialTerms[0].value ? this.goodsItem.deliveryTerms.specialTerms[0].value : 'None';
     }
 
@@ -262,7 +357,10 @@ export class ProductWrapper {
         return this.goodsItem.deliveryTerms.estimatedDeliveryPeriod.durationMeasure;
     }
 
-    getDeliveryPeriodString(): string {
+    getDeliveryPeriodString(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD)){
+            return 'None';
+        }
         return periodToString(this.goodsItem.deliveryTerms.estimatedDeliveryPeriod);
     }
 
@@ -270,7 +368,18 @@ export class ProductWrapper {
         return this.line.warrantyValidityPeriod.durationMeasure;
     }
 
-    getIncoterms(): string {
+    getWarrantyPeriodString(displayNonPublicInformation:boolean = false): string {
+        if ((!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD)) || !this.line.warrantyValidityPeriod.durationMeasure || !this.line.warrantyValidityPeriod.durationMeasure.value) {
+            return 'Not specified';
+        }
+
+        return `${this.line.warrantyValidityPeriod.durationMeasure.value} ${this.line.warrantyValidityPeriod.durationMeasure.unitCode}`;
+    }
+
+    getIncoterms(displayNonPublicInformation:boolean = false): string {
+        if(!displayNonPublicInformation && !this.isPublicInformation(NON_PUBLIC_FIELD_ID.INCOTERMS)){
+            return 'None';
+        }
         return this.goodsItem.deliveryTerms.incoterms || 'None';
     }
 

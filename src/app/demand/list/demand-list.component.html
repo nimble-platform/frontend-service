@@ -11,6 +11,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
+<!-- Page title -->
+<p *ngIf="showTitle" class="nimble-title"><span [innerHTML]="'Demands' | translate"></span></p>
 <!-- search bar -->
 <div class="d-flex mt-3">
     <input type="text" class="form-control mr-3" [(ngModel)]="searchTerm" (keyup.enter)="onSearchClicked()">
@@ -33,6 +35,8 @@
         </ng-container>
         <search-facet *ngIf="!companyDemands && buyerCountryFacet" [facet]="buyerCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
         <search-facet *ngIf="deliveryCountryFacet" [facet]="deliveryCountryFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="otherCertificatesFacet" [facet]="otherCertificatesFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
+        <search-facet *ngIf="circularEconomyCertificatesFacet" [facet]="circularEconomyCertificatesFacet" (facetOptionSelected)="onFacetSelected($event)"></search-facet>
     </div>
     <div class="result-column ml-3">
         <call-status *ngIf="searchCallStatus" [large]="true" [callStatus]="searchCallStatus"></call-status>

@@ -50,6 +50,9 @@ import {CountryInputComponent} from './country-input-component';
 import {AddressMapComponent} from './address-map.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {CertificateViewComponent} from './certificate-view-component';
+import {CategorySearchComponent} from './category/category-search.component';
+import {CategoryTreeComponent} from './category/category-tree.component';
+import {UserRoleTranslatePipe} from './pipe/user-role-translate.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -86,6 +89,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AmountUiTranslatePipe,
         QuantityTranslatePipe,
         WordByWordTranslatePipe,
+        UserRoleTranslatePipe,
         BooleanInputComponent,
         CountryInputComponent,
         MultiAddressInputComponent,
@@ -98,6 +102,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         CancelCollaborationModalComponent,
         SingleClickDirective,
         CategoryFacetComponent,
+        CategorySearchComponent,
+        CategoryTreeComponent,
         SearchFacetComponent
     ],
     exports: [
@@ -112,6 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         AddressMapComponent,
         LeafletModule,
         BooleanInputComponent,
+        UserRoleTranslatePipe,
         CancelCollaborationModalComponent,
         ConfirmModalComponent,
         MultiAddressInputComponent,
@@ -127,7 +134,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         SingleClickDirective,
         CategoryFacetComponent,
         SearchFacetComponent,
-        CountryInputComponent
+        CountryInputComponent,
+        CategorySearchComponent,
+        CategoryTreeComponent
     ],
     providers: [
     ]

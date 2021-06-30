@@ -32,6 +32,7 @@ import {FEDERATIONID, LANGUAGES} from '../../catalogue/model/constants';
 import {CatalogueService} from '../../catalogue/catalogue.service';
 import {UBLModelUtils} from '../../catalogue/model/ubl-model-utils';
 import {CountryUtil} from '../../common/country-util';
+import {config} from '../../globals';
 
 @Component({
     selector: "company-terms-and-conditions",
@@ -44,6 +45,11 @@ export class CompanyTermsAndConditions implements OnInit {
     // if catalogueId is available, then we are editing T&Cs for the given catalogue
     @Input() catalogueId = null;
     @Input() catalogueUuid = null;
+    @Output() onSaveEvent: EventEmitter<void> = new EventEmitter();
+    // keeps the type of terms and conditions
+    // if it is true, the users are allowed to add files as terms and conditions
+    // otherwise, the users are allowed to add/select clauses as terms and conditions
+    showFileInput: boolean = false;
 
     initPageStatus: CallStatus = new CallStatus();
     callStatus: CallStatus = new CallStatus();
@@ -65,6 +71,7 @@ export class CompanyTermsAndConditions implements OnInit {
 
     LANGUAGES = LANGUAGES;
 
+    enableTermsAndConditionsAsFile = config.enableTermsAndConditionsAsFile;
     @ViewChild(EditTradingTermModalComponent)
     private editTradingTermModelComponent: EditTradingTermModalComponent;
     // Emit an event when the contract creation is completed (either it is successfully saved or the user wants to cancel it and go back)
@@ -108,6 +115,12 @@ export class CompanyTermsAndConditions implements OnInit {
             // create sales terms if the company does not have any
             if (!this.settings.negotiationSettings.company.salesTerms) {
                 this.settings.negotiationSettings.company.salesTerms = new TradingPreferences();
+            }
+
+            // if the company has some terms and conditions file, show the file input
+            // the file input is not available if the contract generator is being used for catalogues
+            if(!this.catalogueId && this.settings.negotiationSettings.company.salesTerms.documentReference && this.settings.negotiationSettings.company.salesTerms.documentReference.length){
+                this.showFileInput = true;
             }
 
             // copy the terms and conditions
@@ -376,5 +389,9 @@ export class CompanyTermsAndConditions implements OnInit {
             }
         }
         return clause.clauseTitle[titleIndex].value;
+    }
+
+    onTermsAndConditionsTypeChanged(){
+        this.showFileInput = !this.showFileInput;
     }
 }

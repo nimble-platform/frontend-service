@@ -16,7 +16,7 @@
 <div class="col-12 section" *ngIf="_termsAndConditions">
     <div *ngFor="let clause of _termsAndConditions;let i=index" class="mb-1">
         <div class="d-flex">
-            <button *ngIf="showActionButton && !readOnly"  class="btn btn-danger btn-sm space-right {{actionButtonClass}}" (click)="emitCollapseClause(i)">
+            <button *ngIf="config.enableActionButtonsForTermsAndConditions && showActionButton && !readOnly"  class="btn btn-danger btn-sm space-right {{actionButtonClass}}" (click)="emitCollapseClause(i)">
                 {{(clause.tradingTerms.length > 0 ? "Update": "View")|translate}}
             </button>
             <!-- Button to open/close clause content-->

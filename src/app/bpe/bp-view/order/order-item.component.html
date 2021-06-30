@@ -162,8 +162,12 @@
             </ng-container>
 
             <!-- Clauses -->
-            <terms-and-conditions *ngIf="selectedTCTab == 'CLAUSES'" [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms" [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms" [sellerPartyId]="getPartyId(sellerParty)" [sellerFederationId]="sellerParty.federationInstanceID" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [documentType]="'order'" [termsAndConditions]="getTermAndConditionClauses()">
-            </terms-and-conditions>
+            <ng-container *ngIf="selectedTCTab == 'CLAUSES'">
+                <terms-and-conditions *ngIf="!getCompanyTermsAndConditionFiles(order.additionalDocumentReference).length" [selectedIncoterm]="order.orderLine[0].lineItem.deliveryTerms.incoterms" [selectedTradingTerm]="order.orderLine[lineIndex].lineItem.paymentTerms.tradingTerms" [sellerPartyId]="getPartyId(sellerParty)" [sellerFederationId]="sellerParty.federationInstanceID" [readOnly]="true" [enableComparisonWithOtherTerms]="false" [documentType]="'order'" [termsAndConditions]="getTermAndConditionClauses()">
+                </terms-and-conditions>
+                <company-terms-and-conditions-file-input *ngIf="getCompanyTermsAndConditionFiles(order.additionalDocumentReference).length" [termsAndConditions]="getCompanyTermsAndConditionFiles(order.additionalDocumentReference)">
+                </company-terms-and-conditions-file-input>
+            </ng-container>
         </div>
     </ng-container>
 </ng-container>

@@ -27,6 +27,7 @@ export class Facet {
     public selectedUnit: string = null; // the selected unit for the quantity facets
     public localName: string = null; // local name of the quantity properties, used to group facet options with different units
     public dataType: string = null; // the data type
+    public visible: boolean = true; // whether the facet is visible or not
 
     constructor(json?: any) {
         if (json) {

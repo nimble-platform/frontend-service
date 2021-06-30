@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
-<ng-container *ngIf="catalogueLine">
+<ng-container *ngIf="catalogueLine && !isProductCategoriesLoading()">
     <!-- Single Upload Publishing Steps -->
     <product-publish-steps
             [currentStep]="publishingStep"
@@ -56,7 +56,7 @@
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
-            <div class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} section">
+            <div *ngIf="!categoryService.hasServiceCategories" class="{{nonPublicInformationFunctionalityEnabled ? 'col-11' : 'col-8'}} section">
                 <div (click)="toggleDimensionCard()" class="d-flex justify-content-between">
                     <span [innerHTML]="'Dimensions' | translate" ></span>
                     <i>
@@ -129,7 +129,7 @@
                     </i>
                 </div>
                 <div [hidden]="!showProperties">
-                    <div *ngIf="nonPublicInformationFunctionalityEnabled" class="row">
+                    <div *ngIf="nonPublicInformationFunctionalityEnabled && getSelectedPropertiesCount()" class="row">
                         <div class="col-10"></div>
                         <div class="col-2" style="text-align: end"><b>{{'Non Public ?'|translate}}</b></div>
                     </div>
@@ -237,7 +237,7 @@
         <!-- Certificates -->
         <div class="row space-before" [hidden]="publishingStep != 'Certificates'">
             <div class="col-12">
-                <product-certificates-tab [catalogueLine]="catalogueLine" [wrapper]="productWrapper" [disabled]="isLoading()">
+                <product-certificates-tab [certificates]="catalogueLine.goodsItem.item.certificate" [wrapper]="productWrapper" [disabled]="isLoading()">
                 </product-certificates-tab>
             </div>
         </div>
@@ -357,7 +357,7 @@
                         <ng-container *ngFor="let property of getCategoryProperties(category)">
                             <div class="col-6 form-check modal-category-property" *ngIf="isPropertyFilteredIn(property)">
                                 <input type="checkbox" class="form-check-input" [ngModel]="isCategoryPropertySelected(category, property)" (change)="onToggleCategoryPropertySelected(category, property)">
-                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) }})</label>
+                                <label class="form-check-label">{{ selectPreferredName(property) }} ({{ getPropertyType(property) | translate }})</label>
                             </div>
                         </ng-container>
                     </div>

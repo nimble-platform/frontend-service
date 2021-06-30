@@ -18,8 +18,8 @@ import {ItemProperty} from '../catalogue/model/publish/item-property';
 import {Quantity} from '../catalogue/model/publish/quantity';
 import {Period} from '../catalogue/model/publish/period';
 import {Price} from '../catalogue/model/publish/price';
-import {Category} from '../catalogue/model/category/category';
-import {Property} from '../catalogue/model/category/property';
+import {Category} from './model/category/category';
+import {Property} from './model/category/property';
 import {PropertyValueQualifier} from '../catalogue/model/publish/property-value-qualifier';
 import {CUSTOM_PROPERTY_LIST_ID, DEFAULT_LANGUAGE, SOCIAL_MEDIA_CLASSES} from '../catalogue/model/constants';
 import {Item} from '../catalogue/model/publish/item';
@@ -29,7 +29,7 @@ import {Amount} from '../catalogue/model/publish/amount';
 import {CookieService} from 'ng2-cookies';
 import {Headers} from '@angular/http';
 import {PartyName} from '../catalogue/model/publish/party-name';
-import {maximumDecimalsForPrice} from './constants'
+import {maximumDecimalsForPrice, MONTHS} from './constants'
 
 const UI_NAMES: any = {
     STRING: 'TEXT'
@@ -746,4 +746,38 @@ export function getAuthorizedHeaders(cookieService: CookieService): Headers {
 
 export function findCategoryInArray(categoryArray: Category[], category: Category): number {
     return categoryArray.findIndex(c => c.id == category.id);
+}
+
+export function getTimeLabel(timeInDays){
+    if(timeInDays <= 0){
+        return null;
+    }
+    if(timeInDays < 0.0417){
+        return Math.round(timeInDays * 10 * 1440) / 10 + " M";
+    }
+    else if(timeInDays < 1){
+        return Math.round(timeInDays * 10 * 24) / 10 + " H";
+    }
+    return Math.round(timeInDays * 10) / 10 + " D";
+}
+
+export function populateValueObjectForMonthGraphs(map): any[]{
+    var obj = [];
+
+    // get the current month
+    let currentMonth = new Date().getMonth();
+    // populate the data for each month starting from the current one
+    while(map[currentMonth] != undefined){
+        obj.push({
+            "value": map[currentMonth],
+            "name": MONTHS[currentMonth]
+        })
+        currentMonth--;
+        if(currentMonth < 0){
+            currentMonth = 11;
+        }
+    }
+    // reverse the array so that the current month is the last one in the graph
+    obj.reverse();
+    return obj;
 }

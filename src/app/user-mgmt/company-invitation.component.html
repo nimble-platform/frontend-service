@@ -34,7 +34,7 @@
                     <call-status [callStatus]="rolesCallStatus"></call-status>
                     <div *ngFor="let role of userRoles">
                         <input [id]="role.identifier" type="checkbox" [value]="role.identifier" class="form-check-input" [disabled]="checkDisable(role.identifier)" (change)="setRoles(role.identifier)">
-                        <label class="form-check-label" [for]="role.identifier"><span [innerHTML]="role.name | translate"></span></label>
+                        <label class="form-check-label" [for]="role.identifier"><span [innerHTML]="role.name | userRoleTranslate"></span></label>
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                 </td>
                 <td>
                 <span *ngFor="let role of userRoles">
-                    <div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1"><span [innerHTML]="role.name | translate"></span></div>
+                    <div *ngIf="inv.roleIDs.indexOf(role.identifier)!=-1"><span [innerHTML]="role.name | userRoleTranslate"></span></div>
                 </span>
                 </td>
                 <td *ngIf="appComponent.checkRoles('comp') && !platformManagerMode">

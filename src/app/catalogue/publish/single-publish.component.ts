@@ -52,12 +52,12 @@ import {UnitService} from '../../common/unit-service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AppComponent} from '../../app.component';
 import {UBLModelUtils} from '../model/ubl-model-utils';
-import {Category} from '../model/category/category';
+import {Category} from '../../common/model/category/category';
 import {Catalogue} from '../model/publish/catalogue';
 import {BinaryObject} from '../model/publish/binary-object';
 import {DocumentReference} from '../model/publish/document-reference';
 import {Attachment} from '../model/publish/attachment';
-import {Property} from '../model/category/property';
+import {Property} from '../../common/model/category/property';
 import {Quantity} from '../model/publish/quantity';
 import {CommodityClassification} from '../model/publish/commodity-classification';
 import {SelectedProperty} from '../model/publish/selected-property';
@@ -305,9 +305,8 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                         .subscribe((categories: Category[]) => {
                             // upon navigating from the catalogue view, classification codes are set as selected categories
                             for (let category of categories) {
-                                this.categoryService.selectedCategories.push(category);
+                                this.categoryService.addSelectedCategory(category);
                             }
-                            sortCategories(this.categoryService.selectedCategories);
 
                             if (this.categoryService.selectedCategories != []) {
                                 this.populateCommodityClassificationForCategories();
@@ -1201,6 +1200,8 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 this.publishingStep = this.config.showLCPA ? "LCPA" : "Review";
                 break;
             case 'LCPA':
+                // set the non-public information of catalogue line for the review tab
+                this.catalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(this.catalogueLine);
                 this.publishingStep = "Review";
         }
     }
@@ -1209,6 +1210,10 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         // handle the case where the publishing step is Category
         if(this.publishingStep == "Category"){
             this.onCategorySelectionCompleted();
+        }
+        // set the non-public information of catalogue line for the review tab
+        if(step === 'Review'){
+            this.catalogueLine.nonPublicInformation = this.processNonPublicProductPropertiesAndDimensions(this.catalogueLine);
         }
         // set the current publishing step
         this.publishingStep = step;
@@ -1251,24 +1256,34 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
     onPropertyNonPublicClicked(property:ItemProperty, propertyValueIndex, checked:boolean){
         if(checked){
-            let multiTypeValue:MultiTypeValue = new MultiTypeValue();
-            multiTypeValue.valueQualifier = property.valueQualifier;
-            switch (property.valueQualifier){
-                case "STRING":
-                    multiTypeValue.value = property.value;
-                    break;
-                case "QUANTITY":
-                    multiTypeValue.valueQuantity = property.valueQuantity;
-                    break;
-                case "NUMBER":
-                    multiTypeValue.valueDecimal = property.valueDecimal;
+            // check whether the property has any non-public values
+            let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.id);
+            // if yes, add the selected property index
+            if(nonPublicInformation){
+                nonPublicInformation.indexes.push(propertyValueIndex);
             }
-            let nonPublicInformationUI = new NonPublicInformationUi();
-            nonPublicInformationUI.id = property.id;
-            nonPublicInformationUI.value = multiTypeValue;
-            nonPublicInformationUI.indexes = [propertyValueIndex];
+            // otherwise, create a non-public information object for the property value
+            else{
+                let multiTypeValue:MultiTypeValue = new MultiTypeValue();
+                multiTypeValue.valueQualifier = property.valueQualifier;
+                switch (property.valueQualifier){
+                    case "BOOLEAN":
+                    case "STRING":
+                        multiTypeValue.value = property.value;
+                        break;
+                    case "QUANTITY":
+                        multiTypeValue.valueQuantity = property.valueQuantity;
+                        break;
+                    case "NUMBER":
+                        multiTypeValue.valueDecimal = property.valueDecimal;
+                }
+                let nonPublicInformationUI = new NonPublicInformationUi();
+                nonPublicInformationUI.id = property.id;
+                nonPublicInformationUI.value = multiTypeValue;
+                nonPublicInformationUI.indexes = [propertyValueIndex];
 
-            this.nonPublicInformationUIs.push(nonPublicInformationUI);
+                this.nonPublicInformationUIs.push(nonPublicInformationUI);
+            }
         } else{
             let nonPublicInformation = this.nonPublicInformationUIs.find(value => value.id == property.id);
             nonPublicInformation.indexes.splice(nonPublicInformation.indexes.indexOf(propertyValueIndex),1);
@@ -1314,6 +1329,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 let multiTypeValue = new MultiTypeValue();
                 multiTypeValue.valueQualifier = itemProperty.valueQualifier;
                 switch (multiTypeValue.valueQualifier){
+                    case "BOOLEAN":
                     case "STRING":
                         multiTypeValue.value = itemProperty.value;
                         for (let value of nonPublicInformation.value.value) {
@@ -1342,18 +1358,21 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             }
             // handle dimensions
             for (let dimension of this.multiValuedDimensions) {
-                let nonPublicInformation = this.catalogueLine.nonPublicInformation.find(value => value.id === dimension.attributeID);
-
+                // create non-public information ui model for the dimension
                 let nonPublicInformationUI = new NonPublicInformationUi();
-                nonPublicInformationUI.id = nonPublicInformation.id ;
-
-                let indexes = []
+                nonPublicInformationUI.id = dimension.attributeID ;
                 let multiTypeValue = new MultiTypeValue();
                 multiTypeValue.valueQualifier = "QUANTITY";
                 multiTypeValue.valueQuantity = dimension.measure;
-                for (let value of nonPublicInformation.value.valueQuantity) {
-                    let index = dimension.measure.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
-                    indexes.push(index);
+
+                // find the indexes of values which are non-public
+                let indexes = []
+                let nonPublicInformationList = this.catalogueLine.nonPublicInformation.filter(value => value.id === dimension.attributeID);
+                for (let nonPublicInformation of nonPublicInformationList) {
+                    for (let value of nonPublicInformation.value.valueQuantity) {
+                        let index = dimension.measure.findIndex(value1 => value1.value === value.value && value1.unitCode === value.unitCode)
+                        indexes.push(index);
+                    }
                 }
                 nonPublicInformationUI.value = multiTypeValue;
                 nonPublicInformationUI.indexes = indexes;
@@ -1379,6 +1398,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             let multiTypeValue = new MultiTypeValue();
             multiTypeValue.valueQualifier = nonPublicInformationUI.value.valueQualifier;
             switch (multiTypeValue.valueQualifier){
+                case "BOOLEAN":
                 case "STRING":
                     for (let index of nonPublicInformationUI.indexes) {
                         multiTypeValue.value.push(new Text(nonPublicInformationUI.value.value[index].value,nonPublicInformationUI.value.value[index].languageID));

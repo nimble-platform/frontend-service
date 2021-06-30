@@ -40,7 +40,7 @@
                                 [(languageId)]="description.languageID" [availableLanguages]="getAvailableLanguages(demand.description)"
                                 [languageIdClass]="'col ml-2'" (languageIdChange)="description.languageID = $event;"
                                 [forbiddenPrecedingTrailingSpace]="true"
-                                [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_title'" [componentIndex]="i">
+                                [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_description'" [componentIndex]="i">
                     </text-input>
                 </div>
                 <div *ngIf="i > 0" class="btn btn-outline-danger ml-3 delete-description-btn" (click)="onDeleteDescription(i)">{{'Delete Description' | translate}}</div>
@@ -53,7 +53,7 @@
 
     <!-- due date -->
     <div class="w-75">
-        <date-input [label]="'Due Date' | translate" [rowClass]="'no-gutters'" [valueClass]="'col-9'" [(date)]="demand.dueDate" [presentationMode]="'edit'" [required]="true">
+        <date-input [label]="'Due Date' | translate" [rowClass]="'no-gutters'" [valueClass]="'col-9'" [(date)]="demand.dueDate" [presentationMode]="'edit'" [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_due_date'">
         </date-input>
     </div>
 
@@ -98,6 +98,12 @@
         <img *ngIf="demand.image" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" class="offset-3 image"/>
     </div>
 
+    <!-- Certificates -->
+    <div class="w-75">
+        <product-certificates-tab [certificates]="demand.certificate" [disabled]="callStatus.isLoading()">
+        </product-certificates-tab>
+    </div>
+
     <!-- publish button -->
     <div class="d-flex flex-row-reverse w-75 space-before">
         <div class="ml-4" [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
@@ -113,7 +119,7 @@
 </ng-container>
 
 <ng-container *ngIf="categorySearchPage">
-    <category-search [categoriesSelected]="selectedCategory != null"
+    <category-search [categoriesSelected]="selectedCategory != null" [enableSelectionOfDifferentCategoryTypes]="true"
                      [categoryCount]="'single'">
     </category-search>
     <hr class="actions-hr">

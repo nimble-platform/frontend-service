@@ -61,27 +61,27 @@
         <div *ngIf="!treeView" class="border" style="height:50vh; overflow-x: hidden; overflow-y: scroll;">
             <table class="table table-hover mb-0">
                 <thead class="thead-light fixed">
-                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Classification' | translate"></span></th>
-                    <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Name' | translate"></span></th>
-                    <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()"><span [innerHTML]="'Browse' | translate"></span></button></th>
+                <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Classification' | translate"></span></th>
+                <th scope="col" style="color: #000;" class="p-3 border-top-0 border-bottom"><span [innerHTML]="'Name' | translate"></span></th>
+                <th scope="col" colspan="2" class="p-0 border-top-0 border-bottom text-right" style="vertical-align:top"><button class="btn btn-secondary my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()"><span [innerHTML]="'Browse' | translate"></span></button></th>
                 </thead>
                 <tbody>
-                    <tr *ngIf="getCategoriesStatus.isDisplayed()">
-                        <call-status [callStatus]="getCategoriesStatus"></call-status>
+                <tr *ngIf="getCategoriesStatus.isDisplayed()">
+                    <call-status [callStatus]="getCategoriesStatus"></call-status>
+                </tr>
+                <tr *ngIf="!getCategoriesStatus.isDisplayed() && (!categories || categories.length == 0)">
+                    <td colspan="3"><span [innerHTML]="'No results found.' | translate"></span></td>
+                </tr>
+                <ng-container *ngIf="!getCategoriesStatus.isDisplayed() && categories">
+                    <tr *ngFor="let category of categories" (click)="getCategoryDetails(category,false)" class="pointer" [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code, 'disabled': getCategoryDetailsStatus.isDisplayed()}">
+                        <td class="py-2 px-3 font-weight-light" [innerHTML]="category.taxonomyId == 'FurnitureOntology' ? ('Furniture Sector'|translate) : category.taxonomyId"></td>
+                        <td class="py-2 px-3">{{selectPreferredName(category)}}</td>
+                        <td></td>
+                        <td class="py-2 px-3">
+                            <span class="fa fa-fw mr-1 icon-secondary fa-sitemap" aria-hidden="true" (click)="getCategoryTree(category)"></span>
+                        </td>
                     </tr>
-                    <tr *ngIf="!getCategoriesStatus.isDisplayed() && (!categories || categories.length == 0)">
-                        <td colspan="3"><span [innerHTML]="'No results found.' | translate"></span></td>
-                    </tr>
-                    <ng-container *ngIf="!getCategoriesStatus.isDisplayed() && categories">
-                        <tr *ngFor="let category of categories" (click)="getCategoryDetails(category,false)" class="pointer" [ngClass]="{'table-secondary': selectedCategory && category.code == selectedCategory.code, 'disabled': getCategoryDetailsStatus.isDisplayed()}">
-                            <td class="py-2 px-3 font-weight-light" [innerHTML]="category.taxonomyId == 'FurnitureOntology' ? ('Furniture Sector'|translate) : category.taxonomyId"></td>
-                            <td class="py-2 px-3">{{selectPreferredName(category)}}</td>
-                            <td></td>
-                            <td class="py-2 px-3">
-                                <span class="fa fa-fw mr-1 icon-secondary fa-sitemap" aria-hidden="true" (click)="getCategoryTree(category)"></span>
-                            </td>
-                        </tr>
-                    </ng-container>
+                </ng-container>
                 </tbody>
             </table>
         </div>
@@ -256,7 +256,7 @@
                         <div class="col-4">
                             <label>
                                 <p class="mb-1 font-weight-light">
-                                    {{getPropertyType(prop)}}
+                                    {{getPropertyType(prop) | translate}}
                                 </p>
                             </label>
                         </div>

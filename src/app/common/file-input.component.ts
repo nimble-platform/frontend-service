@@ -108,27 +108,41 @@ export class FileInputComponent implements OnInit {
 
     onDownloadFile(file: BinaryObject, event: Event) {
         event.preventDefault();
-        this.catalogueService.getBinaryObject(file.uri).then(binaryObject => {
-            const binaryString = window.atob(binaryObject.value);
-            const binaryLen = binaryString.length;
-            const bytes = new Uint8Array(binaryLen);
-            for (let i = 0; i < binaryLen; i++) {
-                const ascii = binaryString.charCodeAt(i);
-                bytes[i] = ascii;
-            }
-            const a = document.createElement("a");
-            document.body.appendChild(a);
-            const blob = new Blob([bytes], { type: binaryObject.mimeCode });
-            const url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = binaryObject.fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }).catch(error => {
-            console.error("Failed to download the file", error);
-        });
+        // the file has no uri and it means that it is not saved so use the given binary object which has the complete content
+        // to download file
+        if(file.uri == null || file.uri == ""){
+            this.downloadFile(file)
+        }
+        // the file is saved, so retrieve its complete content using catalogue service
+        else{
+            this.catalogueService.getBinaryObject(file.uri).then(binaryObject => {
+                this.downloadFile(binaryObject)
+            }).catch(error => {
+                console.error("Failed to download the file", error);
+            });
+        }
 
+    }
 
+    /**
+     * Downloads the given file i.e. binary object
+     * */
+    private downloadFile(binaryObject:BinaryObject){
+        const binaryString = window.atob(binaryObject.value);
+        const binaryLen = binaryString.length;
+        const bytes = new Uint8Array(binaryLen);
+        for (let i = 0; i < binaryLen; i++) {
+            const ascii = binaryString.charCodeAt(i);
+            bytes[i] = ascii;
+        }
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        const blob = new Blob([bytes], { type: binaryObject.mimeCode });
+        const url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = binaryObject.fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 
     getFileClasses(): any {

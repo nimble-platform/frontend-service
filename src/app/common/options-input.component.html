@@ -21,11 +21,11 @@
     </div>
     <div [class]="sizeClass" *ngIf="presentationMode === 'edit' && visible">
         <select #optionsInputSelect class="form-control" [ngClass]="innerFormClass + ' ' + selectClass" [(ngModel)]="selected" (change)="onChange($event)" [disabled]="disabled">
-            <option *ngFor="let option of options; let i = index" [value]="getValue(option)" [selected]="selectedIndex == i">{{ getName(option) }}</option>
+            <option *ngFor="let option of options; let i = index" [value]="getValue(option)" [selected]="selectedIndex == i">{{ getName(option) | translate}}</option>
         </select>
     </div>
 
     <div [class]="sizeClass" *ngIf="presentationMode === 'view' && visible">
-        <span>{{ getName(selected) }}</span>
+        <span>{{ getName(selected) | translate}}</span>
     </div>
 </div>

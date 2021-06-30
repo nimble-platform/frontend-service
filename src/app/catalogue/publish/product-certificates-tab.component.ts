@@ -15,7 +15,6 @@
  */
 
 import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
-import { CatalogueLine } from "../model/publish/catalogue-line";
 import { Certificate } from "../model/publish/certificate";
 import * as myGlobals from '../../globals';
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
@@ -43,8 +42,8 @@ import { NON_PUBLIC_FIELD_ID } from "../model/constants";
 })
 export class ProductCertificatesTabComponent implements OnInit {
 
-    @Input() catalogueLine: CatalogueLine;
-    @Input() wrapper: ProductWrapper;
+    @Input() certificates:Certificate[] = [];
+    @Input() wrapper: ProductWrapper = null;
     @Input() disabled: boolean;
 
     NON_PUBLIC_FIELD_ID = NON_PUBLIC_FIELD_ID;
@@ -77,8 +76,8 @@ export class ProductCertificatesTabComponent implements OnInit {
         this.updateMode = 'edit';
         this.certificateGroup = certificateGroup;
         let certificate = certificateGroup == 'arbitrary' ? this.arbitraryCertificates[i]: this.circularEconomyCertificates[i];
-        const index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
-        this.editedCertificate = this.catalogueLine.goodsItem.item.certificate[index];
+        const index = this.certificates.indexOf(certificate);
+        this.editedCertificate = this.certificates[index];
         this.certificateFilesProvided = true;
         this.addCertForm = this._fb.group({
             name: [this.editedCertificate.certificateTypeCode.name],
@@ -100,8 +99,8 @@ export class ProductCertificatesTabComponent implements OnInit {
     }
 
     onDelete(certificate) {
-        let index = this.catalogueLine.goodsItem.item.certificate.indexOf(certificate);
-        this.catalogueLine.goodsItem.item.certificate.splice(index, 1);
+        let index = this.certificates.indexOf(certificate);
+        this.certificates.splice(index, 1);
         this.updateCertificateLists();
     }
 
@@ -155,7 +154,7 @@ export class ProductCertificatesTabComponent implements OnInit {
         }
 
         if (this.updateMode === 'add') {
-            this.catalogueLine.goodsItem.item.certificate.push(certificate);
+            this.certificates.push(certificate);
         }
         this.updateCertificateLists();
         close();
@@ -203,7 +202,7 @@ export class ProductCertificatesTabComponent implements OnInit {
     private updateCertificateLists(): void {
         this.circularEconomyCertificates = [];
         this.arbitraryCertificates = [];
-        this.catalogueLine.goodsItem.item.certificate.forEach(cert => {
+        this.certificates.forEach(cert => {
             if (cert.certificateType === config.circularEconomy.certificateGroup) {
                 this.circularEconomyCertificates.push(cert);
             } else {

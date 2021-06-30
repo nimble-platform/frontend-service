@@ -37,7 +37,7 @@
                         <span [innerHTML]="searchIndex | translate"></span>
                     </button>
                     <!--  if page reference is catalogue, we display the companies from the eFactory index, therefore, we do not need a dropdown menu for the searchIndex selection-->
-                    <div *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering'" ngbDropdownMenu
+                    <div *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering' && pageRef!=='subscription'" ngbDropdownMenu
                          aria-labelledby="searchIndex">
                         <a *ngFor="let searchIndexName of searchIndexes" class="dropdown-item"
                            (click)="changeSearchIndex(searchIndexName)"><span
@@ -92,7 +92,7 @@
                 </div>
             </div>
         </ng-container>
-        <ng-container *ngIf="pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'">
+        <ng-container *ngIf="pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue' || pageRef === 'subscription'">
             <hr>
             <div class="row">
                 <div *ngIf="pageRef === 'catalogue'" class="offset-4 col-6">
@@ -111,14 +111,24 @@
                         </span>
                     </span>
                 </div>
+                <div *ngIf="pageRef === 'subscription'" class="offset-4 col-6">
+                    <span *ngFor="let selectedCompany of companySubscriptionService.selectedCompanies">
+                        <span class="badge badge-secondary mr-1 mb-2 pointer"
+                              (click)="onRemoveSelectedCompanyFromSubscriptionList(selectedCompany)">
+                            <span [title]="selectedCompany[product_vendor_name]"><b>{{ selectedCompany[product_vendor_name] }}</b></span>
+                        </span>
+                    </span>
+                </div>
 
                 <div class="col-2">
                     <div *ngIf="pageRef == 'catalogue'" class="btn btn-primary float-right"
                          (click)="onNavigateToCatalogue()"><span
                             [innerHTML]="'Go to White/Black List' | translate"></span></div>
-                    <div *ngIf="pageRef == 'network'" class="btn btn-primary float-right" (click)="onNavigate(true)">
+                    <div *ngIf="pageRef == 'network'" class="btn btn-primary float-right" (click)="onNavigate('NETWORK')">
                         <span [innerHTML]="'Go to Network' | translate"></span></div>
-                    <div *ngIf="pageRef == 'offering'" class="btn btn-primary float-right" (click)="onNavigate(false)">
+                    <div *ngIf="pageRef == 'subscription'" class="btn btn-primary float-right" (click)="onNavigate('SUBSCRIPTIONS')">
+                        <span [innerHTML]="'Go to Subscriptions' | translate"></span></div>
+                    <div *ngIf="pageRef == 'offering'" class="btn btn-primary float-right" (click)="onNavigate()">
                         <span [innerHTML]="'Continue with product offering' | translate"></span></div>
                 </div>
             </div>
@@ -129,6 +139,16 @@
 
             <div class="row">
                 <div *ngIf="size==0" class="col-12">
+                    <!-- Button to initiate a business opportunity -->
+                    <div *ngIf="enableTenderAndBidManagementToolIntegration && searchTopic=='prod'" class="row space-after alert-danger" style="padding: 15px;flex-wrap: nowrap">
+                        <div style="flex-grow: 1;align-self: center"
+                             [innerHTML]="'Could not find what you are looking for ?'|translate">
+                        </div>
+                        <div class="btn btn-primary"
+                             (click)="onInitiateBusinessOpportunity()">
+                            <span>{{'Procure New Product / Service' | translate}}</span>
+                        </div>
+                    </div>
                     <span [innerHTML]="'No search results' | translate"></span><br/>
                     <button class="btn btn-secondary mt-2 mb-2" (click)="resetSearch()"><span
                             [innerHTML]="'Reset Search' | translate"></span></button>
@@ -140,6 +160,16 @@
 
                 <!-- Search headers -->
                 <div *ngIf="size>0" class="col-8">
+                    <!-- Button to initiate a business opportunity -->
+                    <div *ngIf="enableTenderAndBidManagementToolIntegration && searchTopic=='prod'" class="row space-after alert-danger" style="padding: 15px;flex-wrap: nowrap">
+                        <div style="flex-grow: 1;align-self: center"
+                             [innerHTML]="'Could not find what you are looking for ?'|translate">
+                        </div>
+                        <div class="btn btn-primary"
+                                (click)="onInitiateBusinessOpportunity()">
+                            <span>{{'Procure New Product / Service' | translate}}</span>
+                        </div>
+                    </div>
                     <!-- Pagination -->
                     <div class="justify-content-center pagination">
                         <ngb-pagination [(collectionSize)]="size" [(page)]="page" [pageSize]="rows" [maxSize]="5"
@@ -233,7 +263,7 @@
                                     (click)="setCat('','',false,-1)"><span
                                     [innerHTML]="'Reset category' | translate"></span></button>
                             <!--  No need to show this button since no filter is available in the eFactory companies -->
-                            <button *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering'"
+                            <button *ngIf="pageRef!=='catalogue' && pageRef!=='network' && pageRef!=='offering' && pageRef!=='subscription'"
                                     class="btn btn-secondary" [ngClass]="{'ml-2':searchTopic=='prod'}"
                                     [disabled]="!facetQuery || (facetQuery && facetQuery.length==0)"
                                     (click)="resetFilter()"><span [innerHTML]="'Reset filter' | translate"></span>
@@ -680,63 +710,69 @@
                             </div>
 
                             <div *ngIf="!productOtherFilter.isCollapsed">
-                                <div *ngFor="let facet of productOtherFilter.facets">
-                                    <div class="card mb-3">
-                                        <!-- Display the units for quantity properties -->
-                                        <div *ngIf="facet.showContent && facet.units && facet.units.length > 1"
-                                             class="card-header" (click)="onFacetClicked(facet)">
-                                            <div class="row">
-                                                <div class="col-8 my-auto">
-                                                    {{ facet.realName }}
-                                                </div>
-                                                <div class="col-4">
-                                                    <select class="form-control custom-select"
-                                                            [(ngModel)]="facet.selectedUnit"
-                                                            [ngModelOptions]="{standalone: true}"
-                                                            (click)="$event.stopPropagation()">
-                                                        <option *ngFor="let unit of facet.units">{{unit}}</option>
-                                                    </select>
+                                <filter-search-input *ngIf="enableOtherFiltersSearch && !searchCallStatus.isLoading()" [values]="productOtherFilter.facetNames"
+                                                     (onValueChanged)="onOtherFilterFacetsFiltered($event)">
+                                </filter-search-input>
+
+                                <ng-container *ngFor="let facet of productOtherFilter.facets">
+                                    <div *ngIf="facet.visible" >
+                                        <div class="card mb-3">
+                                            <!-- Display the units for quantity properties -->
+                                            <div *ngIf="facet.showContent && facet.units && facet.units.length > 1"
+                                                 class="card-header" (click)="onFacetClicked(facet)">
+                                                <div class="row">
+                                                    <div class="col-8 my-auto">
+                                                        {{ facet.realName }}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <select class="form-control custom-select"
+                                                                [(ngModel)]="facet.selectedUnit"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                (click)="$event.stopPropagation()">
+                                                            <option *ngFor="let unit of facet.units">{{unit}}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1"
-                                             class="card-header" (click)="onFacetClicked(facet)">
-                                            {{ facet.realName }}
-                                        </div>
-                                        <div *ngIf="facet.showContent" class="card-body">
-                                            <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
-                                                <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                            <div *ngIf="!facet.showContent || !facet.units || facet.units.length == 1"
+                                                 class="card-header" (click)="onFacetClicked(facet)">
+                                                {{ facet.realName }}
+                                            </div>
+                                            <div *ngIf="facet.showContent" class="card-body">
+                                                <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
+                                                    <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
                                                           (click)="setFacet(facetInner.unitGenName ? facetInner.unitGenName : facet.name,facetInner.name,facet.genName)"
                                                           [title]="facetInner.realName">{{ facetInner.realName.substring(0, 30) }}
                                                         <span *ngIf="facetInner.realName.length>30">...</span></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'"
-                                                       (click)="setFacet(facet.name,facetInner.name,facet.genName)"
-                                                       class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
-                                                       aria-hidden="true"></i> ({{ facetInner.count }})
-                                                </div>
-                                                <div *ngIf="facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
+                                                        <i *ngIf="facet.dataType == 'boolean'"
+                                                           (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                           class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
+                                                           aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    </div>
+                                                    <div *ngIf="facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
                                                           (click)="setFacet(facetInner.unitGenName ? facetInner.unitGenName : facet.name,facetInner.name,facet.genName)"
                                                           [title]="facetInner.realName"><b>{{ facetInner.realName.substring(0, 30) }}
                                                         <span *ngIf="facetInner.realName.length>30">...</span></b></span>
-                                                    <i *ngIf="facet.dataType == 'boolean'"
-                                                       (click)="setFacet(facet.name,facetInner.name,facet.genName)"
-                                                       class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
-                                                       aria-hidden="true"></i> ({{ facetInner.count }})
+                                                        <i *ngIf="facet.dataType == 'boolean'"
+                                                           (click)="setFacet(facet.name,facetInner.name,facet.genName)"
+                                                           class="fa boolean-type {{facetInner.realName == 'true' ? 'fa-check': 'fa-times'}} clickable"
+                                                           aria-hidden="true"></i> ({{ facetInner.count }})
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div *ngIf="getFacetOptions(facet.options,facet.selectedUnit).length>maxFacets">
-                                                <hr>
-                                                <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
-                                                        *ngIf="!facet.expanded"><span
-                                                        [innerHTML]="'Show more' | translate"></span></span><span
-                                                        *ngIf="facet.expanded"><span
-                                                        [innerHTML]="'Show less' | translate"></span></span></span>
+                                                <div *ngIf="getFacetOptions(facet.options,facet.selectedUnit).length>maxFacets">
+                                                    <hr>
+                                                    <span class="clickable" (click)="facet.expanded=!facet.expanded"><span
+                                                            *ngIf="!facet.expanded"><span
+                                                            [innerHTML]="'Show more' | translate"></span></span><span
+                                                            *ngIf="facet.expanded"><span
+                                                            [innerHTML]="'Show less' | translate"></span></span></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ng-container>
                             </div>
 
                         </div>
@@ -1079,12 +1115,20 @@
                                                        [checked]="isCompanySelectedForNetwork(result.vatNumber)"
                                                        (click)="$event.preventDefault();  $event.stopPropagation(); companySelect.click();">
                                             </div>
+                                            <div *ngIf="pageRef === 'subscription'" #companySelect
+                                                 class="align-self-center"
+                                                 [ngClass]="{'col-1':display=='list','col-12 pb-1':display=='panel'}"
+                                                 (click)="onToggleCompanySelectForSubscription(result, $event)">
+                                                <input type="checkbox"
+                                                       [checked]="isCompanySelectedForSubscription(result.id)"
+                                                       (click)="$event.preventDefault();  $event.stopPropagation(); companySelect.click();">
+                                            </div>
                                             <div class="align-center"
                                                  [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
                                                 <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb"
                                                      onerror="this.src='assets/empty_img.png';"/>
                                             </div>
-                                            <div [ngClass]="{'col-8 border-right':display=='list' && !(pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'),'col-7 border-right':display=='list' && (pageRef === 'network' || pageRef === 'offering' || pageRef === 'catalogue'),'col-12 pt-1 pb-2 border-bottom':display=='panel'}">
+                                            <div [ngClass]="{'col-8 border-right':display=='list' && !(pageRef === 'network' || pageRef === 'subscription' || pageRef === 'offering' || pageRef === 'catalogue'),'col-7 border-right':display=='list' && (pageRef === 'network' || pageRef === 'subscription' || pageRef === 'offering' || pageRef === 'catalogue'),'col-12 pt-1 pb-2 border-bottom':display=='panel'}">
                                                 <div style="max-height:1.5rem;overflow:hidden">
                                                     <span [title]="result[product_vendor_name]"><b>{{ result[product_vendor_name] }}</b></span>
                                                 </div>

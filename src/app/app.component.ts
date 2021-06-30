@@ -42,6 +42,7 @@ import {DomSanitizer, Title} from '@angular/platform-browser';
 import {ConfirmModalComponent} from './common/confirm-modal.component';
 import {CountryUtil} from './common/country-util';
 import {DemandService} from './demand/demand-service';
+import {CategoryService} from './catalogue/category/category.service';
 
 @Component({
     selector: 'nimble-app',
@@ -96,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private modalService: NgbModal,
         private titleService: Title,
+        private categoryService: CategoryService,
         private demandService: DemandService,
         public translate: TranslateService,
         public sanitizer: DomSanitizer
@@ -147,8 +149,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
-        // initialize country service after setting the default language of platform
-        CountryUtil.initialize(this.translate);
         this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
             this.translations = res;
         });
@@ -209,11 +209,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         // this.submitCallStatus.callback("Login Successful");
     }
 
-    generateFederationURL(catalogueId, id) {
+    generateFederationURL(catalogueId, id, federationIDP:string) {
+        const idp = federationIDP === "efs" ? myGlobals.config.federationIDP: myGlobals.config.smeFederationIDP
         let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
         let clientID = "?client_id=" + myGlobals.config.federationClientID;
         let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
-        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + idp;
 
         if (catalogueId != null && id != null) {
             let endpoint = encodeURI("?catalogueId=" + catalogueId + "_" + id);
@@ -258,12 +259,17 @@ export class AppComponent implements OnInit, AfterViewInit {
         return txt;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        // initialize country service after setting the default language of platform
+        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
+        // from CountryUtil
+        await CountryUtil.initialize(this.translate);
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
         }
-
+        // get service categories for available taxonomies
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies();
         this.getVersions();
         this.checkLogin("");
 
@@ -272,8 +278,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         let catalogueId = this.getQueryParameter('catalogueId');
         let id = this.getQueryParameter('id');
 
-        if (federatedLogin != undefined && federatedLogin == "efs") {
-            window.location.href = this.generateFederationURL(catalogueId, id);
+        if (federatedLogin != undefined && (federatedLogin == "efs" || federatedLogin == "sme")) {
+            window.location.href = this.generateFederationURL(catalogueId, id,federatedLogin);
         }
 
         if (code != null) {
@@ -323,7 +329,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
 
         // get demand last seen response for the user
-        if(this.isLoggedIn){
+        if(this.isLoggedIn && this.config.demandsEnabled){
             this.demandService.getDemandLastSeenResponse();
         }
 
@@ -806,7 +812,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         return this.allowed;
     }
 
+    /**
+     * Returns the mailto content for the invitation of a company
+     * */
     getInvitationMailTo(){
-        return "mailto:?subject=" + encodeURIComponent(this.translate.instant("Invitation to platform",{platformName:this.config.platformNameInMail}));
+        let mailto = "mailto:";
+        mailto += "?subject=" + encodeURIComponent(this.translate.instant("Invitation to platform",{platformName:this.config.platformNameInMail}));
+        mailto += "&body=" + encodeURIComponent(this.translate.instant("invitationMailContent",{platformName:this.config.platformNameInMail,companyName:this.activeCompanyName,frontendUrl:myGlobals.frontendURL}));
+        return mailto ;
     }
 }

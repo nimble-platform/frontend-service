@@ -57,6 +57,8 @@ export const tntMasterDataEndpoint = `${base_path}/tracking/masterData/id/`;
 export const tntAnalysisEndpoint = `${base_path}/tracking-analysis/`;
 export const tntIoTBlockchainEndpoint = `${base_path}/iot-bc-api/api/verify`;
 
+// SME Cluster endpoints
+export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/my-opportunities/create-opportunity";
 
 // Platform Configuration
 
@@ -113,8 +115,14 @@ export const config = {
     "delegationEnabled": true,
     "demandsEnabled": false,
     "displayCategoryCounts":true,
+    "displayProductIdInOverview": false,
     "docLink": "https://www.nimble-project.org/docs/",
+    "enableActionButtonsForTermsAndConditions":true,
+    "enableOtherFiltersSearch": true,
     "enableStripePayment": true,
+    "enableSubscriptions": true,
+    "enableTenderAndBidManagementToolIntegration": true,
+    "enableTermsAndConditionsAsFile": true,
     "faviconPath": "./assets/favicon.ico",
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
@@ -123,7 +131,8 @@ export const config = {
     "hideVisitStats": false,
     "imprint": {
         "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
-        "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Proveedor de Plataforma</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)</td></tr></table>"
+        "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Proveedor de Plataforma</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)</td></tr></table>",
+        "de": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Eigentümer der Plattform</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Straße 13<br/>46980 Paterna (Valencia), Spanien<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Plattform Anbieter</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Österreich<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Geschäftsführer: Siegfried Reich<br/>Firmenbuch-Nr.: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Inhaltlich Verantwortlicher: Siegfried Reich<br/>Eigentümer: State of Salzburg (100%)</td></tr></table>"
     },
     "invitationToPlatformEnabled": true,
     "kibanaConfig": {
@@ -283,6 +292,7 @@ export const config = {
     "productOfferingEnabled":true,
     "vatEnabled": false,
     "projectsEnabled": true,
+    "replaceLegalRepresentativeWithCompanyAdmin": true,
     "requiredAgreements": [
         {
             "title": "Privacy Policy",
@@ -297,6 +307,7 @@ export const config = {
     "showChat": false,
     "showAgent": false,
     "showBusinessKeywordsInCompanyDetails":true,
+    "showBusinessProcessBreakdownForPlatformAnalytics": false,
     "showCompanyMembers": true,
     "showCompanyDetailsInPlatformMembers":false,
     "showExplorative": false,
@@ -411,8 +422,9 @@ export const config = {
     ],
     "supportMail": "support@efactory-project.eu",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachement if they are of use.]",
-        "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
+        "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]",
+        "de": "Sehr geehrtes NIMBLE-Supportteam,\n\n\nIch bin auf ein Problem gestoßen.\n\nBeschreibung des Problems:\n[Bitte geben Sie hier eine detaillierte Beschreibung des Problems ein. Fügen Sie einige Screenshots als Anhang hinzu, wenn nötig.]"
     },
     "showLoginFederation": true,
     "unshippedOrdersTabEnabled": true,
@@ -424,6 +436,7 @@ export const config = {
     "whiteBlackListForCatalogue":true,
     "federationClientID": "efact-test-client",
     "federationIDP": "EFS",
+    "smeFederationIDP": "SME",
     "legislationSettings": {
         "enabled": false,
         "authMode": "nimble",
@@ -487,7 +500,7 @@ export const product_filter_mappings = {
     "businessKeywords": "Business Keywords",
     "origin": "Vendor Origin"
 };
-export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels"];
+export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType", "allLabels","permittedParties","restrictedParties"];
 export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price", "_deliveryTime","_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];

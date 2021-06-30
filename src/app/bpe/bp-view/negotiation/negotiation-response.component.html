@@ -124,7 +124,7 @@
             </div>
             <div class="col-3">
                 <button class="btn btn-secondary action" (click)="finishCollaboration()" [disabled]="callStatus.isLoading() || processMetadata.collaborationStatus === 'COMPLETED' || processMetadata.collaborationStatus === 'CANCELLED'">
-                    <span [innerHTML]="'Finish collaboration' | translate"></span>
+                    <span [innerHTML]="'Accept & Finish collaboration' | translate"></span>
                 </button>
             </div>
         </ng-container>

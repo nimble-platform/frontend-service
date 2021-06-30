@@ -46,6 +46,7 @@ export class CredentialsFormComponent implements OnInit {
     shaObj: any;
     showLoginFederation = myGlobals.config.showLoginFederation;
     federationURL = "";
+    smeFederationURL = "";
 
     submitCallStatus: CallStatus = new CallStatus();
 
@@ -83,7 +84,8 @@ export class CredentialsFormComponent implements OnInit {
             }, 100);
         }
         if (this.showLoginFederation) {
-            this.federationURL = this.generateFederationURL();
+            this.federationURL = this.generateFederationURL(this.config.federationIDP);
+            this.smeFederationURL = this.generateFederationURL(this.config.smeFederationIDP)
         }
     }
 
@@ -113,7 +115,8 @@ export class CredentialsFormComponent implements OnInit {
                 this.cookieService.set("user_email", res.email);
                 this.cookieService.set("bearer_token", res.accessToken);
                 // get demand last seen response for the user
-                this.demandService.getDemandLastSeenResponse();
+                if(myGlobals.config.demandsEnabled)
+                    this.demandService.getDemandLastSeenResponse();
                 // Setting cookie path to root to facilitate the iframe base login
                 if (myGlobals.config.showChat) {
                     this.cookieService.set(constants.chatToken, res.rocketChatToken, undefined, '/');
@@ -169,11 +172,11 @@ export class CredentialsFormComponent implements OnInit {
         this.post(this.objToSubmit);
     }
 
-    generateFederationURL() {
+    generateFederationURL(federationIDP:string) {
         let identityURL = myGlobals.idpURL + "/protocol/openid-connect/auth";
         let clientID = "?client_id=" + myGlobals.config.federationClientID;
         let redirectURI = "&redirect_uri=" + myGlobals.frontendURL;
-        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + myGlobals.config.federationIDP;
+        let hint = "&scope=openid&response_type=code&kc_idp_hint=" + federationIDP;
 
         return identityURL + clientID + redirectURI + hint;
     }

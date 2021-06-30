@@ -61,6 +61,7 @@ export class NegotiationResponseItemComponent implements OnInit {
     config = myGlobals.config;
 
     CURRENCIES: string[] = CURRENCIES;
+    getCompanyTermsAndConditionFiles = UBLModelUtils.getCompanyTermsAndConditionFiles;
 
     callStatus: CallStatus = new CallStatus();
 

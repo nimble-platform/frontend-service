@@ -13,7 +13,7 @@
  */
 
 import { Property } from "./property";
-import { Text } from "../publish/text";
+import { Text } from "../../../catalogue/model/publish/text";
 
 export class Category {
     constructor(

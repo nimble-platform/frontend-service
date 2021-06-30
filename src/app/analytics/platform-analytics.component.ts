@@ -20,10 +20,12 @@ import { CallStatus } from "../common/call-status";
 import { SimpleSearchService } from '../simple-search/simple-search.service';
 import { CategoryService } from '../catalogue/category/category.service';
 import * as myGlobals from '../globals';
-import { selectNameFromLabelObject } from '../common/utils';
+import {getTimeLabel, populateValueObjectForMonthGraphs} from '../common/utils';
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../user-mgmt/user.service";
 import { TranslateService } from '@ngx-translate/core';
+import {BusinessProcessCountModalComponent} from './modal/business-process-count-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: "platform-analytics",
@@ -33,7 +35,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class PlatformAnalyticsComponent implements OnInit {
     hideLogAnalytics = myGlobals.config.hideLogAnalytics;
     user_count = -1;
-    comp_count = -1;
+    // keeps the number of registered companies
+    registered_company_count = -1;
     bp_count = -1;
     trade_count = -1;
     green = 0;
@@ -54,9 +57,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     trade_green_perc_str = "0%";
     trade_yellow_perc_str = "0%";
     trade_red_perc_str = "0%";
-    cat_loading = true;
     cat_levels = [];
-    cat_level = -2;
     cat = "";
     product_count = 0;
     service_count = 0;
@@ -64,18 +65,21 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     callStatus: CallStatus = new CallStatus();
     categoriesCallStatus: CallStatus = new CallStatus();
+    companyCallStatus:CallStatus = new CallStatus();
 
     product_cat_mix = myGlobals.product_cat_mix;
-    getMultilingualLabel = selectNameFromLabelObject;
+    showBusinessProcessBreakdownForPlatformAnalytics = myGlobals.config.showBusinessProcessBreakdownForPlatformAnalytics
     config = myGlobals.config;
     dashboards = [];
     selectedTab;
 
+    tooltipHTML: string;
+    view: any[] = [700, 450];
     // collab time
-    collab_time = 0;
-    collab_time_sell = 0;
-    collab_time_buy = 0;
-    avg_res_time = 0;
+    collab_time = null;
+    collab_time_sell = null;
+    collab_time_buy = null;
+    avg_res_time = null;
 
     // options
     showXAxis = true;
@@ -87,17 +91,30 @@ export class PlatformAnalyticsComponent implements OnInit {
     showGridLines = true;
     showYAxisLabel = true;
     yAxisLabel = this.translate.instant('Average Response Time(s) in days');
-    showChart = false;
+    yAxisLabelForAverageResponseChart = this.translate.instant('Average Response Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeChart = this.translate.instant('Average Collaboration Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeSalesChart = this.translate.instant('Average Collaboration Time(s) In Sales in days');
+    yAxisLabelForAverageCollaborationTimePurchaseChart = this.translate.instant('Average Collaboration Time(s) In Purchases in days');
+    showAverageResponseChart = false;
+    showAverageCollaborationTimeChart = false;
+    showAverageCollaborationTimeSalesChart = false;
+    showAverageCollaborationTimePurchaseChart = false;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
     // line, area
     autoScale = true;
     multi = [];
+    averageCollaborationTimeChartData = [];
+    averageCollaborationTimeSalesChartData = [];
+    averageCollaborationTimePurchaseChartData = [];
 
     months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 
+    // process count modal
+    @ViewChild(BusinessProcessCountModalComponent)
+    public processCountModal: BusinessProcessCountModalComponent;
 
     public secureSrc = "";
 
@@ -105,6 +122,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
         private categoryService: CategoryService,
+        private modalService: NgbModal,
         private userService: UserService,
         private sanitizer: DomSanitizer,
         private translate: TranslateService,
@@ -114,7 +132,7 @@ export class PlatformAnalyticsComponent implements OnInit {
     ngOnInit(): void {
 
         this.selectedTab = this.config.kibanaEnabled && !this.hideLogAnalytics? "LOG" : "DB";
-        if (this.config.kibanaEnabled) {
+        if (this.config.kibanaEnabled && !this.hideLogAnalytics) {
             let tmpDashboards = this.config.kibanaConfig.dashboards;
             for (let i = 0; i < tmpDashboards.length; i++) {
                 let full_url = myGlobals.kibana_endpoint + tmpDashboards[i].url;
@@ -123,12 +141,13 @@ export class PlatformAnalyticsComponent implements OnInit {
             this.dashboards = tmpDashboards;
         }
         this.callStatus.submit();
-        this.getCatTree();
+        this.getProductAndServiceCounts();
+        // get registered company count
+        this.getRegisteredCompanyCount();
         this.analyticsService
             .getPlatAnalytics()
             .then(res => {
                 this.user_count = res.identity.totalUsers;
-                this.comp_count = res.identity.totalCompanies;
                 this.bp_count = Math.round(res.businessProcessCount.state.approved + res.businessProcessCount.state.waiting + res.businessProcessCount.state.denied);
                 this.green = res.businessProcessCount.state.approved;
                 this.yellow = res.businessProcessCount.state.waiting;
@@ -154,34 +173,65 @@ export class PlatformAnalyticsComponent implements OnInit {
                     .then(res => {
                         this.callStatus.callback("Successfully loaded platform analytics", true);
                         //collab time
-                        this.collab_time = Math.round(res.collaborationTime.averageCollabTime * 10 * 24) / 10;
-                        this.collab_time_buy = Math.round(res.collaborationTime.averageCollabTimePurchases * 10 * 24) / 10;
-                        this.collab_time_sell = Math.round(res.collaborationTime.averageCollabTimeSales * 10 * 24) / 10;
+                        this.collab_time = getTimeLabel(res.collaborationTime.averageCollabTime);
+                        this.collab_time_buy = getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
+                        this.collab_time_sell = getTimeLabel(res.collaborationTime.averageCollabTimeSales);
 
-                        this.avg_res_time = Math.round(res.responseTime.averageTime * 10 * 24) / 10;
-                        var map1 = res.responseTime.averageTimeForMonths;
-                        var i = 0;
-                        var obj = [];
-
-
-                        for (var y = 0; y < 12; y++) {
-                            if (map1[y] != undefined) {
-                                obj.push({
-                                    "value": map1[y],
-                                    "name": this.months[y]
-                                })
-                            }
-                        }
-
+                        // average collaboration time chart
+                        let obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeForMonths);
                         if (obj.length == 6) {
                             var dataGr =
-                            {
-                                "name": "Time series",
-                                "series": obj
-                            };
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimeChartData.push(dataGr);
+                            this.showAverageCollaborationTimeChart = true;
+
+                        }
+
+                        // average collaboration time in sales chart
+                        obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeSalesForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimeSalesChartData.push(dataGr);
+                            this.showAverageCollaborationTimeSalesChart = true;
+
+                        }
+
+                        // average collaboration time in purchase chart
+                        obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimePurchasesForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
+
+                            this.averageCollaborationTimePurchaseChartData.push(dataGr);
+                            this.showAverageCollaborationTimePurchaseChart = true;
+
+                        }
+
+                        // average response time
+                        this.avg_res_time = getTimeLabel(res.responseTime.averageTime);
+
+                        obj = populateValueObjectForMonthGraphs(res.responseTime.averageTimeForMonths);
+                        if (obj.length == 6) {
+                            var dataGr =
+                                {
+                                    "name": "Time series",
+                                    "series": obj
+                                };
 
                             this.multi.push(dataGr);
-                            this.showChart = true;
+                            this.showAverageResponseChart = true;
 
                         }
 
@@ -200,142 +250,62 @@ export class PlatformAnalyticsComponent implements OnInit {
         return this.callStatus.fb_submitted;
     }
 
-
-    private getCatTree(): void {
-        this.categoriesCallStatus.submit();
-        this.simpleSearchService.get("*", [this.product_cat_mix], [""], 1, 1, "score desc", "", "", myGlobals.config.defaultSearchIndex)
+    /**
+     * Sets registered company count i.e. {@link registered_company_count}
+     * */
+    private getRegisteredCompanyCount(){
+        this.simpleSearchService.getComp("*", [], [], null, null, "lowercaseLegalName asc","Name", null,false, true)
             .then(res => {
-                // if res.facets are null, it means that there is no product in the index
-                if (res.facets == null || Object.keys(res.facets).indexOf(this.product_cat_mix) == -1) {
-                    this.categoriesCallStatus.callback("Categories loaded.", true);
-                } else {
-                    // before starting to build category tree, we have to get categories to retrieve their names
-                    this.buildCatTree(res.facets[this.product_cat_mix].entry);
-                    //this.categoriesCallStatus.callback("Categories loaded.", true);
-                }
+                this.registered_company_count = res.totalElements;
+                this.companyCallStatus.callback("Successfully loaded companies", true);
             })
             .catch(error => {
-                this.categoriesCallStatus.error("Error while loading category tree.", error);
+                this.companyCallStatus.error("Error while loading companies", error);
             });
     }
 
+    /**
+     * Sets the product and service counts i.e. {@link product_count} and {@link service_count}
+     * */
+    private getProductAndServiceCounts(): void {
+        // first get the categories to get the number of services
+        this.categoryService.getServiceCategoriesForAvailableTaxonomies().then(res => {
 
-    private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
-            taxonomy = this.config.standardTaxonomy;
-        }
-        var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
-            taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
+            // catalogue count
+            const catalogPromise: Promise<any> = this.simpleSearchService.get(
+                '*',
+                ['catalogueId'],
+                [],
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
 
-        // retrieve the labels for the category uris included in the categoryCounts field
-        let categoryUris: string[] = [];
-        for (let categoryCount of categoryCounts) {
-            categoryUris.push(categoryCount.label);
-        }
-        this.cat_loading = true;
-        var indexCategories = await this.categoryService.getCategories(categoryUris);
-        let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
-        let split_idx: any = -1;
-        let name: any = "";
-        if (taxonomyPrefix != "") {
-            // ToDo: Remove manual distinction after search update
-            // ================================================================================
-            if (taxonomy == "eClass") {
-                this.cat_levels = [[], [], [], []];
-                for (let categoryCount of categoryCounts) {
-                    let facet_inner = categoryCount.label;
-                    var count = categoryCount.count;
-                    if (facet_inner.startsWith(taxonomyPrefix)) {
-                        var eclass_idx = categoryDisplayInfo[facet_inner].code;
-                        if (eclass_idx % 1000000 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                    }
-                }
+            const facetQuery: string[] = [];
+            for (let cat of res) {
+                facetQuery.push(`-commodityClassficationUri:\"${cat}\"`);
             }
-            // ================================================================================
-            // if (this.cat == "") {
-            else if (this.cat == "") {
-                this.cat_levels = [];
-                var lvl = [];
+            const servicePromise: Promise<any> = this.simpleSearchService.get(
+                '*',
+                [],
+                facetQuery,
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
 
-                for (let categoryCount of categoryCounts) {
-                    var count = categoryCount.count;
-                    var ontology = categoryCount.label;
-                    if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
-                        split_idx = ontology.lastIndexOf("#");
-                        name = ontology.substr(split_idx + 1);
-                        if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                            if (ontology.startsWith(taxonomyPrefix)) {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label) });
-                            } else {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": ontology });
-                            }
-                        }
-                    }
-                }
-                this.cat_levels.push(lvl);
-            }
-            else {
-                var catLevels = [];
-                this.cat_levels = [];
-                for (var i = 0; i < catLevels.length; i++) {
-                    var lvl = [];
-                    var constructedLevel: string[] = catLevels[i];
-                    for (let uri of constructedLevel) {
-                        let categoryCount = categoryCounts.find(cat => cat.label == uri);
-                        if (categoryCount != null) {
-                            var count = categoryCount.count;
-                            var ontology = categoryCount.label;
+            Promise.all([catalogPromise, servicePromise]).then(([catalogResult, notServiceResult]) => {
+                const totalItemCount: number = catalogResult.totalElements;
+                this.product_count = notServiceResult.totalElements;
+                this.service_count = totalItemCount - this.product_count;
 
-                            if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-                                split_idx = uri.lastIndexOf("#");
-                                name = uri.substr(split_idx + 1);
-                                if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                                    if (ontology.startsWith(taxonomyPrefix)) {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label) });
-                                    } else {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": name });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    this.cat_levels.push(lvl);
-                }
-            }
-        }
-
-        this.cat_levels[0].forEach(catele => {
-            if (catele.preferredName != null && catele.preferredName != '') {
-                if (catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0) {
-                    this.service_count = this.service_count + catele.count;
-                } else {
-                    this.product_count = this.product_count + catele.count;
-                }
-            }
+                this.loadedps = true;
+            });
         });
-
-        this.loadedps = true;
-        this.cat_loading = false;
-
-
-        this.categoriesCallStatus.callback("Categories loaded.", true);
-
-
-    }
-
-    getCategoryDisplayInfo(categories: any): any {
-        let labelMap = {};
-        for (let category of categories.result) {
-            labelMap[category.uri] = {};
-            labelMap[category.uri].label = category.label;
-            labelMap[category.uri].code = category.code;
-            labelMap[category.uri].isRoot = category.allParents == null ? true : false;
-        }
-        return labelMap;
     }
 
     onSelectTab(event: any, id: any): void {
@@ -343,4 +313,15 @@ export class PlatformAnalyticsComponent implements OnInit {
         this.selectedTab = id;
     }
 
+    /**
+     * Opens the process count modal
+     * */
+    openProcessCountModal() {
+        this.processCountModal.open();
+    }
+
+    showToolTip(content,key) {
+        this.tooltipHTML = this.translate.instant(key);
+        this.modalService.open(content);
+    }
 }

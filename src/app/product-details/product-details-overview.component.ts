@@ -148,6 +148,11 @@ export class ProductDetailsOverviewComponent implements OnInit {
             }
         }
         if (this.categoryUris.length > 0) {
+            // set the activity type
+            let activity = "product_visit";
+            if(this.categoryUris.filter(categoryUri => this.categoryService.isServiceCategory(categoryUri)).length > 0){
+                activity = "service_visit";
+            }
             this.getClassificationNamesStatus.submit();
             this.classificationNames = [];
             let manPartyId = UBLModelUtils.getPartyId(this.wrapper.goodsItem.item.manufacturerParty);
@@ -160,7 +165,7 @@ export class ProductDetailsOverviewComponent implements OnInit {
                 "companyId": this.companyId,
                 "active_company": this.activeComp,
                 "manufactured_companyId": manPartyId,
-                "activity": "product_visit"
+                "activity": activity
             };
 
             if (this.debug)

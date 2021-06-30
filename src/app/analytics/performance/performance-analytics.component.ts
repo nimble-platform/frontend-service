@@ -20,10 +20,11 @@ import { CallStatus } from "../../common/call-status";
 import { SimpleSearchService } from '../../simple-search/simple-search.service';
 import { CategoryService } from '../../catalogue/category/category.service';
 import * as myGlobals from '../../globals';
-import { selectNameFromLabelObject } from '../../common/utils';
+import {getTimeLabel, selectNameFromLabelObject, populateValueObjectForMonthGraphs} from '../../common/utils';
 import { CookieService } from "ng2-cookies";
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from "@angular/platform-browser";
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: "performance-analytics",
@@ -45,8 +46,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
     cat_levels = [];
     cat_level = -2;
     cat = "";
-
-    months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     greenTotalApproved = 0;
     yellowTotWaiting = 0;
@@ -121,7 +120,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
     single: any[];
 
-    view: any[] = [700, 400];
+    view: any[] = [700, 450];
 
     // options
     showXAxis = true;
@@ -132,14 +131,23 @@ export class PerformanceAnalyticsComponent implements OnInit {
     xAxisLabel = 'Month';
     showGridLines = true;
     showYAxisLabel = true;
-    yAxisLabel = this.translate.instant('Average Response Time(s) in days');
-    showChart = false;
+    yAxisLabelForAverageResponseChart = this.translate.instant('Average Response Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeChart = this.translate.instant('Average Collaboration Time(s) in days');
+    yAxisLabelForAverageCollaborationTimeSalesChart = this.translate.instant('Average Collaboration Time(s) In Sales in days');
+    yAxisLabelForAverageCollaborationTimePurchaseChart = this.translate.instant('Average Collaboration Time(s) In Purchases in days');
+    showAverageResponseChart = false;
+    showAverageCollaborationTimeChart = false;
+    showAverageCollaborationTimeSalesChart = false;
+    showAverageCollaborationTimePurchaseChart = false;
     colorScheme = {
         domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
     };
     // line, area
     autoScale = true;
     multi = [];
+    averageCollaborationTimeChartData = [];
+    averageCollaborationTimeSalesChartData = [];
+    averageCollaborationTimePurchaseChartData = [];
 
     product_count = 0;
     service_count = 0;
@@ -156,10 +164,13 @@ export class PerformanceAnalyticsComponent implements OnInit {
     dashboards = [];
     graphsa = [];
 
+    tooltipHTML: string;
+
     constructor(private analyticsService: AnalyticsService,
         private simpleSearchService: SimpleSearchService,
         private cookieService: CookieService,
         private categoryService: CategoryService,
+        private modalService: NgbModal,
         private translate: TranslateService,
         private sanitizer: DomSanitizer
     ) {
@@ -269,14 +280,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
 
     private async buildCatTree(categoryCounts: any[]) {
-        var taxonomy = "eClass";
-        if (this.config.standardTaxonomy.localeCompare("All") != 0 && this.config.standardTaxonomy.localeCompare("eClass") != 0) {
-            taxonomy = this.config.standardTaxonomy;
-        }
-        var taxonomyPrefix = "";
-        if (this.config.categoryFilter[taxonomy] && this.config.categoryFilter[taxonomy].ontologyPrefix)
-            taxonomyPrefix = this.config.categoryFilter[taxonomy].ontologyPrefix;
-
         // retrieve the labels for the category uris included in the categoryCounts field
         let categoryUris: string[] = [];
         for (let categoryCount of categoryCounts) {
@@ -285,86 +288,24 @@ export class PerformanceAnalyticsComponent implements OnInit {
         this.cat_loading = true;
         var indexCategories = await this.categoryService.getCategories(categoryUris);
         let categoryDisplayInfo: any = this.getCategoryDisplayInfo(indexCategories);
-        let split_idx: any = -1;
-        let name: any = "";
-        if (taxonomyPrefix != "") {
-            // ToDo: Remove manual distinction after search update
-            // ================================================================================
-            if (taxonomy == "eClass") {
-                this.cat_levels = [[], [], [], []];
-                for (let categoryCount of categoryCounts) {
-                    let facet_inner = categoryCount.label;
-                    var count = categoryCount.count;
-                    if (facet_inner.startsWith(taxonomyPrefix)) {
-                        var eclass_idx = categoryDisplayInfo[facet_inner].code;
-                        if (eclass_idx % 1000000 == 0) {
-                            this.cat_levels[0].push({ "name": facet_inner, "id": facet_inner, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[facet_inner].label) });
-                        }
-                    }
-                }
-            }
-            // ================================================================================
-            // if (this.cat == "") {
-            else if (this.cat == "") {
-                this.cat_levels = [];
-                var lvl = [];
 
-                for (let categoryCount of categoryCounts) {
-                    var count = categoryCount.count;
-                    var ontology = categoryCount.label;
-                    if (categoryDisplayInfo[ontology] != null && ontology.indexOf(taxonomyPrefix) != -1) {
-                        split_idx = ontology.lastIndexOf("#");
-                        name = ontology.substr(split_idx + 1);
-                        if (categoryDisplayInfo[ontology].isRoot && this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                            if (ontology.startsWith(taxonomyPrefix)) {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[ontology].label) });
-                            } else {
-                                lvl.push({ "name": ontology, "id": ontology, "count": count, "preferredName": ontology });
-                            }
-                        }
-                    }
-                }
-                this.cat_levels.push(lvl);
+        let rootCategories = [];
+        categoryUris.forEach(categoryUri => {
+            if(categoryDisplayInfo[categoryUri] && categoryDisplayInfo[categoryUri].isRoot){
+                rootCategories.push(categoryUri);
             }
-            else {
-                var catLevels = [];
-                this.cat_levels = [];
-                for (var i = 0; i < catLevels.length; i++) {
-                    var lvl = [];
-                    var constructedLevel: string[] = catLevels[i];
-                    for (let uri of constructedLevel) {
-                        let categoryCount = categoryCounts.find(cat => cat.label == uri);
-                        if (categoryCount != null) {
-                            var count = categoryCount.count;
-                            var ontology = categoryCount.label;
+        })
 
-                            if (categoryDisplayInfo[uri] != null && uri.indexOf(taxonomyPrefix) != -1) {
-                                split_idx = uri.lastIndexOf("#");
-                                name = uri.substr(split_idx + 1);
-                                if (this.config.categoryFilter[taxonomy].hiddenCategories.indexOf(name) == -1) {
-                                    if (ontology.startsWith(taxonomyPrefix)) {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": selectNameFromLabelObject(categoryDisplayInfo[uri].label) });
-                                    } else {
-                                        lvl.push({ "name": uri, "id": uri, "count": count, "preferredName": name });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    this.cat_levels.push(lvl);
-                }
+        // set product and service counts
+        this.product_count = 0;
+        this.service_count = 0;
+        rootCategories.forEach(rootCategoryUri => {
+            if(this.categoryService.isServiceCategory(rootCategoryUri)){
+                this.service_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
+            } else{
+                this.product_count += categoryCounts.find(categoryCount => categoryCount.label === rootCategoryUri).count;
             }
-        }
-
-        this.cat_levels[0].forEach(catele => {
-            if (catele.preferredName != null && catele.preferredName != '') {
-                if (catele.preferredName.toLowerCase().indexOf("service") >= 0 || catele.preferredName.toLowerCase().indexOf("servicio") >= 0) {
-                    this.service_count = this.service_count + catele.count;
-                } else {
-                    this.product_count = this.product_count + catele.count;
-                }
-            }
-        });
+        })
 
         this.loadedps = true;
         this.cat_loading = false;
@@ -418,7 +359,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
                 let totalTradingVolumeApproved = res.tradingVolumesales.approved + res.tradingVolumespurchase.approved;
                 let totalTradingVolumeWaiting = res.tradingVolumesales.waiting + res.tradingVolumespurchase.waiting;
-                let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumesales.denied;
+                let totalTradingVolumeDenied = res.tradingVolumesales.denied + res.tradingVolumespurchase.denied;
                 this.trade_green = Math.round(totalTradingVolumeApproved);
                 this.trade_yellow = Math.round(totalTradingVolumeWaiting);
                 this.trade_red = Math.round(totalTradingVolumeDenied);
@@ -431,28 +372,57 @@ export class PerformanceAnalyticsComponent implements OnInit {
                 this.trade_red_perc_str = this.trade_red_perc + "%";
 
                 //collab time
-                this.collab_time = this.getTimeLabel(res.collaborationTime.averageCollabTime);
-                this.collab_time_buy = this.getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
-                this.collab_time_sell = this.getTimeLabel(res.collaborationTime.averageCollabTimeSales);
+                this.collab_time = getTimeLabel(res.collaborationTime.averageCollabTime);
+                this.collab_time_buy = getTimeLabel(res.collaborationTime.averageCollabTimePurchases);
+                this.collab_time_sell = getTimeLabel(res.collaborationTime.averageCollabTimeSales);
 
+                // average collaboration time chart
+                let obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
 
+                    this.averageCollaborationTimeChartData.push(dataGr);
+                    this.showAverageCollaborationTimeChart = true;
 
-                this.avg_res_time = this.getTimeLabel(res.responseTime.averageTime);
-
-                var map1 = res.responseTime.averageTimeForMonths;
-                var i = 0;
-                var obj = [];
-
-
-                for (var y = 0; y < 12; y++) {
-                    if (map1[y] != undefined) {
-                        obj.push({
-                            "value": map1[y],
-                            "name": this.months[y]
-                        })
-                    }
                 }
 
+                // average collaboration time in sales chart
+                obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimeSalesForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
+
+                    this.averageCollaborationTimeSalesChartData.push(dataGr);
+                    this.showAverageCollaborationTimeSalesChart = true;
+
+                }
+
+                // average collaboration time in purchase chart
+                obj = populateValueObjectForMonthGraphs(res.collaborationTime.averageCollabTimePurchasesForMonths);
+                if (obj.length == 6) {
+                    var dataGr =
+                        {
+                            "name": "Time series",
+                            "series": obj
+                        };
+
+                    this.averageCollaborationTimePurchaseChartData.push(dataGr);
+                    this.showAverageCollaborationTimePurchaseChart = true;
+
+                }
+
+                // average response time
+
+                this.avg_res_time = getTimeLabel(res.responseTime.averageTime);
+
+                obj = populateValueObjectForMonthGraphs(res.responseTime.averageTimeForMonths);
                 if (obj.length == 6) {
                     var dataGr =
                     {
@@ -461,7 +431,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
                     };
 
                     this.multi.push(dataGr);
-                    this.showChart = true;
+                    this.showAverageResponseChart = true;
 
                 }
 
@@ -472,20 +442,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
             });
     }
 
-
-    getTimeLabel(timeInDays){
-        if(timeInDays <= 0){
-            return null;
-        }
-        if(timeInDays < 0.0417){
-            return Math.round(timeInDays * 10 * 1440) / 10 + " M";
-        }
-        else if(timeInDays < 1){
-            return Math.round(timeInDays * 10 * 24) / 10 + " H";
-        }
-        return Math.round(timeInDays * 10) / 10 + " D";
-    }
-
     onSelectTab(event: any, id: any): void {
         event.preventDefault();
         this.selectedTab = id;
@@ -493,5 +449,10 @@ export class PerformanceAnalyticsComponent implements OnInit {
         } else if (id == "Collaboration") {
             this.getCollabStats();
         }
+    }
+
+    showToolTip(content,key) {
+        this.tooltipHTML = this.translate.instant(key);
+        this.modalService.open(content);
     }
 }

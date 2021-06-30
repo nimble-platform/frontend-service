@@ -19,6 +19,7 @@ import { Attachment } from '../model/publish/attachment';
 import { DocumentReference } from '../model/publish/document-reference';
 import { TranslateService } from '@ngx-translate/core';
 import { BinaryObject } from '../model/publish/binary-object';
+import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../common/constants';
 
 
 
@@ -51,10 +52,12 @@ export class NoteFileViewComponent implements OnInit {
     }
     ngOnInit() {
         if (this.documents) {
-            this.files = this.documents.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+            // discard files which do not have any attachments and the ones which are company terms and conditions
+            this.files = this.documents.filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
         if (this.requestDocuments) {
-            this.requestFiles = this.requestDocuments.filter(doc => doc.attachment != null).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+            // discard files which do not have any attachments and the ones which are company terms and conditions
+            this.requestFiles = this.requestDocuments.filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).map(doc => doc.attachment.embeddedDocumentBinaryObject);
         }
     }
 

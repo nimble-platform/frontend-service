@@ -1,0 +1,120 @@
+<!--
+ * Copyright 2020
+ * SRFG - Salzburg Research Forschungsgesellschaft mbH; Salzburg; Austria
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ -->
+
+<call-status [callStatus]="initCallStatus"></call-status>
+
+<ng-container *ngIf="initCallStatus.isAllSuccessful()">
+    <div *ngIf="viewMode == 'SUBSCRIPTIONS'">
+        <!-- Company Subscriptions -->
+        <h4 class="space-before space-after"><span [innerHTML]="'Company Subscriptions' | translate"></span></h4>
+        <!-- Table of company subscriptions -->
+        <div class="form-group row space-before">
+            <div class="col-12">
+                <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+                    <colgroup>
+                        <col style="width: 150%;">
+                        <col style="width: 150%;">
+                        <col style="width: auto;">
+                    </colgroup>
+                    <tr>
+                        <th><span [innerHTML]="'Name' | translate"></span></th>
+                        <th>
+                            <span *ngIf="companyInformationInSearchResult == 'BusinessType'">{{'Business Type' |translate}}</span>
+                            <span *ngIf="companyInformationInSearchResult == 'BusinessKeywords'">{{'Business Keywords' |translate}}</span>
+                        </th>
+                        <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+                    </tr>
+                    <tr *ngIf="subscribedCompanies.length==0">
+                        <td colspan="3" [innerHTML]="'No subscribed companies'|translate"></td>
+                    </tr>
+                    <ng-container *ngIf="subscribedCompanies && subscribedCompanies.length > 0">
+                        <tr *ngFor="let party of subscribedCompanies; let i = index">
+                            <td><span [title]="party[product_vendor_name]">{{ party[product_vendor_name] }}</span></td>
+                            <td>
+                                <span *ngIf="companyInformationInSearchResult == 'BusinessType' && party.businessType"
+                                      [title]="party.businessType"><small>{{party.businessType | translate}}</small></span>
+                                <span *ngIf="companyInformationInSearchResult == 'BusinessKeywords' && party.businessKeywords"
+                                      [title]="getMultilingualLabel(party.businessKeywords)"><small>{{getMultilingualLabel(party.businessKeywords)}}</small></span>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" (click)="removeParty(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </div>
+        </div>
+        <!-- Action buttons -->
+        <div class="d-flex justify-content-end">
+            <ng-container *ngIf="!saveSubscriptionsCallStatus.isLoading()">
+                <button class="btn btn-secondary space-left" (click)="onNavigateToCompanySearch()"><span [innerHTML]="'Search for Companies' | translate"></span></button>
+            </ng-container>
+        </div>
+        <!-- Category Subscriptions -->
+        <h4 class="space-before space-after"><span [innerHTML]="'Category Subscriptions' | translate"></span></h4>
+        <!-- Table of category subscriptions  -->
+        <div class="form-group row space-before">
+            <div class="col-12">
+                <table class="table table-striped table-bordered mb-0 mt-2" style="table-layout: fixed; width: 100%;">
+                    <colgroup>
+                        <col style="width: 150%;">
+                        <col style="width: 150%;">
+                        <col style="width: auto;">
+                    </colgroup>
+                    <tr>
+                        <th><span [innerHTML]="'Name' | translate"></span></th>
+                        <th><span [innerHTML]="'Classification' | translate"></span></th>
+                        <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
+                    </tr>
+                    <tr *ngIf="subscribedCategories.length==0">
+                        <td colspan="3" [innerHTML]="'No subscribed categories'|translate"></td>
+                    </tr>
+                    <ng-container *ngIf="subscribedCategories && subscribedCategories.length > 0">
+                        <tr *ngFor="let category of subscribedCategories; let i = index">
+                            <td>{{selectPreferredName(category)}}</td>
+                            <td>{{category.taxonomyId == 'FurnitureOntology' ? ('Furniture Sector'|translate) : category.taxonomyId}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" (click)="removeCategory(i)"><span [innerHTML]="'Delete' | translate"></span></button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </div>
+        </div>
+        <!-- Action buttons -->
+        <div class="d-flex justify-content-end">
+            <ng-container *ngIf="!saveSubscriptionsCallStatus.isLoading()">
+                <button class="btn btn-secondary" (click)="searchForCategories()"><span [innerHTML]="'Search for Categories' | translate"></span></button>
+            </ng-container>
+        </div>
+        <div class="d-flex justify-content-end space-before">
+            <call-status [callStatus]="saveSubscriptionsCallStatus"></call-status>
+            <ng-container *ngIf="!saveSubscriptionsCallStatus.isLoading()">
+                <button class="btn btn-primary space-left" (click)="save()"><span [innerHTML]="'Save' | translate"></span></button>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Category Selection View -->
+    <div *ngIf="viewMode == 'CATEGORY_SELECTION'" class="space-before">
+        <category-search [categoriesSelected]="subscribedCategories && subscribedCategories.length > 0"
+            [enableSelectionOfDifferentCategoryTypes]="true">
+        </category-search>
+        <hr class="actions-hr">
+        <div class="col-3">
+            <button class="btn btn-primary" (click)="onCategoriesSelected()" [disabled]="categoryService.selectedCategories.length == 0">{{'Continue'|translate}}</button>
+        </div>
+    </div>
+
+</ng-container>
