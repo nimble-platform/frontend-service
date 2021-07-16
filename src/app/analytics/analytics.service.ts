@@ -97,7 +97,10 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
+            .then(res => {
+                // the server returns empty text if there is no global trust policy
+                return res.text() ? res.json(): res
+            })
             .catch(this.handleError);
     }
 
