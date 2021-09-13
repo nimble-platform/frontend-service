@@ -12,7 +12,7 @@ export const ub_base = "https://nimble.smecluster.com/ub-search";
 export const idpURL = "http://nimble.smecluster.com:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
-export const frontendURL = base_path + "/frontend/";
+export const frontendURL = base_path;
 
 
 // Service endpoints
