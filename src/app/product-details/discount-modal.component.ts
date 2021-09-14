@@ -18,7 +18,6 @@ import { PriceOption } from '../catalogue/model/publish/price-option';
 import { PRICE_OPTIONS } from '../catalogue/model/constants';
 import { roundToTwoDecimals, selectPreferredValues } from '../common/utils';
 import { DiscountPriceWrapper } from "../common/discount-price-wrapper";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "discount-modal",
@@ -40,8 +39,7 @@ export class DiscountModalComponent implements OnInit {
     currencyId = null;
     totalDiscount = null;
 
-    constructor(private translate: TranslateService,
-        private modalService: NgbModal) {
+    constructor(private modalService: NgbModal) {
     }
 
     ngOnInit() {

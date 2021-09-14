@@ -28,7 +28,6 @@ import { ActivityVariableParser } from '../activity-variable-parser';
 import { DocumentService } from "../document-service";
 import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 import { DespatchLine } from '../../../catalogue/model/publish/despatch-line';
 import { GoodsItem } from '../../../catalogue/model/publish/goods-item';
 
@@ -59,7 +58,6 @@ export class DispatchAdviceComponent implements OnInit {
         private location: Location,
         private router: Router,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private documentService: DocumentService) {
     }
 

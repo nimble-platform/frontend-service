@@ -25,7 +25,6 @@ import { Location } from "@angular/common";
 import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice";
 import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 import { quantityToString } from '../../../common/utils';
 
 @Component({
@@ -50,7 +49,6 @@ export class ReceiptAdviceComponent implements OnInit {
         private bpDataService: BPDataService,
         private location: Location,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private router: Router) {
     }
 

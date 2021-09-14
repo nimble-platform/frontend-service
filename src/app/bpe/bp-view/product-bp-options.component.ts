@@ -38,13 +38,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
 import { Headers, Http } from "@angular/http";
 import { DomSanitizer } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
 import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
 import { Item } from "../../catalogue/model/publish/item";
 import { AppComponent } from '../../app.component';
 import { DocumentService } from "./document-service";
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
-import {hasOwnProperty} from "tslint/lib/utils";
 
 @Component({
     selector: "product-bp-options",
@@ -107,7 +105,6 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         private router: Router,
         private cookieService: CookieService,
         private renderer: Renderer2,
-        private translate: TranslateService,
         private http: Http,
         private modalService: NgbModal,
         public appComponent: AppComponent) {

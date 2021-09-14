@@ -223,7 +223,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 public companySubscriptionService: CompanySubscriptionService,
                 private publishService: PublishService,
                 public shoppingCartDataService: ShoppingCartDataService,
-                private translateService: TranslateService,
                 private cookieService: CookieService,
                 public appComponent: AppComponent,
                 private unitService:UnitService,
@@ -1474,7 +1473,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         } else if (this.product_filter_mappings[name]) {
             ret = this.product_filter_mappings[name];
         } else{
-            ret = this.translateService.instant(prefName);
+            ret = this.translate.instant(prefName);
         }
         return ret;
     }

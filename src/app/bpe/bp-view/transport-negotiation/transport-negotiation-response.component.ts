@@ -29,7 +29,6 @@ import { BPEService } from "../../bpe.service";
 import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
-import { TranslateService } from '@ngx-translate/core';
 import { dateToString, quantityToString } from '../../../common/utils';
 
 @Component({
@@ -72,7 +71,6 @@ export class TransportNegotiationResponseComponent implements OnInit {
         private bpDataService: BPDataService,
         private location: Location,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private router: Router) {
     }
 

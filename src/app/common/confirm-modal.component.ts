@@ -16,7 +16,6 @@
 
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "confirm-modal",
@@ -29,7 +28,7 @@ export class ConfirmModalComponent {
 
     @ViewChild("modal") modal: ElementRef;
 
-    constructor(private modalService: NgbModal, private translate: TranslateService) {
+    constructor(private modalService: NgbModal) {
     }
 
 

@@ -14,7 +14,6 @@
 
 import {Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import * as myGlobals from '../globals';
 import { DEFAULT_LANGUAGE } from '../catalogue/model/constants';
 
@@ -31,7 +30,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     constructor(
         private route: ActivatedRoute,
-        private translate: TranslateService,
         private renderer: Renderer2) {
         this.renderer.setStyle(document.body, "background-image", "url('assets/bg_login.jpg')");
     }

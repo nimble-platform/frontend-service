@@ -20,7 +20,6 @@ import {UBLModelUtils} from "../../catalogue/model/ubl-model-utils";
 import {CatalogueLine} from "../../catalogue/model/publish/catalogue-line";
 import {Quantity} from "../../catalogue/model/publish/quantity";
 import {Text} from '../../catalogue/model/publish/text';
-import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: "item-property-price-option",
@@ -36,7 +35,6 @@ export class ItemPropertyPriceOptionComponent {
     @Input() discountUnits;
 
     constructor(
-        private translate: TranslateService
     ) { }
 
     getItemPropertyName = selectPreferredValues;

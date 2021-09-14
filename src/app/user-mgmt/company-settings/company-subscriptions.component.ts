@@ -17,7 +17,6 @@ import {CompanySettings} from '../model/company-settings';
 import {CallStatus} from '../../common/call-status';
 import {UserService} from '../user.service';
 import {CookieService} from 'ng2-cookies';
-import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../../app.component';
 import {CategoryService} from '../../catalogue/category/category.service';
 import {Category} from '../../common/model/category/category';
@@ -55,8 +54,7 @@ export class CompanySubscriptionsComponent implements OnInit {
     companyInformationInSearchResult = myGlobals.config.companyInformationInSearchResult;
     product_vendor_name = myGlobals.product_vendor_name;
 
-    constructor(private translate: TranslateService,
-                private cookieService: CookieService,
+    constructor(private cookieService: CookieService,
                 private appComponent: AppComponent,
                 private searchService: SimpleSearchService,
                 private router: Router,

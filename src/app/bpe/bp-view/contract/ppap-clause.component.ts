@@ -17,8 +17,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { PpapResponse } from "../../../catalogue/model/publish/ppap-response";
 import { DocumentReference } from "../../../catalogue/model/publish/document-reference";
-import { CallStatus } from "../../../common/call-status";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'ppap-clause',
@@ -28,7 +26,7 @@ export class PpapClauseComponent implements OnInit {
 
     @Input() ppapResponse: PpapResponse;
 
-    constructor(private translate: TranslateService) {
+    constructor() {
     }
 
     ngOnInit() {

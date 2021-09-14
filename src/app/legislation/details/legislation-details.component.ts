@@ -20,7 +20,6 @@ import { MainAttrInterface, SpecAttrInterface, DocumentInterface } from '../inte
 import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as Globals from '../../globals';
 import { HttpParams, HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../../app.component';
 import { CookieService } from 'ng2-cookies';
 import * as $ from 'jquery';
@@ -104,7 +103,6 @@ export class LegislationDetailsComponent implements OnInit {
         private route: ActivatedRoute,
         private http: HttpClient,
         private fb: FormBuilder,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private cookieService: CookieService
     ) {

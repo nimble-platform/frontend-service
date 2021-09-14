@@ -20,13 +20,9 @@ import { ProductWrapper } from "../../common/product-wrapper";
 import { Text } from "../model/publish/text";
 import { DEFAULT_LANGUAGE } from '../model/constants';
 import {CompanyNegotiationSettings} from '../../user-mgmt/model/company-negotiation-settings';
-import {TranslateService} from '@ngx-translate/core';
 import {EmptyFormBase} from '../../common/validation/empty-form-base';
 import * as myGlobals from '../../globals';
-import {UserService} from '../../user-mgmt/user.service';
-import {Quantity} from '../model/publish/quantity';
 import {TermsAndConditionUtils} from '../model/model-util/terms-and-condition-utils';
-import {copy} from '../../common/utils';
 import {NonPublicInformation} from '../model/publish/non-public-information';
 import {config} from '../../globals';
 const PRODUCT_DELIVERY_TRADING_INPUT = 'product_delivery_trading';
@@ -47,8 +43,7 @@ export class ProductDeliveryTradingComponent extends EmptyFormBase implements On
     private DELIVERY_TRADING_NON_PUBLIC_FIELD_IDS = [NON_PUBLIC_FIELD_ID.WARRANTY_PERIOD,NON_PUBLIC_FIELD_ID.INCOTERMS,NON_PUBLIC_FIELD_ID.DELIVERY_PERIOD,NON_PUBLIC_FIELD_ID.SPECIAL_TERMS,NON_PUBLIC_FIELD_ID.QUANTITY_PER_PACKAGE,NON_PUBLIC_FIELD_ID.PACKAGING_TYPE,NON_PUBLIC_FIELD_ID.CUSTOMIZABLE,NON_PUBLIC_FIELD_ID.SPARE_PART]
 
     product_filter_prod = myGlobals.product_filter_prod;
-    constructor(private translate: TranslateService,
-                userService: UserService) {
+    constructor() {
         super(PRODUCT_DELIVERY_TRADING_INPUT);
     }
 

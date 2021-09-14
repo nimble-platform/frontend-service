@@ -20,7 +20,6 @@ import { ActivatedRoute } from "@angular/router";
 import { CookieService } from "ng2-cookies";
 import * as myGlobals from "../globals";
 import { CallStatus } from "../common/call-status";
-import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../user-mgmt/user.service';
 import { FEDERATIONID } from '../catalogue/model/constants';
 
@@ -59,7 +58,6 @@ export class CompanyRatingComponent implements OnInit {
 
     constructor(private cookieService: CookieService,
         private bpeService: BPEService,
-        private translate: TranslateService,
         private userService: UserService,
         public route: ActivatedRoute) {
     }

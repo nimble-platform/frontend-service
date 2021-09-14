@@ -18,7 +18,6 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import * as Globals from '../../globals';
-import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../../app.component';
 import { CookieService } from 'ng2-cookies';
 
@@ -35,7 +34,6 @@ export class LegislationLoginComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private router: Router,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private cookieService: CookieService
     ) {

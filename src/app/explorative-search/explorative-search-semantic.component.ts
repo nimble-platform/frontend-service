@@ -21,7 +21,6 @@ import { ExplorativeSearchService } from './explorative-search.service';
 import { Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import { isNumeric } from 'rxjs/util/isNumeric';
-import { TranslateService } from '@ngx-translate/core';
 import * as myGlobals from '../globals';
 
 @Component({
@@ -95,8 +94,7 @@ export class ExplorativeSearchSemanticComponent implements OnChanges, OnInit {
 
 
     constructor(private expSearch: ExplorativeSearchService,
-        private router: Router,
-        private translate: TranslateService) {
+        private router: Router) {
     }
 
     /**

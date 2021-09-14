@@ -39,7 +39,6 @@ import { Catalogue } from '../model/publish/catalogue';
 import * as myGlobals from '../../globals';
 import { Category } from '../../common/model/category/category';
 import { PublishingPropertyService } from './publishing-property.service';
-import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from "../../app.component";
 import { Subject } from 'rxjs';
 import 'rxjs/add/operator/takeUntil';
@@ -64,7 +63,6 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
         private location: Location,
         private cookieService: CookieService,
         private logisticPublishingService: PublishingPropertyService,
-        private translate: TranslateService,
         private appComponent: AppComponent) {
     }
 

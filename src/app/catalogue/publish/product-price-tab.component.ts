@@ -25,7 +25,6 @@ import { TaxCategory } from "../model/publish/tax-category";
 import { UserService } from "../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
 import { Party } from "../model/publish/party";
-import { TranslateService } from '@ngx-translate/core';
 import * as myGlobals from '../../globals';
 import { FormControl, Validators } from '@angular/forms';
 import { ChildFormBase } from '../../common/validation/child-form-base';
@@ -33,7 +32,6 @@ import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { priceValidator } from '../../common/validation/validators';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY } from '../../common/constants';
 import {Quantity} from '../model/publish/quantity';
-import {CountryUtil} from '../../common/country-util';
 import {NonPublicInformation} from '../model/publish/non-public-information';
 const PRODUCT_PRICE_INPUT = 'product_price';
 @Component({
@@ -66,8 +64,7 @@ export class ProductPriceTabComponent extends ChildFormBase implements OnInit {
 
     constructor(private catalogueService: CatalogueService,
         private userService: UserService,
-        private cookieService: CookieService,
-        private translate: TranslateService) {
+        private cookieService: CookieService) {
         super(PRODUCT_PRICE_INPUT);
     }
 

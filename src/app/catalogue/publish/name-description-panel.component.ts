@@ -19,7 +19,6 @@ import { Text } from '../model/publish/text';
 import {LANGUAGES} from '../model/constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BinaryObject } from '../model/publish/binary-object';
-import { TranslateService } from '@ngx-translate/core';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
 const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 @Component({
@@ -29,8 +28,7 @@ const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 })
 export class NameDescriptionPanelComponent extends EmptyFormBase implements OnInit {
 
-    constructor(private modalService: NgbModal,
-        private translate: TranslateService) {
+    constructor(private modalService: NgbModal) {
         super(BASIC_PRODUCT_DETAILS);
     }
 

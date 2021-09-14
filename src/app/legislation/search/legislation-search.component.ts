@@ -26,7 +26,6 @@ import { DocumentService } from '../document.service';
 import { Observable } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { MainAttrInterface, SpecAttrInterface, DocumentInterface } from '../interfaces/document.interface';
-import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../../app.component';
 import { CookieService } from 'ng2-cookies';
 import * as $ from 'jquery';
@@ -185,7 +184,6 @@ export class LegislationSearchComponent implements OnInit {
         private router: Router,
         private fb: FormBuilder,
         public docService: DocumentService,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private cookieService: CookieService
     ) {

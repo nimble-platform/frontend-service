@@ -19,7 +19,6 @@ import { Component, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { TrackInfo } from './model/trackinfo';
 import * as myGlobals from '../globals';
 import { TnTService } from './tnt.service';
-import { TranslateService } from '@ngx-translate/core';
 import moment = require('moment');
 
 
@@ -45,7 +44,7 @@ export class TnTEventDetailsComponent implements OnChanges {
     dashboardQuery: string;
     selectedBizLocation = '';
 
-    constructor(private tntBackend: TnTService, private translate: TranslateService) { }
+    constructor(private tntBackend: TnTService) { }
 
     ngOnChanges() {
         if (!this.events.length) {

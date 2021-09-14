@@ -18,7 +18,6 @@ import { CallStatus } from '../common/call-status';
 import * as myGlobals from '../globals';
 import { sanitizeLink, copy } from '../common/utils';
 import { AppComponent } from "../app.component";
-import { TranslateService } from '@ngx-translate/core';
 import { SimpleSearchService } from "../simple-search/simple-search.service";
 import { Search } from "./model/search";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
@@ -61,8 +60,7 @@ export class MembersComponent implements OnInit {
     constructor(
         private analyticsService: AnalyticsService,
         public appComponent: AppComponent,
-        private simpleSearchService: SimpleSearchService,
-        private translate: TranslateService
+        private simpleSearchService: SimpleSearchService
     ) {
     }
 

@@ -18,7 +18,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { BPDataService } from "../bp-data-service";
 import { BPEService } from "../../bpe.service";
 import { CallStatus } from "../../../common/call-status";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { ItemInformationRequest } from "../../../catalogue/model/publish/item-information-request";
 import { ItemInformationResponse } from "../../../catalogue/model/publish/item-information-response";
@@ -28,9 +28,7 @@ import { Attachment } from "../../../catalogue/model/publish/attachment";
 import { ProcessType } from "../../model/process-type";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { isLogisticsService, isTransportService } from '../../../common/utils';
-import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "item-information-response",
@@ -56,10 +54,7 @@ export class ItemInformationResponseComponent implements OnInit {
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
         private location: Location,
-        private router: Router,
-        private cookieService: CookieService,
-        private translate: TranslateService,
-        private route: ActivatedRoute) {
+        private router: Router) {
 
     }
 

@@ -19,7 +19,6 @@ import { Component } from '@angular/core';
 import { Search } from './model/search';
 import { TnTService } from './tnt.service';
 import * as myGlobals from '../globals';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'tnt-form',
@@ -37,7 +36,7 @@ export class TnTFormComponent {
     falsecode = '';
     verified: boolean;
 
-    constructor(private tntBackend: TnTService, private translate: TranslateService) {
+    constructor(private tntBackend: TnTService) {
     }
 
     Search(code: string) {

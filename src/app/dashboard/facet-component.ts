@@ -15,7 +15,6 @@
  */
 
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "facet",
@@ -40,7 +39,6 @@ export class FacetComponent {
     maxFacets = 5;
 
     constructor(
-        private translate: TranslateService
     ) {
     }
 

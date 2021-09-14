@@ -16,7 +16,6 @@ import {Component, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {UserService} from './user.service';
 import {CookieService} from 'ng2-cookies';
 import {CallStatus} from '../common/call-status';
-import {TranslateService} from '@ngx-translate/core';
 import {Router} from "@angular/router";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -63,7 +62,6 @@ export class AgentsComponent implements OnInit {
 
     constructor(private userService: UserService,
                 private agentService: AgentService,
-                private translate: TranslateService,
                 private cookieService: CookieService,
                 private router: Router,
                 private _fb: FormBuilder,

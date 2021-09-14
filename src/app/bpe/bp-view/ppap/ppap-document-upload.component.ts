@@ -29,7 +29,6 @@ import { Location } from "@angular/common";
 import { DocumentService } from "../document-service";
 import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "ppap-document-upload",
@@ -61,7 +60,6 @@ export class PpapDocumentUploadComponent {
         private router: Router,
         private location: Location,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private documentService: DocumentService) {
     }
 

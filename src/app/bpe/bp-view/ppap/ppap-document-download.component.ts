@@ -24,7 +24,6 @@ import { DocumentReference } from "../../../catalogue/model/publish/document-ref
 import { Location } from "@angular/common";
 import { BinaryObject } from "../../../catalogue/model/publish/binary-object";
 import { DocumentService } from "../document-service";
-import { TranslateService } from '@ngx-translate/core';
 
 interface UploadedDocuments {
     [doc: string]: BinaryObject[];
@@ -57,7 +56,6 @@ export class PpapDocumentDownloadComponent {
         private bpeService: BPEService,
         private route: ActivatedRoute,
         private location: Location,
-        private translate: TranslateService,
         private documentService: DocumentService) {
     }
 

@@ -33,7 +33,6 @@ import { copy, isTransportService } from "../../../common/utils";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { DocumentService } from '../document-service';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "item-information-request",
@@ -55,7 +54,6 @@ export class ItemInformationRequestComponent implements OnInit {
         private userService: UserService,
         private cookieService: CookieService,
         private location: Location,
-        private translate: TranslateService,
         private documentService: DocumentService,
         private router: Router) {
 

@@ -22,7 +22,6 @@ import { selectPartyName, selectPreferredValues } from "../common/utils";
 import { CallStatus } from "../common/call-status";
 import { UBLModelUtils } from "../catalogue/model/ubl-model-utils";
 import { Router } from "@angular/router";
-import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../user-mgmt/user.service';
 import {AppComponent} from '../app.component';
 
@@ -40,7 +39,6 @@ export class FrameContractTabComponent implements OnInit {
 
     constructor(private bpeService: BPEService,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private userService: UserService,
         private router: Router) {
