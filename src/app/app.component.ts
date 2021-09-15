@@ -84,8 +84,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     response: any;
     submitCallStatus: CallStatus = new CallStatus();
 
-    private translations: any = [];
-
     @ViewChild(ConfirmModalComponent)
     public confirmModalComponent: ConfirmModalComponent;
 
@@ -149,9 +147,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
-        this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
-            this.translations = res;
-        });
         // set title
         this.titleService.setTitle(this.config.platformNameInMail)
         // set icon
@@ -236,34 +231,31 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     getChatText(): string {
-        let txt = this.translations['Chat'];
+        let txt = this.translate.instant('Chat');
         if (this.chatVisible)
-            txt += ": " + this.translations['ON'];
+            txt += ": " + this.translate.instant('ON');
         else
-            txt += ": " + this.translations['OFF'];
+            txt += ": " + this.translate.instant('OFF');
         return txt;
     }
 
     getFederationText(): string {
-        let txt = this.translations['Federation'];
+        let txt = this.translate.instant('Federation');
         if (this.federation)
-            txt += ": " + this.translations['ON'];
+            txt += ": " + this.translate.instant('ON');
         else
-            txt += ": " + this.translations['OFF'];
+            txt += ": " + this.translate.instant('OFF');
         return txt;
     }
 
     getLangText(): string {
-        let txt = this.translations['Language'];
+        let txt = this.translate.instant('Language');
         txt += ": " + this.language.toUpperCase();
         return txt;
     }
 
     async ngOnInit() {
-        // initialize country service after setting the default language of platform
-        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
-        // from CountryUtil
-        await CountryUtil.initialize(this.translate);
+        await this.initializeCountryUtil();
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
@@ -344,11 +336,19 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     setLang(lang: string) {
         if (lang != this.language) {
-            this.loading = true;
             document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
             this.cookieService.set("language", lang);
-            location.reload();
+            this.language = lang;
+            this.translate.use(lang);
+            this.initializeCountryUtil();
         }
+    }
+
+    async initializeCountryUtil() {
+        // initialize country service after setting the default language of platform
+        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
+        // from CountryUtil
+        await CountryUtil.initialize(this.translate);
     }
 
     setFed(fed: boolean) {

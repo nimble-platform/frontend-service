@@ -198,7 +198,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     categoryCounts: any[] = null;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    private translations: any;
     // suggestions for the category search
     categorySuggestions: any = [];
     // keeps the user's login state
@@ -241,9 +240,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             });
         }
         window.scrollTo(0, 0);
-        this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-            this.translations = res;
-        });
         this.unitService.getCachedUnitList(deliveryPeriodUnitListId).then(list =>{
             this.deliveryPeriodUnits = list;
             // select the first one
@@ -718,7 +714,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     'name': 'Other',
                     'id': this.catID,
                     'count': (currentLevelCount - childLevelCount),
-                    'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                    'preferredName': this.appComponent.translate.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                     'other': true
                 });
             }
@@ -735,7 +731,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 'name': 'Other',
                 'id': this.catID,
                 'count': this.cat_levels[this.cat_level][0].count,
-                'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                'preferredName': this.appComponent.translate.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                 'other': true
             });
         }

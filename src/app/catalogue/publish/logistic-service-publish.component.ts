@@ -101,12 +101,8 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
     showRailTransportService: boolean = false;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    private translations: any;
 
     ngOnInit() {
-        this.appComponent.translate.get(['Successfully saved. You can now continue.', 'Successfully saved. You are now getting redirected.']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-            this.translations = res;
-        });
         const userId = this.cookieService.get("user_id");
         this.callStatus.submit();
 
@@ -732,7 +728,7 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
 
                         // since every changes is saved,we do not need a dialog box
                         this.dialogBox = false;
-                        alert(this.translations["Successfully saved. You are now getting redirected."]);
+                        alert(this.appComponent.translate.instant("Successfully saved. You are now getting redirected."));
                         this.router.navigate(['dashboard'], {
                             queryParams: {
                                 tab: "CATALOGUE",
@@ -769,7 +765,7 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.aggregatedCallBack(this.translations["Successfully saved. You can now continue."], false);
+                    this.publishStatus.aggregatedCallBack(this.appComponent.translate.instant("Successfully saved. You can now continue."), false);
                     if (this.publishStatus.isAllSuccessful()) {
                         this.dialogBox = false;
                     }

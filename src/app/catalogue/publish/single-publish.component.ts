@@ -158,8 +158,6 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
     invalidCategoryCodes: Code[] = [];
 
-    private translations: any;
-
     // the current step in single/bulk upload publishing
     public publishingStep:ProductPublishStep = "Category";
     // whether the categories are selected for the publishing
@@ -181,9 +179,6 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
     }
 
     ngOnInit() {
-        this.appComponent.translate.get(['Successfully saved. You can now continue.', 'Successfully saved. You are now getting redirected.']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-            this.translations = res;
-        });
         SinglePublishComponent.dialogBox = true;
         // TODO: asych calls like below should have proper chain.
         // E.g. the below line is expected to be called upon a change in the query params.
@@ -380,7 +375,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                         SinglePublishComponent.dialogBox = false;
                         // avoid category duplication
                         this.categoryService.resetSelectedCategories();
-                        alert(this.translations["Successfully saved. You are now getting redirected."]);
+                        alert(this.appComponent.translate.instant("Successfully saved. You are now getting redirected."));
                         this.router.navigate(['dashboard'], {
                             queryParams: {
                                 tab: "CATALOGUE",
@@ -395,7 +390,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                     }
                     this.catalogueService.draftCatalogueLine = this.catalogueLine;
 
-                    this.publishStatus.callback(this.translations["Successfully saved. You can now continue."], false);
+                    this.publishStatus.callback(this.appComponent.translate.instant("Successfully saved. You can now continue."), false);
 
                     this.submitted = false;
                     this.callback = true;

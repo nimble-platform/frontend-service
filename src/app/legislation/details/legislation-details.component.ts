@@ -178,12 +178,10 @@ export class LegislationDetailsComponent implements OnInit {
 
                 /* Fix some properties */
                 this.alert_msg = "Document loaded succesfully";
-                this.appComponent.translate.get(this.alert_msg).subscribe((res: string) => {
-                    this.alert_msg = res;
-                    this.alerts.push({
-                        type: 'success',
-                        message: this.alert_msg,
-                    });
+                this.alert_msg = this.appComponent.translate.instant(this.alert_msg);
+                this.alerts.push({
+                    type: 'success',
+                    message: this.alert_msg,
                 });
 
                 /* Make visible the chunk of properties associated to the selectedDocumentType */

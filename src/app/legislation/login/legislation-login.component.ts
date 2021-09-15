@@ -46,12 +46,10 @@ export class LegislationLoginComponent implements OnInit {
         }
         else {
             this.alert_msg = "Invalid email or password";
-            this.appComponent.translate.get(this.alert_msg).subscribe((res: string) => {
-                this.alert_msg = res;
-                this.alerts.push({
-                    type: 'danger',
-                    message: this.alert_msg,
-                });
+            this.alert_msg = this.appComponent.translate.instant(this.alert_msg);
+            this.alerts.push({
+                type: 'danger',
+                message: this.alert_msg,
             });
         }
     }
@@ -67,12 +65,10 @@ export class LegislationLoginComponent implements OnInit {
         this.http.get(url, { params }).subscribe(
             (res: any[]) => {
                 this.alert_msg = "Login Successful";
-                this.appComponent.translate.get(this.alert_msg).subscribe((res: string) => {
-                    this.alert_msg = res;
-                    this.alerts.push({
-                        type: 'success',
-                        message: this.alert_msg,
-                    });
+                this.alert_msg = this.appComponent.translate.instant(this.alert_msg);
+                this.alerts.push({
+                    type: 'success',
+                    message: this.alert_msg,
                 });
                 this.appComponent.loading = false;
                 this.router.navigate(['/legislation/search/']);
