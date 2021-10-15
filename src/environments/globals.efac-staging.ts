@@ -125,9 +125,9 @@ export const config = {
     "enableTermsAndConditionsAsFile": true,
     "faviconPath": "./assets/favicon.ico",
     "fundingDisclaimer": {
-        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
-        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
-        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 825075 gefördert.",
+        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 825075",
+        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 825075",
     },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
@@ -135,9 +135,9 @@ export const config = {
     "hideTradeDetailsTab": false,
     "hideVisitStats": false,
     "imprint": {
-        "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Street 13<br/>46980 Paterna (Valencia), Spain<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)</td></tr></table>",
-        "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>AIDIMME - Instituto Tecnológico de la Metalmecánica, Muebles, Madera, Empaques y sectores relacionados</b><br/>Parque Tecnológico, Calle Benjamín Franklin 13<br/>46980 Paterna (Valencia), España<br/>Teléfono: +34.961.366.070<br/>Correo electrónico: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Proveedor de Plataforma</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)</td></tr></table>",
-        "de": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Eigentümer der Plattform</u><br/><b>AIDIMME - Technological Institute of Metalworking, Furniture, Wood, Packaging and Related sectors</b><br/>Technological Park, Benjamín Franklin Straße 13<br/>46980 Paterna (Valencia), Spanien<br/>Phone: +34.961.366.070<br/>E-Mail: <a href='mailto:info@aidimme.es'>info@aidimme.es</a><br/>CIF: G46261590</td><td class='w-50 p-0 pl-3'><u>Plattform Anbieter</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Österreich<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Geschäftsführer: Siegfried Reich<br/>Firmenbuch-Nr.: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Inhaltlich Verantwortlicher: Siegfried Reich<br/>Eigentümer: State of Salzburg (100%)</td></tr></table>"
+        "en": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Platform Owner</u><br/><b>European Factory Foundation</b><br/>Lothringerstraße 14, 1030 Wien, Austria<br/>Phone: +43.1.7153.200<br/>E-Mail: <a href='mailto:info@efactoryfoundation.org'>info@efactoryfoundation.org</a></td><td class='w-50 p-0 pl-3'><u>Platform Provider</u><br/><b>SRDC Yazılım Araştırma ve Geliştirme ve Danışmanlık Ticaret Anonim Şirketi</b><br/>06800 Ankara, Turkey<br/>Phone: 90.312.210.18.37<br/>E-Mail: <a href='mailto:info@srdc.com.tr'>info@srdc.com.tr</a><br/>Internet: <a href='www.srdc.com.tr' target='_blank'>www.srdc.com.tr</a></td></tr></table>",
+        "es": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Dueño de la Plataforma</u><br/><b>European Factory Foundation</b><br/>Lothringerstraße 14, 1030 Wien, Austria<br/>Teléfono: +43.1.7153.200<br/>Correo electrónico: <a href='mailto:info@efactoryfoundation.org'>info@efactoryfoundation.org</a></td><td class='w-50 p-0 pl-3'><u>Proveedor de Plataforma</u><br/><b>SRDC Yazılım Araştırma ve Geliştirme ve Danışmanlık Ticaret Anonim Şirketi</b><br/>06800 Ankara, Turkey<br/>Teléfono: 90.312.210.18.37<br/>Correo electrónico: <a href='mailto:info@srdc.com.tr'>info@srdc.com.tr</a><br/>Internet: <a href='www.srdc.com.tr' target='_blank'>www.srdc.com.tr</a></td></tr></table>",
+        "de": "<table class='table table-borderless'><tr><td class='w-50 p-0 pr-3'><u>Eigentümer der Plattform</u><br/><b>European Factory Foundation</b><br/>Lothringerstraße 14, 1030 Wien, Austria<br/>Phone: +43.1.7153.200<br/>E-Mail: <a href='mailto:info@efactoryfoundation.org'>info@efactoryfoundation.org</a></td><td class='w-50 p-0 pl-3'><u>Plattform Anbieter</u><br/><b>SRDC Yazılım Araştırma ve Geliştirme ve Danışmanlık Ticaret Anonim Şirketi</b><br/>06800 Ankara, Turkey<br/>Phone: 90.312.210.18.37<br/>E-Mail: <a href='mailto:info@srdc.com.tr'>info@srdc.com.tr</a><br/>Internet: <a href='www.srdc.com.tr' target='_blank'>www.srdc.com.tr</a></td></tr></table>"
     },
     "invitationToPlatformEnabled": true,
     "kibanaConfig": {
@@ -300,12 +300,8 @@ export const config = {
     "replaceLegalRepresentativeWithCompanyAdmin": true,
     "requiredAgreements": [
         {
-            "title": "Privacy Policy",
-            "src": "./assets/privacy_policy.pdf"
-        },
-        {
-            "title": "Terms of Service (ToS)",
-            "src": "./assets/tos.pdf"
+            "title": "EFPF Terms and Conditions",
+            "src": "https://efpf-portal.ascora.eu/terms"
         }
     ],
     "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
