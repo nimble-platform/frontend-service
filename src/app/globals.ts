@@ -121,6 +121,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
+- fundingDisclaimer: HTML string of the funding disclaimer
 - hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
@@ -248,6 +249,11 @@ export const config = {
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "fundingDisclaimer": {
+        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
+        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
+        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+    },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": false,

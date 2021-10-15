@@ -84,6 +84,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     response: any;
     submitCallStatus: CallStatus = new CallStatus();
 
+    fundingDisclaimer: string = null;
+
     @ViewChild(ConfirmModalComponent)
     public confirmModalComponent: ConfirmModalComponent;
 
@@ -147,6 +149,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
+        this.setFundingDisclaimer();
         // set title
         this.titleService.setTitle(this.config.platformNameInMail)
         // set icon
@@ -340,8 +343,16 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.cookieService.set("language", lang);
             this.language = lang;
             this.translate.use(lang);
+            this.setFundingDisclaimer();
             this.initializeCountryUtil();
         }
+    }
+
+    private setFundingDisclaimer(){
+        if (this.config.fundingDisclaimer[this.translate.currentLang])
+            this.fundingDisclaimer = this.config.fundingDisclaimer[this.translate.currentLang];
+        else
+            this.fundingDisclaimer = this.config.fundingDisclaimer["en"];
     }
 
     async initializeCountryUtil() {
