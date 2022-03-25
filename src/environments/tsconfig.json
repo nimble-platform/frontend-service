@@ -9,7 +9,8 @@
         "suppressImplicitAnyIndexErrors": true,
         "lib": ["es6", "dom"],
         "typeRoots": [],
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "skipLibCheck": true
     },
     "exclude": []
 }
