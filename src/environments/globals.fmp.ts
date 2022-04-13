@@ -19,7 +19,7 @@ export const frontendURL = base_path;
 
 export const user_mgmt_endpoint = `${base_path}/api/identity`;
 export const catalogue_endpoint = `${base_path}/api/catalog`;
-export const catalogue_endpoint_with_zuul = `${base_path}/zuul/catalog`;
+export const catalogue_endpoint_with_zuul = `${base_path}/api/zuul/catalog`;
 export const bpe_endpoint = `${base_path}/api/business-process`;
 export const data_channel_endpoint = `${base_path}/api/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/api/data-aggregation`;
