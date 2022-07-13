@@ -1322,9 +1322,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             return facet_innerLabel + ' ' + unit;
         }
 
-        // special check for activity sector labels
-        if (facet.endsWith('activitySectors')) {
-            return this.translate.instant(facet_innerLabel) // return translated activity sector
+        // special check for activity sector and circular economy certificates labels
+        if (facet.endsWith('activitySectors') || facet.endsWith('circularEconomyCertificates')) {
+            return this.translate.instant(facet_innerLabel) // return translated value
         }
 
         return facet_innerLabel;
