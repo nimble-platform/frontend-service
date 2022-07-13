@@ -89,14 +89,19 @@ export const config = {
             'ISO 14006 Eco Design',
             'ISO 50001 Energy Efficiency',
             'Sustainability Report',
-            'Corporate Carbon Footprint'
+            'Corporate Carbon Footprint',
+            'Due dilegence EUTR',
+            'Chain of custody FSC',
+            'Chain of custody PEFC'
         ],
         productCertificates: [
             'PEFC Certificate',
             'FSC Certificate',
             'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
             'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
-            'Free of Hazardous Substances'
+            'Free of Hazardous Substances',
+            'CITES licence',
+            'FLEGT licence'
         ],
         indexField: "circularEconomyCertificates"
     },
