@@ -112,7 +112,7 @@
                     <td colspan="4"><span [innerHTML]="'No data' | translate"></span></td>
                 </tr>
                 <tr *ngFor="let certificate of arbitraryCertificates; let i = index">
-                    <td>{{certificate.type}}</td>
+                    <td>{{certificate.type | translate}}</td>
                     <td>{{certificate.name}}</td>
                     <td>{{certificate.description}}</td>
                     <td>
@@ -182,7 +182,7 @@
                         <!-- this input is just to update the form -->
                         <input class="d-none" formControlName="type" [ngModel]="config.circularEconomy.certificateGroup">
                         <!-- this input is to show the translated value -->
-                        <input class="form-control" [attr.disabled]="true" [ngModel]="config.circularEconomy.certificateGroup" [ngModelOptions]="{standalone: true}">
+                        <input class="form-control" [attr.disabled]="true" [ngModel]="config.circularEconomy.certificateGroup|translate" [ngModelOptions]="{standalone: true}">
                     </ng-container>
                     <select *ngIf="certificateGroup === 'arbitrary'" class="form-control" formControlName="type" required>
                         <option></option>
