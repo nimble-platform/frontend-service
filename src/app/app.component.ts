@@ -339,7 +339,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     setLang(lang: string) {
         if (lang != this.language) {
-            document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
+            document.getElementsByTagName('html')[0].setAttribute('lang', lang);
             this.cookieService.set("language", lang);
             this.language = lang;
             this.translate.use(lang);
