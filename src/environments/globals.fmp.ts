@@ -120,6 +120,7 @@ export const config = {
     "displayCategoryCounts":false,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs_es/",
+    "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,

@@ -116,6 +116,7 @@ export const config = {
     "displayCategoryCounts":false,
     "displayProductIdInOverview": true,
     "docLink": "http://b2bm.aidimme.es/manual-de-usuario/",
+    "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,

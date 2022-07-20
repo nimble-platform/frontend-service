@@ -74,6 +74,9 @@ export class MembersComponent implements OnInit {
         this.getCompanies();
     }
 
+    onImageError(event){
+        event.target.src = this.config.emptyImage;
+    }
     getCompanies() {
         let rows = this.rows;
         if (this.view == "List") {

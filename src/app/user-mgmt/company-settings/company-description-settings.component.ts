@@ -49,6 +49,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     externalResourcesChanged = false;
     compEventsChanged = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
+    config = myGlobals.config;
     addEventForm: FormGroup;
     addImageForm: FormGroup;
     imgFile = null;

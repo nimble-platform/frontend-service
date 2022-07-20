@@ -113,6 +113,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - displayProductIdInOverview: Boolean flag if the product id is displayed in the product overview
 - docLink: Link to the documentation resources
+- emptyImage: Link to default image
 - enableActionButtonsForTermsAndConditions: Boolean flag if the actions buttons are visible for terms and conditions. If it is true, an update/view button displayed next to the clause name.
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - enableSubscriptions: Boolean flag if the subscription functionality is enabled or not
@@ -241,6 +242,7 @@ export const config = {
     "displayCategoryCounts":true,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,

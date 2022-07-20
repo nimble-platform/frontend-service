@@ -967,7 +967,7 @@
                                             <div class="align-center"
                                                  [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
                                                 <img src="{{productImageMap[result.uri]}}" class="thumb"
-                                                     onerror="this.src='assets/empty_img.png';"/>
+                                                (error)="onImageError($event)"/>
                                             </div>
                                             <div [ngClass]="{'col-6':display=='list'&&pageRef!=='publish','col-5':display=='list'&&pageRef==='publish','col-12 pt-1 pb-1':display=='panel'}">
                                                 <div style="max-height:1.5rem;overflow:hidden">
@@ -1126,7 +1126,7 @@
                                             <div class="align-center"
                                                  [ngClass]="{'col-2':display=='list','col-12 pb-1':display=='panel'}">
                                                 <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb"
-                                                     onerror="this.src='assets/empty_img.png';"/>
+                                                (error)="onImageError($event)"/>
                                             </div>
                                             <div [ngClass]="{'col-8 border-right':display=='list' && !(pageRef === 'network' || pageRef === 'subscription' || pageRef === 'offering' || pageRef === 'catalogue'),'col-7 border-right':display=='list' && (pageRef === 'network' || pageRef === 'subscription' || pageRef === 'offering' || pageRef === 'catalogue'),'col-12 pt-1 pb-2 border-bottom':display=='panel'}">
                                                 <div style="max-height:1.5rem;overflow:hidden">

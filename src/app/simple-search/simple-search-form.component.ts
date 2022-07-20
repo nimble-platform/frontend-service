@@ -1330,6 +1330,10 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         return facet_innerLabel;
     }
 
+    onImageError(event){
+        event.target.src = this.config.emptyImage;
+    }
+
     /**
      * Checks whether the facet has a value annotated with the current language, english or any other language respectively.
      * Returns the index of that label among the facet values

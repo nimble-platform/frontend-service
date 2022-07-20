@@ -555,6 +555,9 @@ export class CompareViewComponent implements OnInit {
         return ret;
     }
 
+    onImageError(event){
+        event.target.src = this.config.emptyImage;
+    }
 
     private init(): void {
 

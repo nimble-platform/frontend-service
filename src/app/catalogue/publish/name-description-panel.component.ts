@@ -19,6 +19,7 @@ import { Text } from '../model/publish/text';
 import {LANGUAGES} from '../model/constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BinaryObject } from '../model/publish/binary-object';
+import * as myGlobals from '../../globals';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
 const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 @Component({
@@ -34,6 +35,8 @@ export class NameDescriptionPanelComponent extends EmptyFormBase implements OnIn
 
     @Input() catalogueLine;
     @Input() productIdEditable;
+
+    config = myGlobals.config;
 
     LANGUAGES = LANGUAGES;
 

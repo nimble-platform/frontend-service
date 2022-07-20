@@ -67,7 +67,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="align-center col-12 pb-1">
-                                    <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" onerror="this.src='assets/empty_img.png';" />
+                                    <img src="{{imgEndpoint}}{{result[product_vendor_img]}}" class="thumb" (error)="onImageError($event)"/>
                                 </div>
                                 <div class="col-12 pt-1" [ngClass]="{'pb-1':!mgmt_view,'pb-2 border-bottom':mgmt_view}">
                                     <div class="text-center" style="max-height:1.5rem;overflow:hidden;">
