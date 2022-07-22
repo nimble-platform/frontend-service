@@ -18,16 +18,14 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { CatalogueLine } from "../../model/publish/catalogue-line";
 import { CatalogueService } from "../../catalogue.service";
 import { Router } from "@angular/router";
-import { TranslateService } from '@ngx-translate/core';
 import { PublishService } from "../../publish-and-aip.service";
 import { CategoryService } from "../../category/category.service";
 import { ProductWrapper } from "../../../common/product-wrapper";
 import { CompanyNegotiationSettings } from "../../../user-mgmt/model/company-negotiation-settings";
-import { CallStatus } from "../../../common/call-status";
-import { isLogisticsService, isTransportService } from '../../../common/utils';
+import { isLogisticsService } from '../../../common/utils';
 import { CompanySettings } from "../../../user-mgmt/model/company-settings";
 import { Item } from '../../model/publish/item';
-import { selectDescription, selectName } from '../../../common/utils';
+import { selectName } from '../../../common/utils';
 import {AppComponent} from '../../../app.component';
 
 @Component({
@@ -56,7 +54,6 @@ export class CatalogueLinePanelComponent {
         private categoryService: CategoryService,
         private appComponent: AppComponent,
         private publishService: PublishService,
-        private translate: TranslateService,
         private router: Router) {
     }
 

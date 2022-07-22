@@ -26,7 +26,6 @@ import { DocumentService } from '../document.service';
 import { Observable } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { MainAttrInterface, SpecAttrInterface, DocumentInterface } from '../interfaces/document.interface';
-import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from '../../app.component';
 import { CookieService } from 'ng2-cookies';
 import * as $ from 'jquery';
@@ -185,7 +184,6 @@ export class LegislationSearchComponent implements OnInit {
         private router: Router,
         private fb: FormBuilder,
         public docService: DocumentService,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private cookieService: CookieService
     ) {
@@ -307,13 +305,10 @@ export class LegislationSearchComponent implements OnInit {
                 }
 
                 this.alerts = [];
-
-                this.appComponent.translate.get(this.alert_msg).subscribe((res: string) => {
-                    this.alert_msg = res;
-                    this.alerts.push({
-                        type: 'success',
-                        message: this.alert_msg,
-                    });
+                this.alert_msg = this.appComponent.translate.instant(this.alert_msg);
+                this.alerts.push({
+                    type: 'success',
+                    message: this.alert_msg,
                 });
 
                 this.appComponent.loading = false;
@@ -486,12 +481,10 @@ export class LegislationSearchComponent implements OnInit {
                 this.alerts = [];
 
                 this.alert_msg = 'Document loaded succesfully';
-                this.appComponent.translate.get(this.alert_msg).subscribe((res: string) => {
-                    this.alert_msg = res;
-                    this.alerts.push({
-                        type: 'success',
-                        message: this.alert_msg,
-                    });
+                this.alert_msg = this.appComponent.translate.instant(this.alert_msg);
+                this.alerts.push({
+                    type: 'success',
+                    message: this.alert_msg,
                 });
 
                 /* Make visible the chunk of properties associated to the selectedDocumentType */

@@ -19,7 +19,6 @@ import { Text } from '../model/publish/text';
 import { ItemProperty } from '../model/publish/item-property';
 import { selectNameFromLabelObject, selectPreferredValue } from '../../common/utils';
 import { PublishingPropertyService } from './publishing-property.service';
-import { TranslateService } from '@ngx-translate/core';
 import {NonPublicInformation} from '../model/publish/non-public-information';
 import {CatalogueLine} from '../model/publish/catalogue-line';
 import {config} from '../../globals';
@@ -34,8 +33,7 @@ import {config} from '../../globals';
 })
 export class OptionsPanelComponent implements OnInit {
 
-    constructor(public publishingPropertyService: PublishingPropertyService,
-        private translate: TranslateService) {
+    constructor(public publishingPropertyService: PublishingPropertyService) {
     }
 
     // inputs

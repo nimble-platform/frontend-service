@@ -32,7 +32,6 @@ import { BPEService } from "../../bpe.service";
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import { DiscountPriceWrapper } from "../../../common/discount-price-wrapper";
 import { Text } from '../../../catalogue/model/publish/text';
-import { TranslateService } from '@ngx-translate/core';
 import { DocumentService } from "../document-service";
 import {ValidationService} from '../../../common/validation/validators';
 import {FormGroup} from '@angular/forms';
@@ -74,7 +73,6 @@ export class TransportNegotiationRequestComponent implements OnInit {
         private userService: UserService,
         private validationService: ValidationService,
         private location: Location,
-        private translate: TranslateService,
         private router: Router) {
     }
 

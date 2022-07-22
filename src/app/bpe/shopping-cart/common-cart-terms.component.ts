@@ -26,9 +26,7 @@ import { NegotiationModelWrapper } from '../bp-view/negotiation/negotiation-mode
 import { CompanySettings } from '../../user-mgmt/model/company-settings';
 import { CustomTermModalComponent } from '../bp-view/negotiation/custom-term-modal.component';
 import { CommonTerms } from '../../common/common-terms';
-import { ChildFormBase } from '../../common/validation/child-form-base';
 import { ValidationService } from '../../common/validation/validators';
-import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../../app.component';
 
 @Component({
@@ -73,7 +71,6 @@ export class CommonCartTermsComponent implements OnInit {
     private customTermModal: CustomTermModalComponent;
 
     constructor(private unitService: UnitService,
-        private translate: TranslateService,
         private appComponent: AppComponent,
         private validationService: ValidationService) {
     }

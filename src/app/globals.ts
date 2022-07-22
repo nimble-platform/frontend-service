@@ -113,6 +113,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - displayCategoryCounts: Boolean flag if the category counts are displayed in the category filter. If it's false, then we show the count only for the selected category.
 - displayProductIdInOverview: Boolean flag if the product id is displayed in the product overview
 - docLink: Link to the documentation resources
+- emptyImage: Link to default image
 - enableActionButtonsForTermsAndConditions: Boolean flag if the actions buttons are visible for terms and conditions. If it is true, an update/view button displayed next to the clause name.
 - enableStripePayment: Boolean flag if the stripe payment is enabled or not
 - enableSubscriptions: Boolean flag if the subscription functionality is enabled or not
@@ -121,6 +122,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 - enableOtherFiltersSearch: Boolean flag if a search input is displayed for other filters to search for a facet
 - faviconPath: Link to the favicon
 - frameContractEnabled: Boolean flag is frame contracts are applicable
+- fundingDisclaimer: HTML string of the funding disclaimer
 - hideContactInformationInCompanyDetails: Boolean flag if the company contact is shown in the company details page
 - hideLogAnalytics: Boolean flag if the log analytics tab in platform analytics is hidden
 - hidePriceFunctionality: Boolean flag if the functionality of hiding prices for the catalogue is enabled
@@ -240,6 +242,7 @@ export const config = {
     "displayCategoryCounts":true,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs/",
+    "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
@@ -248,6 +251,11 @@ export const config = {
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "fundingDisclaimer": {
+        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
+        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
+        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+    },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
     "hidePriceFunctionality": false,

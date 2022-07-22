@@ -25,7 +25,6 @@
 
 import { Component, Input, OnChanges, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { ExplorativeSearchService } from './explorative-search.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'search-filter',
@@ -55,7 +54,7 @@ export class ExplorativeSearchFilterComponent implements OnChanges {
     @ViewChild('rangeVal') slider: ElementRef;
     private _error_detected_slider;
 
-    constructor(private expSearch: ExplorativeSearchService, private translate: TranslateService) {
+    constructor(private expSearch: ExplorativeSearchService) {
     }
 
     /**

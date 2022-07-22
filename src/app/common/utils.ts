@@ -764,20 +764,22 @@ export function getTimeLabel(timeInDays){
 export function populateValueObjectForMonthGraphs(map): any[]{
     var obj = [];
 
-    // get the current month
-    let currentMonth = new Date().getMonth();
-    // populate the data for each month starting from the current one
-    while(map[currentMonth] != undefined){
-        obj.push({
-            "value": map[currentMonth],
-            "name": MONTHS[currentMonth]
-        })
-        currentMonth--;
-        if(currentMonth < 0){
-            currentMonth = 11;
+    if(map){
+        // get the current month
+        let currentMonth = new Date().getMonth();
+        // populate the data for each month starting from the current one
+        while(map[currentMonth] != undefined){
+            obj.push({
+                "value": map[currentMonth],
+                "name": MONTHS[currentMonth]
+            })
+            currentMonth--;
+            if(currentMonth < 0){
+                currentMonth = 11;
+            }
         }
+        // reverse the array so that the current month is the last one in the graph
+        obj.reverse();
     }
-    // reverse the array so that the current month is the last one in the graph
-    obj.reverse();
     return obj;
 }

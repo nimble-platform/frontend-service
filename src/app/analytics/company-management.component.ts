@@ -16,7 +16,6 @@
 
 import { Component, OnInit, Input } from "@angular/core";
 import { CompanyManagementTab } from "./model/company-management-tab";
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "company-management",
@@ -29,7 +28,7 @@ export class CompanyManagementComponent implements OnInit {
 
     selectedTab: CompanyManagementTab;
 
-    constructor(private translate: TranslateService) {
+    constructor() {
     }
 
     ngOnInit(): void {

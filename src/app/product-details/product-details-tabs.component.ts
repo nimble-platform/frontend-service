@@ -22,7 +22,6 @@ import {getPropertyValuesAsStrings, selectPartyName} from '../common/utils';
 import {CompanySettings} from '../user-mgmt/model/company-settings';
 import * as myGlobals from '../globals';
 import {Quantity} from '../catalogue/model/publish/quantity';
-import {TranslateService} from '@ngx-translate/core';
 import {Item} from '../catalogue/model/publish/item';
 import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {CookieService} from 'ng2-cookies';
@@ -82,7 +81,6 @@ export class ProductDetailsTabsComponent implements OnInit {
     getPropertyValuesAsStrings = getPropertyValuesAsStrings;
 
     constructor(
-        private translate: TranslateService,
         private bpeService: BPEService,
         private cookieService: CookieService,
         private router: Router

@@ -249,12 +249,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8">
+                <div *ngIf="showAverageCollaborationTimeChart" class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
                             <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'yourAverageCollaborationTimeMonthlyToolTip')"><i
                                     class="fa fa-question-circle"></i></span>
-                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                            <ngx-charts-line-chart  [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
                             </ngx-charts-line-chart>
@@ -277,12 +277,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8">
+                <div *ngIf="showAverageCollaborationTimePurchaseChart" class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
                             <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'yourAverageCollaborationTimeMonthlyInPurchaseToolTip')"><i
                                     class="fa fa-question-circle"></i></span>
-                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimePurchaseChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimePurchaseChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                            <ngx-charts-line-chart  [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimePurchaseChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimePurchaseChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
                             </ngx-charts-line-chart>
@@ -305,12 +305,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8">
+                <div *ngIf="showAverageCollaborationTimeSalesChart" class="col-8">
                     <div class="row justify-content-center">
                         <div class="col-9">
                             <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'yourAverageCollaborationTimeMonthlyInSalesToolTip')"><i
                                     class="fa fa-question-circle"></i></span>
-                            <ngx-charts-line-chart *ngIf="showAverageCollaborationTimeSalesChart" [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeSalesChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                            <ngx-charts-line-chart  [view]="view" [scheme]="colorScheme" [results]="averageCollaborationTimeSalesChartData" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageCollaborationTimeSalesChart" [showGridLines]="showGridLines"
                                                    [autoScale]="autoScale" (select)="onSelect($event)">
                             </ngx-charts-line-chart>
@@ -335,12 +335,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-8">
+            <div *ngIf="showAverageResponseChart" class="col-8">
                 <div class="row justify-content-center">
                     <div class="col-9">
                               <span class="tooltip-icon-with-right-space" (click)="showToolTip(tooltip,'yourAverageResponseTimeMonthlyToolTip')"><i
                                       class="fa fa-question-circle"></i></span>
-                        <ngx-charts-line-chart *ngIf="showAverageResponseChart" [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        <ngx-charts-line-chart  [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
                                                [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabelForAverageResponseChart" [showGridLines]="showGridLines"
                                                [autoScale]="autoScale" (select)="onSelect($event)">
                         </ngx-charts-line-chart>

@@ -14,7 +14,6 @@
 
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { TranslateService } from '@ngx-translate/core';
 import * as myGlobals from '../../globals';
 import { quantityToString } from '../../common/utils';
 import { NegotiationModelWrapper } from '../bp-view/negotiation/negotiation-model-wrapper';
@@ -37,8 +36,7 @@ export class ShoppingCartSummaryModalComponent {
 
     quantityToString = quantityToString;
 
-    constructor(private translate: TranslateService,
-        private modalService: NgbModal) {
+    constructor(private modalService: NgbModal) {
     }
 
     open() {

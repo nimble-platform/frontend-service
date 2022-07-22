@@ -16,7 +16,6 @@
 
 import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angular/core';
 import { LANGUAGES } from '../catalogue/model/constants';
-import { TranslateService } from '@ngx-translate/core';
 import { ChildFormBase } from './validation/child-form-base';
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
@@ -66,8 +65,7 @@ export class TextInputComponent extends ChildFormBase implements OnInit , OnDest
     // available options for the language selection of the text
     languages = LANGUAGES;
 
-    constructor(private validationService: ValidationService,
-        private translate: TranslateService) {
+    constructor(private validationService: ValidationService) {
         super();
     }
 

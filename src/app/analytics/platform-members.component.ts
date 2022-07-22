@@ -13,7 +13,6 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from "@angular/router";
 
 @Component({
@@ -26,7 +25,6 @@ export class PlatformMembersComponent implements OnInit {
     size = 12;
 
     constructor(
-        private translate: TranslateService,
         private route: ActivatedRoute
     ) {
     }

@@ -16,7 +16,6 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterStateSnapshot } from '@angular/router';
-import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -29,8 +28,7 @@ export class SimpleSearchComponent implements OnInit {
     pageRef = '';
 
     constructor(private route: ActivatedRoute,
-                private appComponent: AppComponent,
-                private translate: TranslateService,) { }
+                private appComponent: AppComponent) { }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {

@@ -305,10 +305,12 @@ export class CatalogueViewComponent implements OnInit {
             this.getCompanySettings(userId)
         ])
             .then(([catalogueResponse, settings]) => {
-                this.categoryService.getCategories(catalogueResponse.categoryUris).then(categories => {
+                // promise to retrieve categories used in the catalogue
+                const categoryPromise = catalogueResponse.categoryUris && catalogueResponse.categoryUris.length ? this.categoryService.getCategories(catalogueResponse.categoryUris): Promise.resolve(null);
+                categoryPromise.then(categories => {
                     this.catalogueResponse = catalogueResponse;
                     this.settings = settings;
-                    this.updateView(categories.result);
+                    this.updateView(categories ? categories.result : null);
                     this.getCatalogueStatus.callback(null, true);
                 }).catch(error => {
                     this.getCatalogueStatus.error("Failed to get catalogue", error);
@@ -331,7 +333,7 @@ export class CatalogueViewComponent implements OnInit {
     // called when the catalogue pagination response is retrieved to update the view
     private updateView(categoriesInSolrFormat = null): void {
         let len = this.catalogueResponse.catalogueLines.length;
-        this.categoriesInSolrFormat = sortSolrCategories(categoriesInSolrFormat);
+        this.categoriesInSolrFormat = categoriesInSolrFormat ? sortSolrCategories(categoriesInSolrFormat) : [];
         this.collectionSize = this.catalogueResponse.size;
         this.catalogueLinesArray = [...this.catalogueResponse.catalogueLines];
         this.catalogueLinesWRTTypes = this.catalogueLinesArray;

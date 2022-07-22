@@ -32,6 +32,7 @@ import {AppComponent} from '../../app.component';
 import {TranslateService} from '@ngx-translate/core';
 import * as myGlobals from '../../globals';
 import {Certificate} from '../../catalogue/model/publish/certificate';
+import { Text } from '../../catalogue/model/publish/text';
 
 @Component({
     selector: 'demand-list-item',
@@ -56,7 +57,6 @@ export class DemandListItemComponent {
     callStatus: CallStatus;
 
     selectNameFromLabelObject = selectNameFromLabelObject;
-    selectPreferredValue = selectPreferredValue;
     selectPartyName = selectPartyName;
     getCountryByISO = CountryUtil.getCountryByISO;
     // flag if the demand is new for the user or not (in other words, the demand is already seen by the user or not)
@@ -170,5 +170,9 @@ export class DemandListItemComponent {
             // open mail template
             window.location.href = mailto;
         })
+    }
+
+    getPreferredValue(texts:Text[]){
+        return selectPreferredValue(texts, this.translateService.currentLang);
     }
 }

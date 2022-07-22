@@ -19,11 +19,9 @@ import {CompanySettings} from '../model/company-settings';
 import {CallStatus} from '../../common/call-status';
 //import { PPAP_CERTIFICATES } from "../../catalogue/model/constants";
 import {UserService} from '../user.service';
-import {CookieService} from 'ng2-cookies';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
-import {TranslateService} from '@ngx-translate/core';
 import {BinaryObject} from '../../catalogue/model/publish/binary-object';
 import {AppComponent} from '../../app.component';
 import {Certificate} from '../model/certificate';
@@ -71,9 +69,7 @@ export class CompanyCertificatesSettingsComponent {
     constructor(private _fb: FormBuilder,
         private userService: UserService,
         private modalService: NgbModal,
-        private appComponent: AppComponent,
-        private translate: TranslateService,
-        private cookieService: CookieService) {
+        private appComponent: AppComponent) {
 
     }
 

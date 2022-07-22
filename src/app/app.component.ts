@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     response: any;
     submitCallStatus: CallStatus = new CallStatus();
 
-    private translations: any = [];
+    fundingDisclaimer: string = null;
 
     @ViewChild(ConfirmModalComponent)
     public confirmModalComponent: ConfirmModalComponent;
@@ -149,9 +149,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         translate.setDefaultLang(FALLBACK_LANGUAGE);
         translate.use(DEFAULT_LANGUAGE());
-        this.translate.get(['Chat', 'Federation', 'Language', 'ON', 'OFF']).subscribe((res: any) => {
-            this.translations = res;
-        });
+        this.setFundingDisclaimer();
         // set title
         this.titleService.setTitle(this.config.platformNameInMail)
         // set icon
@@ -236,34 +234,31 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     getChatText(): string {
-        let txt = this.translations['Chat'];
+        let txt = this.translate.instant('Chat');
         if (this.chatVisible)
-            txt += ": " + this.translations['ON'];
+            txt += ": " + this.translate.instant('ON');
         else
-            txt += ": " + this.translations['OFF'];
+            txt += ": " + this.translate.instant('OFF');
         return txt;
     }
 
     getFederationText(): string {
-        let txt = this.translations['Federation'];
+        let txt = this.translate.instant('Federation');
         if (this.federation)
-            txt += ": " + this.translations['ON'];
+            txt += ": " + this.translate.instant('ON');
         else
-            txt += ": " + this.translations['OFF'];
+            txt += ": " + this.translate.instant('OFF');
         return txt;
     }
 
     getLangText(): string {
-        let txt = this.translations['Language'];
+        let txt = this.translate.instant('Language');
         txt += ": " + this.language.toUpperCase();
         return txt;
     }
 
     async ngOnInit() {
-        // initialize country service after setting the default language of platform
-        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
-        // from CountryUtil
-        await CountryUtil.initialize(this.translate);
+        await this.initializeCountryUtil();
         // the user could not publish logistic services if the standard taxonomy is 'eClass'
         if (this.config.standardTaxonomy == "eClass") {
             this.enableLogisticServicePublishing = false;
@@ -284,18 +279,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         if (code != null) {
 
-            let redirectURL = window.location.href.split("code=");
-            if (redirectURL.length != 1) {
-                let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
-                if (lastChar == '?' || lastChar == '&') {
-                    redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
-                }
-            }
+            // let redirectURL = window.location.href.split("code=");
+            // if (redirectURL.length != 1) {
+            //     let lastChar = redirectURL[0].charAt(redirectURL[0].length - 1);
+            //     if (lastChar == '?' || lastChar == '&') {
+            //         redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
+            //     }
+            // }
 
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0] }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
+                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': myGlobals.frontendURL }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback(this.translate.instant("Login Successful"));
@@ -344,11 +339,27 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     setLang(lang: string) {
         if (lang != this.language) {
-            this.loading = true;
-            document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
+            document.getElementsByTagName('html')[0].setAttribute('lang', lang);
             this.cookieService.set("language", lang);
-            location.reload();
+            this.language = lang;
+            this.translate.use(lang);
+            this.setFundingDisclaimer();
+            this.initializeCountryUtil();
         }
+    }
+
+    private setFundingDisclaimer(){
+        if (this.config.fundingDisclaimer[this.translate.currentLang])
+            this.fundingDisclaimer = this.config.fundingDisclaimer[this.translate.currentLang];
+        else
+            this.fundingDisclaimer = this.config.fundingDisclaimer["en"];
+    }
+
+    async initializeCountryUtil() {
+        // initialize country service after setting the default language of platform
+        // wait until it is initialized, otherwise, other components which use CountryUtil receive exceptions while trying to access data
+        // from CountryUtil
+        await CountryUtil.initialize(this.translate);
     }
 
     setFed(fed: boolean) {

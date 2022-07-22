@@ -47,7 +47,6 @@ import { FEDERATIONID } from '../../catalogue/model/constants';
 import { ValidationService } from '../../common/validation/validators';
 import { FormGroup } from '@angular/forms';
 import {ContractService} from '../bp-view/contract-service';
-import {TranslateService} from '@ngx-translate/core';
 import {AppComponent} from '../../app.component';
 
 @Component({
@@ -102,7 +101,6 @@ export class ShoppingCartComponent implements OnInit {
 
     constructor(private shoppingCartDataService: ShoppingCartDataService,
         private catalogueService: CatalogueService,
-        private translate: TranslateService,
         private bpeService: BPEService,
         private contractService: ContractService,
         private documentService: DocumentService,

@@ -19,7 +19,7 @@ export const frontendURL = base_path;
 
 export const user_mgmt_endpoint = `${base_path}/api/identity`;
 export const catalogue_endpoint = `${base_path}/api/catalog`;
-export const catalogue_endpoint_with_zuul = `${base_path}/zuul/catalog`;
+export const catalogue_endpoint_with_zuul = `${base_path}/api/zuul/catalog`;
 export const bpe_endpoint = `${base_path}/api/business-process`;
 export const data_channel_endpoint = `${base_path}/api/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/api/data-aggregation`;
@@ -89,14 +89,19 @@ export const config = {
             'ISO 14006 Eco Design',
             'ISO 50001 Energy Efficiency',
             'Sustainability Report',
-            'Corporate Carbon Footprint'
+            'Corporate Carbon Footprint',
+            'Due dilegence EUTR',
+            'Chain of custody FSC',
+            'Chain of custody PEFC'
         ],
         productCertificates: [
             'PEFC Certificate',
             'FSC Certificate',
             'Type I Ecolabel (ECO LABEL, NF Environment, Blue Angel, etc)',
             'Type III Ecolabel (Environmental Product Declaration / Product Footprint)',
-            'Free of Hazardous Substances'
+            'Free of Hazardous Substances',
+            'CITES licence',
+            'FLEGT licence'
         ],
         indexField: "circularEconomyCertificates"
     },
@@ -115,6 +120,7 @@ export const config = {
     "displayCategoryCounts":false,
     "displayProductIdInOverview": true,
     "docLink": "https://www.nimble-project.org/docs_es/",
+    "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
     "enableStripePayment": false,
@@ -123,6 +129,11 @@ export const config = {
     "enableTermsAndConditionsAsFile": false,
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
+    "fundingDisclaimer": {
+        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
+        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
+        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+    },
     "hideContactInformationInCompanyDetails": true,
     "hideLogAnalytics": true,
     "hidePriceFunctionality": false,

@@ -20,7 +20,6 @@ import { LineItem } from "../../../catalogue/model/publish/line-item";
 import { Location } from "@angular/common";
 import { PaymentTermsWrapper } from "../payment-terms-wrapper";
 import { Router } from "@angular/router";
-import { copy, quantityToString } from "../../../common/utils";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
 import { UserService } from "../../../user-mgmt/user.service";
 import { CookieService } from "ng2-cookies";
@@ -39,8 +38,6 @@ import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-eve
 import * as myGlobals from '../../../globals';
 import { Contract } from '../../../catalogue/model/publish/contract';
 import { Clause } from '../../../catalogue/model/publish/clause';
-import { TranslateService } from '@ngx-translate/core';
-import { CatalogueLine } from '../../../catalogue/model/publish/catalogue-line';
 import { Delivery } from '../../../catalogue/model/publish/delivery';
 import {Quantity} from '../../../catalogue/model/publish/quantity';
 
@@ -95,7 +92,6 @@ export class OrderItemComponent implements OnInit {
         private epcService: EpcService,
         private location: Location,
         private router: Router,
-        private translate: TranslateService,
         private documentService: DocumentService) {
     }
 

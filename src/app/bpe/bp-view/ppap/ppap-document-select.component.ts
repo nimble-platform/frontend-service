@@ -30,7 +30,6 @@ import { copy } from "../../../common/utils";
 import { Certificate } from "../../../user-mgmt/model/certificate";
 import { DocumentService } from '../document-service';
 import { DocumentReference } from '../../../catalogue/model/publish/document-reference';
-import { TranslateService } from '@ngx-translate/core';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 
 type PpapLevels = [boolean, boolean, boolean, boolean, boolean]
@@ -96,7 +95,6 @@ export class PpapDocumentSelectComponent implements OnInit {
         private cookieService: CookieService,
         private route: ActivatedRoute,
         private router: Router,
-        private translate: TranslateService,
         private documentService: DocumentService,
         private location: Location) {
     }

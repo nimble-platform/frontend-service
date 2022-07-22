@@ -16,7 +16,6 @@
 
 import {Component, OnInit} from '@angular/core';
 import * as myGlobals from '../globals';
-import { TranslateService } from '@ngx-translate/core';
 import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 
 @Component({
@@ -31,8 +30,7 @@ export class PlatformInfoComponent implements OnInit{
 
     imprint = null;
 
-    constructor(private translate: TranslateService,
-    ) {
+    constructor() {
     }
 
     ngOnInit() {

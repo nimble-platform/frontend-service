@@ -26,7 +26,6 @@ import { CatalogueService } from '../catalogue/catalogue.service';
 import * as constants from "../common/constants";
 import { Headers, Http } from "@angular/http";
 import * as myGlobals from "../globals";
-import { TranslateService } from '@ngx-translate/core';
 import * as moment from "moment";
 import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
 
@@ -51,7 +50,6 @@ export class LogoutComponent implements OnInit {
         private categoryService: CategoryService,
         private catalogueService: CatalogueService,
         private shoppingCartDataService: ShoppingCartDataService,
-        private translate: TranslateService,
         private credentialsService: CredentialsService,
         private http: Http
     ) { }

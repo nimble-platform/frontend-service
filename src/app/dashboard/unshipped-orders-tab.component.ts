@@ -17,7 +17,6 @@ import { CookieService } from 'ng2-cookies';
 import { BPEService } from '../bpe/bpe.service';
 import { CallStatus } from '../common/call-status';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { DocumentService } from '../bpe/bp-view/document-service';
 import { Order } from '../catalogue/model/publish/order';
 import { copy, quantityToString, selectPartyName, selectPreferredValue } from '../common/utils';
@@ -66,7 +65,6 @@ export class UnshippedOrdersTabComponent implements OnInit {
         private bpDataService: BPDataService,
         private unShippedOrdersTransitionService: UnshippedOrdersTransitionService,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private router: Router) {
     }
 

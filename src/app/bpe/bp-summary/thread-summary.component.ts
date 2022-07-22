@@ -126,7 +126,6 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
     selectPreferredValue = selectPreferredValue;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    private translations: any;
 
     // cancel collaboration modal
     @ViewChild(CancelCollaborationModalComponent)
@@ -147,9 +146,6 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.appComponent.translate.get(['Slow Response Time', 'Suspicious Company Information', 'Undervalued Offer', 'Rejected Delivery Terms', 'Other', 'Due to', 'Some reasons', 'Collaboration finished', 'Collaboration cancelled']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-            this.translations = res;
-        });
         this.route.params.subscribe(params => {
             this.routeProcessInstanceId = params["processInstanceId"];
             let sellerFederationId = params["delegateId"];
@@ -413,12 +409,12 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
     }
 
     getCollaborationCancelledStatus(reason: string, date: string): string {
-        let status = this.translations["Collaboration cancelled"];
+        let status = this.translate.instant("Collaboration cancelled");
         if (reason) {
             if (reason == "Other") {
                 reason = "Some reasons";
             }
-            status += " " + this.translations["Due to"] + " " + this.translations[reason];
+            status += " " + this.translate.instant("Due to") + " " + this.translate.instant(reason);
         }
         if (date) {
             status += " " + this.translate.instant("on date", {date:date});
@@ -430,7 +426,7 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
         if (date) {
             return this.translate.instant("Collaboration finished on", {date:date})
         }
-        return this.translations["Collaboration finished"];
+        return this.translate.instant("Collaboration finished");
     }
 
     // getters for span titles

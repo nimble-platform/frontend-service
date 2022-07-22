@@ -22,7 +22,6 @@ import { CallStatus } from "../../common/call-status";
 import { CompanySettings } from "../model/company-settings";
 import { ActivatedRoute } from "@angular/router";
 import { AppComponent } from "../../app.component";
-import { TranslateService } from '@ngx-translate/core';
 import { FEDERATIONID } from '../../catalogue/model/constants';
 import {Certificate} from '../model/certificate';
 
@@ -57,7 +56,6 @@ export class CompanySettingsComponent implements OnInit {
     constructor(private cookieService: CookieService,
         private userService: UserService,
         public route: ActivatedRoute,
-        private translate: TranslateService,
         public appComponent: AppComponent) {
 
     }

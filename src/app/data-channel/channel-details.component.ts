@@ -20,7 +20,6 @@ import { Machine } from "./model/machine";
 import { Sensor } from "./model/sensor";
 import { Server } from "./model/server";
 import * as moment from "moment";
-import { TranslateService } from '@ngx-translate/core';
 
 class NewServer {
     constructor(
@@ -95,7 +94,6 @@ export class ChannelDetailsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private dataChannelService: DataChannelService,
-        private translate: TranslateService,
         private router: Router
     ) { }
 

@@ -298,7 +298,7 @@
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="'funding-disclaimer' | translate"></span>
+    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="fundingDisclaimer"></span>
     <div *ngIf="versions.length > 0">
         <small>
             <span *ngFor="let version of versions; let i = index" [attr.data-index]="i">

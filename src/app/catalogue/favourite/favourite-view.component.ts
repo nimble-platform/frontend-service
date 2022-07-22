@@ -394,6 +394,10 @@ export class FavouriteViewComponent implements OnInit {
         }
     }
 
+    onImageError(event){
+        event.target.src = this.config.emptyImage;
+    }
+
 
     private getCall(q: string) {
         this.model.q = q;

@@ -197,7 +197,7 @@
         <div *ngIf="!settings.description.logoImageId" class="card m-2" style="width: 15rem;">
             <div class="card-body p-2">
                 <div class="align-center">
-                    <img class="img-max" src="../../../assets/images/empty_img.png">
+                    <img class="img-max" [src]="config.emptyImage">
                 </div>
             </div>
         </div>
@@ -220,7 +220,7 @@
         <div *ngIf="settings.description.companyPhotoList.length == 0" class="card m-2" style="width: 15rem;">
             <div class="card-body p-2">
                 <div class="align-center">
-                    <img class="img-max" src="../../../assets/images/empty_img.png">
+                    <img class="img-max" [src]="config.emptyImage">
                 </div>
             </div>
         </div>

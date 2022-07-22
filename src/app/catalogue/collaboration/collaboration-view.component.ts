@@ -22,7 +22,7 @@ import { ActivatedRoute, Params, Router } from "@angular/router";
 // import { UserService } from "../user-mgmt/user.service";
 // import { CompanySettings } from "../user-mgmt/model/company-settings";
 // import {roundToTwoDecimals} from '../common/utils';
-// import * as myGlobals from '../globals';
+import * as myGlobals from '../../globals';
 import { ProjectType } from './model/project-type';
 import { ResourceListType } from './model/resourcelist-type';
 import { ResourceType } from './model/resource-type';
@@ -47,6 +47,8 @@ export class CollaborationViewComponent implements OnInit {
     selectedCurrency: any = "EUR";
 
     settings: CompanySettings;
+
+    config = myGlobals.config;
 
     userToken: string = null;
     userEmail: string = null;

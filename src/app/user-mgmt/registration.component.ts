@@ -13,7 +13,6 @@
  */
 
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'nimble-registration',
@@ -24,7 +23,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class RegistrationComponent {
     constructor(
-        private translate: TranslateService
     ) {
     }
 }

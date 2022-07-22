@@ -17,7 +17,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CookieService } from "ng2-cookies";
 import { Location } from "@angular/common";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
 import { BPDataService } from "../bp-data-service";
 import { CallStatus } from "../../../common/call-status";
 import { TransportExecutionPlanRequest } from "../../../catalogue/model/publish/transport-execution-plan-request";
@@ -31,7 +31,6 @@ import { Order } from "../../../catalogue/model/publish/order";
 import { PresentationMode } from "../../../catalogue/model/publish/presentation-mode";
 import { DocumentService } from '../document-service';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "transport-execution-plan",
@@ -58,9 +57,7 @@ export class TransportExecutionPlanComponent implements OnInit {
         private bpeService: BPEService,
         private location: Location,
         private router: Router,
-        private documentService: DocumentService,
-        private translate: TranslateService,
-        private route: ActivatedRoute) {
+        private documentService: DocumentService) {
     }
 
     ngOnInit() {

@@ -85,7 +85,7 @@
                         <!-- Image -->
                         <div class="product-image justify-content-center">
 
-                            <img *ngIf="activeResource.imageData == ''" class="img-max" style="margin: auto; padding: 20px;" src="../../../assets/images/empty_img.png">
+                            <img *ngIf="activeResource.imageData == ''" class="img-max" style="margin: auto; padding: 20px;" [src]="config.emptyImage">
                             <img *ngIf="activeResource.imageData != ''" class="img-selected d-block active" style="margin: auto; padding: 20px;" src="data:image/png;base64,{{activeResource.imageData}}" />
 
                         </div>

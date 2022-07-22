@@ -332,7 +332,6 @@ export class PerformanceAnalyticsComponent implements OnInit {
         this.analyticsService
             .getCollabAnalytics(this.comp_id)
             .then(res => {
-                this.callStatusCollab.callback("Successfully loaded collab analytics", true);
                 // average trade seller
                 this.trade_green_sell = Math.round(res.tradingVolumesales.approved);
                 this.trade_yellow_sell = Math.round(res.tradingVolumesales.waiting);
@@ -435,7 +434,7 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
                 }
 
-
+                this.callStatusCollab.callback("Successfully loaded collab analytics", true);
             })
             .catch(error => {
                 this.callStatusCollab.error("Error while loading platform analytics", error);

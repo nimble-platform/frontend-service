@@ -34,7 +34,6 @@ import { Explorative } from './model/explorative';
 import { Search } from './model/search';
 import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { CookieService } from 'ng2-cookies';
-import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Array for storing incoming HTTP responses
@@ -88,8 +87,7 @@ export class ExplorativeSearchFormComponent implements OnInit {
 
     constructor(
         private expSearch: ExplorativeSearchService,
-        private cookieService: CookieService,
-        private translate: TranslateService
+        private cookieService: CookieService
     ) {
         this._user_id = this.cookieService.get('user_id');
     }

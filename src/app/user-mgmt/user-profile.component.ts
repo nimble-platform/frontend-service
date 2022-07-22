@@ -19,7 +19,6 @@ import { UserService } from './user.service';
 import { Person } from '../catalogue/model/publish/person';
 import { CookieService } from 'ng2-cookies';
 import { CallStatus } from '../common/call-status';
-import { TranslateService } from '@ngx-translate/core';
 import { ResetPasswordCredentials } from './model/reset-password-credentials';
 import { Router } from "@angular/router";
 import { AppComponent } from "../app.component";
@@ -43,7 +42,6 @@ export class UserProfileComponent implements OnInit {
     public NON_DISPLAYED_ROLES = ["nimble_user","eFactoryUser"];
 
     constructor(private userService: UserService,
-        private translate: TranslateService,
         private cookieService: CookieService,
         private router: Router,
         public appComponent: AppComponent

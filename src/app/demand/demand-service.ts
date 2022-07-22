@@ -26,8 +26,15 @@ export class DemandService {
 
     public publishDemand(demand: Demand): Promise<number> {
         const url = catalogue_endpoint + `/demands`;
+        let headers = getAuthorizedHeaders(this.cookieService);
+        let defaultLanguage = DEFAULT_LANGUAGE();
+        let acceptLanguageHeader = defaultLanguage;
+        if(defaultLanguage != "en"){
+            acceptLanguageHeader += ",en;0.9";
+        }
+        headers.append("Accept-Language",acceptLanguageHeader);
         return this.http
-            .post(url, demand, { headers: getAuthorizedHeaders(this.cookieService) })
+            .post(url, demand, { headers: headers})
             .toPromise()
             .catch(this.handleError);
     }

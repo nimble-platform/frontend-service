@@ -19,7 +19,6 @@ import { selectPreferredValue } from '../../common/utils';
 import { Text } from '../model/publish/text';
 import { ItemProperty } from '../model/publish/item-property';
 import { REGIONS } from '../model/constants';
-import { TranslateService } from '@ngx-translate/core';
 import {CountryUtil} from '../../common/country-util';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
@@ -33,7 +32,7 @@ import {config} from '../../globals';
 })
 export class OriginDestinationViewComponent implements OnInit {
 
-    constructor(private translate: TranslateService) {
+    constructor() {
     }
 
     // stores the address information

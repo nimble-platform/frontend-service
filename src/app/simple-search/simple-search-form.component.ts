@@ -198,7 +198,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     categoryCounts: any[] = null;
 
     ngUnsubscribe: Subject<void> = new Subject<void>();
-    private translations: any;
     // suggestions for the category search
     categorySuggestions: any = [];
     // keeps the user's login state
@@ -223,7 +222,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 public companySubscriptionService: CompanySubscriptionService,
                 private publishService: PublishService,
                 public shoppingCartDataService: ShoppingCartDataService,
-                private translateService: TranslateService,
                 private cookieService: CookieService,
                 public appComponent: AppComponent,
                 private unitService:UnitService,
@@ -242,9 +240,6 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             });
         }
         window.scrollTo(0, 0);
-        this.appComponent.translate.get(['Other']).takeUntil(this.ngUnsubscribe).subscribe((res: any) => {
-            this.translations = res;
-        });
         this.unitService.getCachedUnitList(deliveryPeriodUnitListId).then(list =>{
             this.deliveryPeriodUnits = list;
             // select the first one
@@ -719,7 +714,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                     'name': 'Other',
                     'id': this.catID,
                     'count': (currentLevelCount - childLevelCount),
-                    'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                    'preferredName': this.appComponent.translate.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                     'other': true
                 });
             }
@@ -736,7 +731,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 'name': 'Other',
                 'id': this.catID,
                 'count': this.cat_levels[this.cat_level][0].count,
-                'preferredName': this.translations['Other'] + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
+                'preferredName': this.appComponent.translate.instant('Other') + ' ' + this.cat_levels[this.cat_level][0].preferredName.toLowerCase(),
                 'other': true
             });
         }
@@ -1327,12 +1322,16 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             return facet_innerLabel + ' ' + unit;
         }
 
-        // special check for activity sector labels
-        if (facet.endsWith('activitySectors')) {
-            return this.translate.instant(facet_innerLabel) // return translated activity sector
+        // special check for activity sector and circular economy certificates labels
+        if (facet.endsWith('activitySectors') || facet.endsWith('circularEconomyCertificates')) {
+            return this.translate.instant(facet_innerLabel) // return translated value
         }
 
         return facet_innerLabel;
+    }
+
+    onImageError(event){
+        event.target.src = this.config.emptyImage;
     }
 
     /**
@@ -1474,7 +1473,7 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         } else if (this.product_filter_mappings[name]) {
             ret = this.product_filter_mappings[name];
         } else{
-            ret = this.translateService.instant(prefName);
+            ret = this.translate.instant(prefName);
         }
         return ret;
     }

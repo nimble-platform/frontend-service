@@ -26,9 +26,7 @@ import { QuotationWrapper } from "../negotiation/quotation-wrapper";
 import { selectPartyName, selectPreferredValues } from '../../../common/utils';
 import { CookieService } from "ng2-cookies";
 import { UBLModelUtils } from "../../../catalogue/model/ubl-model-utils";
-import { TranslateService } from '@ngx-translate/core';
 import { UserService } from '../../../user-mgmt/user.service';
-import { QuotationLine } from '../../../catalogue/model/publish/quotation-line';
 
 @Component({
     selector: "frame-contract-details",
@@ -55,7 +53,6 @@ export class FrameContractDetailsComponent implements OnInit {
         private cookieService: CookieService,
         private route: ActivatedRoute,
         private userService: UserService,
-        private translate: TranslateService,
         private router: Router) {
     }
 

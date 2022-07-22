@@ -19,7 +19,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FactorsService } from './factors.service';
 import { TreeviewConfig, TreeviewItem, TreeItem } from 'ngx-treeview';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'factors',
@@ -49,8 +48,7 @@ export class FactorsComponent implements OnInit {
 
     constructor(private service: FactorsService,
         private route: ActivatedRoute,
-        private router: Router,
-        private translate: TranslateService) {
+        private router: Router) {
     }
 
     ngOnInit() {

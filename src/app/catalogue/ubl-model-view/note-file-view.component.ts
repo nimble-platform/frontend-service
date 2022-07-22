@@ -17,7 +17,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Attachment } from '../model/publish/attachment';
 import { DocumentReference } from '../model/publish/document-reference';
-import { TranslateService } from '@ngx-translate/core';
 import { BinaryObject } from '../model/publish/binary-object';
 import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../common/constants';
 
@@ -47,7 +46,6 @@ export class NoteFileViewComponent implements OnInit {
     requestFiles: BinaryObject[];
 
     constructor(
-        private translate: TranslateService
     ) {
     }
     ngOnInit() {

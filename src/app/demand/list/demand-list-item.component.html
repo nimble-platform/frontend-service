@@ -15,15 +15,15 @@
     <div class="card-body d-flex" [ngStyle]="{'padding-bottom': displayCertificates? '0':'1.25rem'}">
         <div class="col-2">
             <div style="text-align:center">
-                <img *ngIf="!demand.image" style="max-height:150px; max-width:100%" src="../../../assets/images/empty_img.png">
+                <img *ngIf="!demand.image" style="max-height:150px; max-width:100%" [src]="config.emptyImage">
                 <img *ngIf="demand.image" style="max-height:150px; max-width:100%" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" />
             </div>
         </div>
         <div class="col-8 d-flex justify-content-between">
             <div class="col">
-                <h5>{{selectPreferredValue(demand.title)}}</h5>
+                <h5>{{getPreferredValue(demand.title)}}</h5>
                 <ng-container *ngIf="isLoggedIn">
-                    <label class="d-block"> {{selectPreferredValue(demand.description)}}</label>
+                    <label class="d-block"> {{getPreferredValue(demand.description)}}</label>
                     <div class="row no-gutters">
                         <div class="col-7">
                             <div class="row no-gutters">

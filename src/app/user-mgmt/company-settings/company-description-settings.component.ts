@@ -17,7 +17,6 @@ import { CallStatus } from "../../common/call-status";
 import { FormGroup, FormBuilder, FormArray } from "@angular/forms";
 import { CompanySettings } from "../model/company-settings";
 import { CompanyEvent } from "../model/company-event";
-import { Address } from "../model/address";
 import { AddressSubForm } from '../subforms/address.component';
 import * as moment from "moment";
 import * as myGlobals from "../../globals";
@@ -25,7 +24,6 @@ import { CookieService } from "ng2-cookies";
 import { UserService } from "../user.service";
 import { AppComponent } from "../../app.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { TranslateService } from '@ngx-translate/core';
 import {
     getArrayOfTextObject,
     createTextObjectFromArray,
@@ -51,6 +49,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
     externalResourcesChanged = false;
     compEventsChanged = false;
     imgEndpoint = myGlobals.user_mgmt_endpoint + "/company-settings/image/";
+    config = myGlobals.config;
     addEventForm: FormGroup;
     addImageForm: FormGroup;
     imgFile = null;
@@ -65,7 +64,6 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         private modalService: NgbModal,
         private _fb: FormBuilder,
         private cookieService: CookieService,
-        private translate: TranslateService,
         private userService: UserService) {
 
     }

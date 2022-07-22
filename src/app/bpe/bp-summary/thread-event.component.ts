@@ -15,14 +15,12 @@
  */
 
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { Router } from "@angular/router";
 import { BPDataService } from "../bp-view/bp-data-service";
 import { ProcessInstanceGroup } from "../model/process-instance-group";
 import { ThreadEventMetadata } from "../../catalogue/model/publish/thread-event-metadata";
 import { BPEService } from "../bpe.service";
 import { BpActivityEvent } from '../../catalogue/model/publish/bp-start-event';
 import { BpUserRole } from '../model/bp-user-role';
-import { TranslateService } from '@ngx-translate/core';
 import { ActivityVariableParser } from '../bp-view/activity-variable-parser';
 import { UserService } from '../../user-mgmt/user.service';
 import {AppComponent} from '../../app.component';
@@ -45,8 +43,7 @@ export class ThreadEventComponent implements OnInit {
     constructor(private bpDataService: BPDataService,
         private appComponent: AppComponent,
         private bpeService: BPEService,
-        private userService: UserService,
-        private translate: TranslateService) {
+        private userService: UserService) {
     }
 
     ngOnInit() {
