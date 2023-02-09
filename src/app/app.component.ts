@@ -286,11 +286,15 @@ export class AppComponent implements OnInit, AfterViewInit {
                      redirectURL[0] = redirectURL[0].substring(0, redirectURL[0].length - 1);
                  }
             }
+           let finalRedirectURL = redirectURL[0].replace("/?","?") 
+            if(finalRedirectURL.charAt(finalRedirectURL.length-1) == '/'){
+                finalRedirectURL = finalRedirectURL.substring(0,finalRedirectURL.length-1)
+            }
 
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0].replace("/?","?") }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
+                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': finalRedirectURL }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback(this.translate.instant("Login Successful"));
