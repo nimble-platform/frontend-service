@@ -9,7 +9,7 @@ export const debug = false;
 
 export const base_path = "https://nimble.smecluster.com";
 export const ub_base = "https://nimble.smecluster.com/ub-search";
-export const idpURL = "http://nimble.smecluster.com:8080/auth/realms/master";
+export const idpURL = "https://nimble.smecluster.com:8080/auth/realms/master";
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path;
