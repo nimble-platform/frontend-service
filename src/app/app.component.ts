@@ -290,7 +290,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0] }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
+                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': redirectURL[0].replace("/?","?") }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback(this.translate.instant("Login Successful"));
