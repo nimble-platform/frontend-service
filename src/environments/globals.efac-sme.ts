@@ -267,7 +267,7 @@ export const config = {
     "requiredAgreements": [
         {
             "title": "EFPF Terms and Conditions",
-            "src": "https://efpf-portal.ascora.eu/terms"
+            "src": "https://efpf.smecluster.com/portal/terms"
         }
     ],
     "separateFilterForCircularEconomyCertificatesInCompanySearch": false,
