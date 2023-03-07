@@ -28,11 +28,11 @@ export const debug = false;
 // Base path variables
 
 // Platform base path of backend services
-export const base_path = "http://nimble-staging-neu.salzburgresearch.at";
+export const base_path = "http://nimble-staging.salzburgresearch.at";
 // Base path of explorative search endpoints
-export const ub_base = "http://nimble-staging-neu.salzburgresearch.at/search";
+export const ub_base = "http://nimble-staging.salzburgresearch.at/search";
 // Base path of Keycloak IDP
-export const idpURL = "http://nimble-staging-neu.salzburgresearch.at:8080/auth/realms/master";
+export const idpURL = "http://nimble-staging.salzburgresearch.at:8080/auth/realms/master";
 // Base path of collaboration tools endpoints
 export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
 // Link to Keycloak password reset
