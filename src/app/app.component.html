@@ -181,13 +181,13 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav navbar-nav">
+        <!-- <ul class="nav navbar-nav">
             <li class="nav-item">
                 <a class="nav-link pointer" (click)="open(support)" [title]="'Help' | translate">
                     <i class="fa fa-question-circle"></i>
                 </a>
             </li>
-        </ul>
+        </ul> -->
         <ul class="nav navbar-nav">
             <li ngbDropdown class="nav-item dropdown" routerLinkActive="active">
                 <a class="nav-link pointer" [title]="config.platformName" id="dropdownMenuPlat" ngbDropdownToggle>
@@ -298,7 +298,8 @@
 </div>
 
 <div *ngIf="!minimalView" id="footer">
-    <img src="../assets/images/eu_flag.png" alt=""> <span [innerHTML]="fundingDisclaimer"></span>
+    <!-- <img src="../assets/images/eu_flag.png" alt="">  -->
+    <span [innerHTML]="fundingDisclaimer"></span>
     <div *ngIf="versions.length > 0">
         <small>
             <span *ngFor="let version of versions; let i = index" [attr.data-index]="i">

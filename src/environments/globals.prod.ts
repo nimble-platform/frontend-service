@@ -7,10 +7,10 @@ export const debug = false;
 
 // Base path variables
 
-export const base_path = "https://nimble-platform.salzburgresearch.at/nimble";
-export const ub_base = "https://nimble-platform.salzburgresearch.at/ub-search";
-export const idpURL = "https://nimble-platform.salzburgresearch.at:8080/auth/realms/master";
-export const collab_path = "http://nimble.eu-de.containers.appdomain.cloud/collaborations";
+export const base_path = "https://nimble.kolayam.co.uk";
+export const ub_base = "https://nimble.kolayam.co.uk/ub-search";
+export const idpURL = "https://keycloak.kolayam.co.uk/auth/realms/master";
+export const collab_path = "https://keycloak.kolayam.co.uk/collaborations";
 export const pw_reset_link = idpURL + "/login-actions/reset-credentials?client_id=nimble_client";
 export const frontendURL = base_path + "/frontend/";
 
@@ -25,15 +25,15 @@ export const data_channel_endpoint = `${base_path}/data-channel`;
 export const data_aggregation_endpoint = `${base_path}/data-aggregation`;
 export const trust_service_endpoint = `${base_path}/trust`;
 export const indexing_service_endpoint = `${base_path}/index`;
-export const rocketChatEndpoint = `https://efpf-security-portal.salzburgresearch.at/chat`;
+export const rocketChatEndpoint = `${base_path}/chat`;
 export const logstash_endpoint = `${base_path}/logstash`;
 export const kibana_endpoint = `${base_path}/kibana/app/kibana`;
 export const delegate_endpoint = `${base_path}:9265`;
-export const agent_mgmt_endpoint = `http://159.69.214.42/agents`;
+export const agent_mgmt_endpoint = `${base_path}/agents`;
 export const collaboration_endpoint = `${collab_path}`;
-export const certificate_of_origin_endpoint = `http://161.156.70.125:7695`;
-export const legislation_endpoint = `http://77.230.101.223/nimsys`;
-export const eFactory_indexing_endpoint = "https://efpf-security-portal.salzburgresearch.at/api/index";
+export const certificate_of_origin_endpoint = `${base_path}/certificate`;
+export const legislation_endpoint = `${base_path}/nimsys`;
+export const eFactory_indexing_endpoint = `${base_path}/api/index`;
 
 // Explorative Search endpoints
 
@@ -123,9 +123,7 @@ export const config = {
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "fundingDisclaimer": {
-        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
-        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
-        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+        "en": "Copyright © 2024 Kolayam Limited"
     },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
@@ -272,7 +270,7 @@ export const config = {
         "purchaser",
         "sales_officer"
     ],
-    "supportMail": "nimble-support@salzburgresearch.at",
+    "supportMail": "support@kolayam.co.uk",
     "supportMailContent": {
         "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"

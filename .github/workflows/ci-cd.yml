@@ -1,0 +1,61 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "10"
+
+      - name: Install nvm
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install 10
+          nvm use 10
+
+      - name: Install dependencies
+        run: |
+          npm i --legacy-peer-deps
+          npm i --save-dev @types/jasmine@3.6.2 --legacy-peer-deps
+
+      - name: Build production
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build:production
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_EMAIL }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build --platform linux/amd64 -t rannybal2024/nimble-frontend-service:${{ github.run_number }} .
+
+      - name: Push Docker image
+        run: docker push rannybal2024/nimble-frontend-service:${{ github.run_number }}
+
+      - name: Update Kubernetes deployment with new image
+        run: |
+          sed -i 's|IMAGE_TAG|rannybal2024/nimble-frontend-service:${{ github.run_number }}|' kubernetes/deploy.yml
+
+      - name: Set up kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/kube-config.yaml
+
+      - name: Apply Kubernetes deployment
+        run: kubectl --kubeconfig=$HOME/kube-config.yaml apply -f kubernetes/deploy.yml
+
+      - name: Clean up kubeconfig
+        run: rm -f $HOME/kube-config.yaml

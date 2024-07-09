@@ -123,9 +123,7 @@ export const config = {
     "faviconPath": "./assets/favicon.ico",
     "frameContractTabEnabled": true,
     "fundingDisclaimer": {
-        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
-        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
-        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+        "en": "Copyright © 2024 Kolayam Limited"
     },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
@@ -271,7 +269,7 @@ export const config = {
         "purchaser",
         "sales_officer"
     ],
-    "supportMail": "nimble-support@salzburgresearch.at",
+    "supportMail": "support@kolayam.co.uk",
     "supportMailContent": {
         "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
         "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"

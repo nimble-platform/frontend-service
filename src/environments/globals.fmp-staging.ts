@@ -126,9 +126,7 @@ export const config = {
     "faviconPath": "./assets/B2B_favicon.ico",
     "frameContractTabEnabled": true,
     "fundingDisclaimer": {
-        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
-        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
-        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+        "en": "Copyright © 2024 Kolayam Limited"
     },
     "hideContactInformationInCompanyDetails": true,
     "hideLogAnalytics": true,
