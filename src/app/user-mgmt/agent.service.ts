@@ -13,7 +13,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ResponseContentType, Http, RequestOptions, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
@@ -27,12 +27,12 @@ export class AgentService {
     BUYING_AGENT = 'BUYING_AGENT';
     private url = myGlobals.agent_mgmt_endpoint;
     token = 'Bearer ' + this.cookieService.get("bearer_token");
-    basic_header = new Headers({ 'Content-Type': 'application/json', 'Authorization': this.token });
+    basic_header = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': this.token });
 
 
     constructor(
         private unitService: UnitService,
-        private http: Http,
+        private http: HttpClient,
         private cookieService: CookieService
     ) {
     }
@@ -42,7 +42,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(sellingAgent), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -51,7 +50,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(sellingAgent), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -60,7 +58,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(buyingAgent), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -69,7 +66,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(buyingAgent), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -82,7 +78,6 @@ export class AgentService {
         return this.http
             .get(url, { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -91,7 +86,6 @@ export class AgentService {
         return this.http
             .get(url, { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -100,7 +94,6 @@ export class AgentService {
         return this.http
             .get(url, { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -113,7 +106,6 @@ export class AgentService {
         return this.http
             .get(url, { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -122,7 +114,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -131,7 +122,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(deactivateSellingAgent), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -140,7 +130,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(sellingAgentData), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -149,7 +138,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify(buyingAgentData), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -162,7 +150,6 @@ export class AgentService {
         return this.http
             .post(url, {}, { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -171,7 +158,6 @@ export class AgentService {
         return this.http
             .post(url, JSON.stringify({ id: agentID, agentType: agentType }), { headers: this.basic_header })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 

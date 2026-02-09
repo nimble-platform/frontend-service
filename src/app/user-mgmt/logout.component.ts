@@ -24,7 +24,7 @@ import { CategoryService } from '../catalogue/category/category.service';
 import { CredentialsService } from './credentials.service';
 import { CatalogueService } from '../catalogue/catalogue.service';
 import * as constants from "../common/constants";
-import { Headers, Http } from "@angular/http";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as myGlobals from "../globals";
 import * as moment from "moment";
 import { ShoppingCartDataService } from '../bpe/shopping-cart/shopping-cart-data-service';
@@ -51,7 +51,7 @@ export class LogoutComponent implements OnInit {
         private catalogueService: CatalogueService,
         private shoppingCartDataService: ShoppingCartDataService,
         private credentialsService: CredentialsService,
-        private http: Http
+        private http: HttpClient
     ) { }
 
     ngOnInit() {
@@ -72,7 +72,7 @@ export class LogoutComponent implements OnInit {
 
         // if rocket chat enabled
 
-        let headers = new Headers({ 'Content-Type': 'application/json', 'X-Auth-Token': this.cookieService.get(constants.chatToken), 'X-User-Id': this.cookieService.get(constants.chatUserID) });
+        let headers = new HttpHeaders({ 'Content-Type': 'application/json', 'X-Auth-Token': this.cookieService.get(constants.chatToken), 'X-User-Id': this.cookieService.get(constants.chatUserID) });
         const url = myGlobals.rocketChatEndpoint + '/api/v1/logout';
         this.http
             .post(url, JSON.stringify({}), { headers: headers })

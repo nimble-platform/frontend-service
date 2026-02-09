@@ -118,7 +118,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
                     partyIds.add(order.buyerCustomerParty.party.partyIdentification[0].id)
                     federationIds.add(order.buyerCustomerParty.party.federationInstanceID);
                 }
-                this.userService.getParties(Array.from(partyIds), Array.from(federationIds)).then(parties => {
+                this.userService.getParties(Array.from(partyIds) as string[], Array.from(federationIds) as string[]).then(parties => {
 
                     for (let party of parties) {
                         this.partyNames.set(party.partyIdentification[0].id, selectPartyName(party.partyName));
@@ -160,7 +160,7 @@ export class UnshippedOrdersTabComponent implements OnInit {
                 partyIds.add(product.goodsItem.item.manufacturerParty.partyIdentification[0].id);
                 federationIds.add(product.goodsItem.item.manufacturerParty.federationInstanceID);
             }
-            this.userService.getParties(Array.from(partyIds), Array.from(federationIds)).then(parties => {
+            this.userService.getParties(Array.from(partyIds) as string[], Array.from(federationIds) as string[]).then(parties => {
 
                 for (let party of parties) {
                     this.partyNames.set(party.partyIdentification[0].id, selectPartyName(party.partyName));

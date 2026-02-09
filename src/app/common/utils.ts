@@ -27,7 +27,7 @@ import {Text} from '../catalogue/model/publish/text';
 import {CatalogueLine} from '../catalogue/model/publish/catalogue-line';
 import {Amount} from '../catalogue/model/publish/amount';
 import {CookieService} from 'ng2-cookies';
-import {Headers} from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {PartyName} from '../catalogue/model/publish/party-name';
 import {maximumDecimalsForPrice, MONTHS} from './constants'
 
@@ -739,9 +739,9 @@ export function removeHjids(json): any {
     return ret;
 }
 
-export function getAuthorizedHeaders(cookieService: CookieService): Headers {
+export function getAuthorizedHeaders(cookieService: CookieService): HttpHeaders {
     const token = 'Bearer ' + cookieService.get('bearer_token');
-    return new Headers({'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
+    return new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': token});
 }
 
 export function findCategoryInArray(categoryArray: Category[], category: Category): number {

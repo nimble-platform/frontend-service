@@ -20,7 +20,7 @@ import { UnitService } from "./unit-service";
 import { isCustomProperty, quantityToString } from "./utils";
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
 import { ChildFormBase } from './validation/child-form-base';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import {periodValidator, stepValidator, ValidationService} from './validation/validators';
 import { ItemProperty } from '../catalogue/model/publish/item-property';
 import { PublishingPropertyService } from '../catalogue/publish/publishing-property.service';

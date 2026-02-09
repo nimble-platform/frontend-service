@@ -16,7 +16,7 @@
 
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -62,9 +62,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     imports: [
         CommonModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         ReactiveFormsModule,
-        NgbModule.forRoot(),
+        NgbModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

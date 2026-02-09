@@ -19,7 +19,7 @@ import { UnitService } from "./unit-service";
 import { amountToString } from "./utils";
 import { Amount } from "../catalogue/model/publish/amount";
 import { ChildFormBase } from './validation/child-form-base';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import { ValidationService } from './validation/validators';
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
 

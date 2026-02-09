@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from "../../globals"
 import { RequestForQuotation } from "../../catalogue/model/publish/request-for-quotation";
@@ -31,7 +31,7 @@ import { FEDERATION } from '../../catalogue/model/constants';
 @Injectable()
 export class DocumentService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private url = myGlobals.bpe_endpoint;
     private mapOfDocument = new Map();
 
@@ -39,7 +39,7 @@ export class DocumentService {
 
     private delegated = (FEDERATION() == "ON");
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private cookieService: CookieService) { }
 
     getCachedDocument(documentID: string, delegateId: string): Promise<any> {
@@ -66,7 +66,6 @@ export class DocumentService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -79,9 +78,8 @@ export class DocumentService {
             .patch(url, document, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
-                let resJson = res.json();
-                this.updateCachedDocument(documentId, resJson);
-                return resJson;
+                this.updateCachedDocument(documentId, res);
+                return res;
             })
             .catch(this.handleError);
     }
@@ -124,9 +122,9 @@ export class DocumentService {
         }
     }
 
-    private getAuthorizedHeaders(): Headers {
+    private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Authorization': token });
+        const headers = new HttpHeaders({ 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         return headers;
     }

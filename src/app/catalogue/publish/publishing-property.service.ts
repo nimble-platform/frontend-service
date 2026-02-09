@@ -14,18 +14,18 @@
 
 import { Injectable } from '@angular/core';
 import { getAuthorizedHeaders } from '../../common/utils';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ng2-cookies';
 import * as myGlobals from '../../globals';
 
 @Injectable()
 export class PublishingPropertyService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private baseUrl = myGlobals.catalogue_endpoint;
     private url = myGlobals.indexing_service_endpoint;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private cookieService: CookieService) {
     }
 
@@ -69,7 +69,7 @@ export class PublishingPropertyService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let logisticRelatedServices = res.json();
+                let logisticRelatedServices = res;
                 // add property to the map
                 this.logisticRelatedServices.set(taxonomyId, logisticRelatedServices);
                 return logisticRelatedServices;
@@ -80,10 +80,10 @@ export class PublishingPropertyService {
     private getProperty(uri: string) {
         let url = this.url + `/property?uri=${encodeURIComponent(uri)}`;
         return this.http
-            .get(url, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
+            .get(url, { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
             .toPromise()
             .then(res => {
-                let property = res.json();
+                let property = res;
                 // add property to the map
                 this.propertyMap.set(uri, property);
                 return property;
@@ -94,10 +94,10 @@ export class PublishingPropertyService {
     private getPropertyCodeList(uri: string) {
         const url = this.url + `/code/select?q=codedList:"${encodeURIComponent(uri)}"`;
         return this.http
-            .get(url, { headers: new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
+            .get(url, { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get("bearer_token") }) })
             .toPromise()
             .then(res => {
-                let propertyCodeList = res.json();
+                let propertyCodeList = res;
                 // add property code list to the map
                 this.propertyCodeListMap.set(uri, propertyCodeList);
                 return propertyCodeList;

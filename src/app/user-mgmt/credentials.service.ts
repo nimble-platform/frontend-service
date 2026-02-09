@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import { Credentials } from './model/credentials';
 import { ForgotPasswordCredentials } from './model/forgot-password-credentials';
@@ -26,17 +26,16 @@ import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 @Injectable()
 export class CredentialsService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private url = myGlobals.user_mgmt_endpoint;
     private log_url = myGlobals.logstash_endpoint;
-    constructor(private http: Http) { }
+    constructor(private http: HttpClient) { }
 
     post(credentials: Credentials): Promise<any> {
         const url = `${this.url}/login`;
         return this.http
-            .post(url, JSON.stringify(credentials), { headers: this.getHeaders(), withCredentials: true })
+            .post(url, credentials, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -64,7 +63,6 @@ export class CredentialsService {
         return this.http
             .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -73,7 +71,6 @@ export class CredentialsService {
         return this.http
             .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -82,7 +79,6 @@ export class CredentialsService {
         return this.http
             .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -91,7 +87,6 @@ export class CredentialsService {
         return this.http
             .get(url, { headers: this.getHeaders(), withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -108,8 +103,8 @@ export class CredentialsService {
         return Promise.reject(error.message || error);
     }
 
-    private getHeaders(): Headers {
-        let headers = new Headers();
+    private getHeaders(): HttpHeaders {
+        let headers = new HttpHeaders();
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;

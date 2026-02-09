@@ -14,7 +14,7 @@
 
 import { Injectable } from '@angular/core';
 import * as myGlobals from '../globals';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { getAuthorizedHeaders } from "../common/utils";
 import { CookieService } from "ng2-cookies";
 import { ServiceBridge } from "./ServiceBridge";
@@ -23,7 +23,7 @@ import { ServiceBridge } from "./ServiceBridge";
 export class UnitService {
     private baseUrl = myGlobals.catalogue_endpoint;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private cookieService: CookieService) {
         ServiceBridge.unitService = this;
     }
@@ -46,19 +46,16 @@ export class UnitService {
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
     }
 
     getAllUnitList(): Promise<any> {
         let url = this.baseUrl + '/unit-lists';
         return this.http
-            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .get<any[]>(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let unitLists = res.json();
+                let unitLists = res;
 
                 // create the map
                 this.map = new Map();
@@ -76,7 +73,7 @@ export class UnitService {
             .patch(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let result = res.json();
+                let result = res;
                 // update map
                 this.map.set(unitListId, result);
                 return result;
@@ -90,7 +87,7 @@ export class UnitService {
             .delete(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let result = res.json();
+                let result = res;
                 // update map
                 this.map.set(unitListId, result);
                 return result;
@@ -104,7 +101,7 @@ export class UnitService {
             .post(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let result = res.json();
+                let result = res;
                 // update map
                 this.map.set(unitListId, units);
                 return result;

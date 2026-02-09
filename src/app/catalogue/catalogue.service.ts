@@ -17,7 +17,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Headers, Http} from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {catalogue_endpoint, catalogue_endpoint_with_zuul, config, delegate_endpoint} from '../globals';
 import {Catalogue} from './model/publish/catalogue';
 import {UserService} from '../user-mgmt/user.service';
@@ -33,7 +33,7 @@ import {Clause} from './model/publish/clause';
 
 @Injectable()
 export class CatalogueService {
-    private headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
     private baseUrl = catalogue_endpoint;
 
     private delegate_url = delegate_endpoint;
@@ -45,7 +45,7 @@ export class CatalogueService {
     // To save a reference to the original version of the item being edited
     originalCatalogueLine: CatalogueLine;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private userService: UserService,
         private cookieService: CookieService) {
     }
@@ -72,7 +72,7 @@ export class CatalogueService {
                 .get(url, { headers: this.getAuthorizedHeaders() })
                 .toPromise()
                 .then(res => {
-                    this.catalogueResponse = res.json() as CataloguePaginationResponse;
+                    this.catalogueResponse = res as CataloguePaginationResponse;
                     let sorted = this.sortImages(res, "catalogueLines", true);
                     return sorted as CataloguePaginationResponse;
                     //return this.catalogueResponse;
@@ -102,7 +102,7 @@ export class CatalogueService {
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
-                return res.json() as Array<CatalogueLine>;
+                return res as Array<CatalogueLine>;
             })
             .catch(res => {
                 this.handleError(res.getBody());
@@ -120,7 +120,6 @@ export class CatalogueService {
             .then(res => {
                 let sorted = this.sortImages(res, null, false);
                 return sorted as CatalogueLine;
-                //return res.json() as CatalogueLine;
             })
             .catch(this.handleError);
     }
@@ -134,7 +133,6 @@ export class CatalogueService {
             .then(res => {
                 let sorted = this.sortImages(res, null, false);
                 return sorted as CatalogueLine;
-                //return res.json() as CatalogueLine;
             })
             .catch(this.handleError);
     }
@@ -167,7 +165,6 @@ export class CatalogueService {
             .then(res => {
                 let sorted = this.sortImages(res, null, true);
                 return sorted as CatalogueLine[];
-                //return res.json() as CatalogueLine[];
             })
             .catch(this.handleError);
     }
@@ -197,7 +194,6 @@ export class CatalogueService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -222,7 +218,6 @@ export class CatalogueService {
             .then(res => {
                 let sorted = this.sortImages(res, null, true);
                 return sorted as CatalogueLine[];
-                //return res.json() as CatalogueLine[];
             })
             .catch(this.handleError);
     }
@@ -251,7 +246,7 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
-    updateCatalogueLine(catalogueId: string, catalogueLineJson: string) {
+    updateCatalogueLine(catalogueId: string, catalogueLineJson: any) {
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline`;
         return this.http
             .put(url, catalogueLineJson, { headers: this.getAuthorizedHeaders() })
@@ -277,7 +272,7 @@ export class CatalogueService {
     postCatalogue(catalogue: Catalogue): Promise<Catalogue> {
         const url = this.baseUrl + `/catalogue/ubl`;
         return this.http
-            .post(url, JSON.stringify(catalogue), { headers: this.getAuthorizedHeaders() })
+            .post(url, catalogue, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .catch(this.handleError);
     }
@@ -470,7 +465,7 @@ export class CatalogueService {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline?lineId=${encodeURIComponent(lineId)}`;
         return this.http
-            .delete(url, { headers: new Headers({ "Authorization": token }) })
+            .delete(url, { headers: new HttpHeaders({ "Authorization": token }) })
             .toPromise()
             .catch(this.handleError);
     }
@@ -485,7 +480,7 @@ export class CatalogueService {
         ids = ids.substr(0, ids.length - 1);
         const url = this.baseUrl + `/catalogue/delete-images?ids=${ids}&partyId=${partyId}`;
         return this.http
-            .get(url, { headers: new Headers({ "Authorization": token }) })
+            .get(url, { headers: new HttpHeaders({ "Authorization": token }) })
             .toPromise()
             .catch(this.handleError);
     }
@@ -500,7 +495,7 @@ export class CatalogueService {
         ids = ids.substr(0, ids.length - 1);
         const url = this.baseUrl + `/catalogue/product-status?ids=${ids}&partyId=${partyId}&status=${productStatus}`;
         return this.http
-            .put(url, null,{ headers: new Headers({ "Authorization": token }) })
+            .put(url, null,{ headers: new HttpHeaders({ "Authorization": token }) })
             .toPromise()
             .catch(this.handleError);
     }
@@ -512,10 +507,10 @@ export class CatalogueService {
             url = this.delegate_url + `/catalogue/contract?catalogueUuids=${catalogueUuids.join()}`;
         }
         return this.http
-            .get(url, { headers: new Headers({ "Authorization": token }) })
+            .get(url, { headers: new HttpHeaders({ "Authorization": token }) })
             .toPromise()
             .then(res => {
-                return res.json() as Map<string,Clause[]>;
+                return res as Map<string,Clause[]>;
             })
             .catch(this.handleError);
     }
@@ -524,7 +519,7 @@ export class CatalogueService {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
         const url = this.baseUrl + `/catalogue/${catalogueUuid}/contract`;
         return this.http
-            .post(url,clauses, { headers: new Headers({ "Authorization": token }) })
+            .post(url,clauses, { headers: new HttpHeaders({ "Authorization": token }) })
             .toPromise()
             .catch(this.handleError);
     }
@@ -535,7 +530,7 @@ export class CatalogueService {
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
-                return res.json() as BinaryObject;
+                return res as BinaryObject;
             })
             .catch(this.handleError);
     }
@@ -560,7 +555,7 @@ export class CatalogueService {
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
-                return res.json() as BinaryObject[];
+                return res as BinaryObject[];
             })
             .catch(this.handleError);
     }
@@ -571,9 +566,6 @@ export class CatalogueService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
 
     }
@@ -584,9 +576,6 @@ export class CatalogueService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
 
     }
@@ -612,12 +601,12 @@ export class CatalogueService {
     getCatalogueIds(uuids: string[]): Promise<any> {
         let url = this.baseUrl + `/catalogue/ids?catalogueUuids=${encodeURIComponent(uuids.join(','))}`;
         return this.http
-            .get(url, { headers: this.getAuthorizedHeaders() })
+            .get<any[]>(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
             .then(res => {
                 // transform the result in the form of [{'uuid':'x', 'id':'y'}] to {'x':'y'}
                 const resp = {};
-                res.json().forEach(pair => resp[pair.uuid] = pair.id);
+                res.forEach(pair => resp[pair.uuid] = pair.id);
                 return resp;
             })
             .catch(this.handleError);
@@ -641,15 +630,12 @@ export class CatalogueService {
         return this.http
             .get(url, {})
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
     }
 
-    private getAuthorizedHeaders(): Headers {
+    private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new Headers({ 'Authorization': token });
+        const headers = new HttpHeaders({ 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         return headers;
     }
@@ -671,7 +657,7 @@ export class CatalogueService {
     }
 
     sortImages(data: any, start: string, array: boolean): any {
-        let dataTmp = data.json();
+        let dataTmp = data
         let dataTmpInner = dataTmp;
         if (dataTmp) {
             if (start)

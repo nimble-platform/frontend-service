@@ -15,7 +15,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Headers, Http} from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {class_label} from '../globals';
@@ -27,7 +27,7 @@ import {DEFAULT_LANGUAGE, FEDERATION, LANGUAGES} from '../catalogue/model/consta
 @Injectable()
 export class SimpleSearchService {
 
-    private headers = new Headers({'Content-Type': 'application/json'});
+    private headers = new HttpHeaders({'Content-Type': 'application/json'});
     private url = myGlobals.indexing_service_endpoint;
     private delegate_url = myGlobals.delegate_endpoint;
     private facetMin = myGlobals.facet_min;
@@ -51,7 +51,7 @@ export class SimpleSearchService {
     product_cat = myGlobals.product_cat;
     product_cat_mix = myGlobals.product_cat_mix;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
                 private cookieService: CookieService) {
     }
 
@@ -70,13 +70,12 @@ export class SimpleSearchService {
         searchObject.fq.push(fq);
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -88,13 +87,12 @@ export class SimpleSearchService {
         // const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
         return this.http
             .get(url, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -106,13 +104,12 @@ export class SimpleSearchService {
         // const url = `${this.url}/select?q=*:*&rows=0&wt=csv`;
         return this.http
             .get(url, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -173,13 +170,12 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -262,13 +258,12 @@ export class SimpleSearchService {
         searchObject.sort.push(sort);
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -285,13 +280,12 @@ export class SimpleSearchService {
         searchObject.fq = [];
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -336,14 +330,14 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .pipe(
                 map(response =>
-                    this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields, search_index)
+                    this.getSuggestionArray(response, query, queryRes.queryArr, queryRes.queryFields, search_index)
                 )
             );
     }
@@ -389,14 +383,14 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .pipe(
                 map(response =>
-                    this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields)
+                    this.getSuggestionArray(response, query, queryRes.queryArr, queryRes.queryFields)
                 )
             );
     }
@@ -426,14 +420,14 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .pipe(
                 map(response =>
-                    this.getSuggestionArray(response.json(), query, queryRes.queryArr, queryRes.queryFields)
+                    this.getSuggestionArray(response, query, queryRes.queryArr, queryRes.queryFields)
                 )
             );
     }
@@ -682,8 +676,8 @@ export class SimpleSearchService {
         return true;
     }
 
-    private getHeadersWithBasicAuthorization(): Headers {
-        const headers = new Headers();
+    private getHeadersWithBasicAuthorization(): HttpHeaders {
+        const headers = new HttpHeaders();
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         headers.append('Authorization', 'Basic ' + btoa('admin:*platform*'));
         return headers;
@@ -728,13 +722,12 @@ export class SimpleSearchService {
 
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -771,13 +764,12 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get('bearer_token')
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -816,13 +808,12 @@ export class SimpleSearchService {
         }
         return this.http
             .post(url, searchObject, {
-                headers: new Headers({
+                headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.cookieService.get("bearer_token")
                 })
             })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 }

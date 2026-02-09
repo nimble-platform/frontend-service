@@ -14,7 +14,6 @@
 
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -38,11 +37,10 @@ import {BusinessProcessCountModalComponent} from './modal/business-process-count
         AppCommonModule,
         FormsModule,
         HttpClientModule,
-        HttpModule,
         ReactiveFormsModule,
         AnalyticsRoutingModule,
         NgxChartsModule,
-        NgbModule.forRoot()
+        NgbModule
     ],
     declarations: [
         PlatformAnalyticsComponent,

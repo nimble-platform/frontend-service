@@ -691,7 +691,7 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
         // TODO: create a service to update multiple catalogue lines
         for (let catalogueLine of splicedCatalogueLines) {
             this.publishStatus.aggregatedSubmit();
-            this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, JSON.stringify(catalogueLine))
+            this.catalogueService.updateCatalogueLine(this.catalogueService.catalogueResponse.catalogueUuid, catalogueLine)
                 .then(() => this.onSuccessfulPublish(exitThePage, [catalogueLine]))
                 // .then(() => this.changePublishModeToCreate())
                 .catch(err => {

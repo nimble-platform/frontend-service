@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ResponseContentType, Http, RequestOptions, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ng2-cookies';
 import 'rxjs/add/operator/toPromise';
 import { Observable } from 'rxjs/Observable';
@@ -45,7 +45,7 @@ import {DocumentReference} from '../catalogue/model/publish/document-reference';
 @Injectable()
 export class UserService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private url = myGlobals.user_mgmt_endpoint;
 
     private delegate_url = myGlobals.delegate_endpoint;
@@ -64,7 +64,7 @@ export class UserService {
 
     constructor(
         private unitService: UnitService,
-        private http: Http,
+        private http: HttpClient,
         private cookieService: CookieService
     ) { }
 
@@ -83,7 +83,6 @@ export class UserService {
         return this.http
             .post(url, JSON.stringify(user), { headers: this.headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -101,9 +100,8 @@ export class UserService {
         const url = `${this.url}/register/company`;
         let headers = this.getAuthorizedHeaders();
         return this.http
-            .post(url, JSON.stringify(company), { headers: headers, withCredentials: true })
+            .post(url, company, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -128,7 +126,6 @@ export class UserService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -139,7 +136,6 @@ export class UserService {
         return this.http
             .delete(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -158,29 +154,23 @@ export class UserService {
         if(accountId)
             url += `&id=${accountId}`;
         let headers = this.getAuthorizedHeaders();
-        return this.http.post(url, {}, {headers: headers})
+        return this.http.post<AccountLink>(url, {}, {headers: headers})
             .toPromise()
             .then(resp => {
-                return resp.json();
+                return resp;
             })
     }
 
     deleteAccount(accountId:string):Promise<string> {
         let headers = this.getAuthorizedHeaders();
-        return this.http.delete(`${this.url}/account?id=${accountId}`,  {headers: headers})
+        return this.http.delete<string>(`${this.url}/account?id=${accountId}`,  {headers: headers})
             .toPromise()
-            .then(resp => {
-                return resp.text();
-            })
     }
 
     getAccountLoginLink(accountId:string):Promise<string> {
         let headers = this.getAuthorizedHeaders();
-        return this.http.get(`${this.url}/account/login-link?id=${accountId}`, {headers: headers})
+        return this.http.get<string>(`${this.url}/account/login-link?id=${accountId}`, {headers: headers})
             .toPromise()
-            .then(resp => {
-                return resp.text();
-            })
     }
 
     getParty(partyId: string, delegateId: string = FEDERATIONID(),includeRoles:boolean = false): Promise<Party> {
@@ -193,7 +183,7 @@ export class UserService {
             .get(url, { headers: headers })
             .toPromise()
             .then(res => {
-                let party: Party = res.json();
+                let party: Party = res as Party;
                 UBLModelUtils.removeHjidFieldsFromObject(party);
                 return Promise.resolve(party);
             })
@@ -221,12 +211,12 @@ export class UserService {
                 }
             }
         }
-        const headers_token = new Headers({ 'Content-Type': 'application/json' });
+        const headers_token = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http
-            .get(url, { headers: headers_token })
+            .get<Party[]>(url, { headers: headers_token })
             .toPromise()
             .then(res => {
-                let parties: Party[] = res.json();
+                let parties: Party[] = res;
                 for (let party of parties) {
                     UBLModelUtils.removeHjidFieldsFromObject(party);
                 }
@@ -245,10 +235,10 @@ export class UserService {
             }
             let headers = this.getAuthorizedHeaders();
             return this.http
-                .get(url, { headers: headers })
+                .get<Person>(url, { headers: headers })
                 .toPromise()
                 .then(res => {
-                    let user = res.json();
+                    let user = res;
                     if (this.mapOfUsers.has(delegateId)) {
                         this.mapOfUsers.get(delegateId).set(personId, user);
                     }
@@ -271,7 +261,7 @@ export class UserService {
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
             .then(res => {
-                this.userParty = res.json()[0];
+                this.userParty = res[0];
                 UBLModelUtils.removeHjidFieldsFromObject(this.userParty);
                 return Promise.resolve(this.userParty);
             })
@@ -305,7 +295,6 @@ export class UserService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(response => response.json())
             .catch(this.handleError)
     }
 
@@ -318,7 +307,7 @@ export class UserService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(response => response.json() as CompanySettings)
+            .then(response => response as CompanySettings)
             .catch(this.handleError)
     }
 
@@ -340,7 +329,7 @@ export class UserService {
             .toPromise()
             .then(res => {
                 let roles: UserRole[] = [];
-                const resultJson = res.json();
+                const resultJson = res;
                 for (var roleId in resultJson)
                     roles.push(new UserRole(roleId, resultJson[roleId]));
                 return Promise.resolve(roles);
@@ -355,7 +344,6 @@ export class UserService {
         return this.http
             .post(url, JSON.stringify(roleIDs), { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -368,7 +356,6 @@ export class UserService {
             return this.http
                 .put(url, settings, { headers: headers, withCredentials: true })
                 .toPromise()
-                .then(response => response.json())
                 .catch(this.handleError)
         });
     }
@@ -381,7 +368,6 @@ export class UserService {
         return this.http
             .put(url, settings, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(response => response.json())
             .catch(this.handleError)
     }
 
@@ -390,11 +376,10 @@ export class UserService {
             "VatCode": vat.replace(/ /g, "")
         };
         const url = `https://api.cloudmersive.com/validate/vat/lookup`;
-        const headers = new Headers({ 'Content-Type': 'application/json', 'Apikey': '28e63794-ef8a-4616-80bb-26fdd3709a19' });
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Apikey': '28e63794-ef8a-4616-80bb-26fdd3709a19' });
         return this.http
             .post(url, JSON.stringify(vat_body), { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -473,7 +458,7 @@ export class UserService {
         }
         const url = `${this.url}/company-settings/${partyId}/certificate?name=${name}&description=${description}&type=${type}&certID=${certID}&uri=${uri}&langId=${langId}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Authorization': token });
         const form_data: FormData = new FormData();
         form_data.append('file', file);
         return this.http
@@ -486,7 +471,7 @@ export class UserService {
     saveImage(file: File, isLogo: boolean, partyId: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/image?isLogo=${isLogo}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Authorization': token });
         const form_data: FormData = new FormData();
         form_data.append('file', file);
         return this.http
@@ -517,9 +502,6 @@ export class UserService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
     }
 
@@ -555,7 +537,7 @@ export class UserService {
             .get(url, { headers: headers })
             .toPromise()
             .then(res => {
-                return this.sanitizeNegotiationSettings(res.json());
+                return this.sanitizeNegotiationSettings(res as CompanyNegotiationSettings);
             }).then(settings => {
                 this.companyNegotiationSettings.set(partyId, settings);
                 return Promise.resolve(settings);
@@ -657,7 +639,7 @@ export class UserService {
     saveTermsAndConditions(file: File, partyId: string, certID?: string): Promise<void> {
         const url = `${this.url}/company-settings/${partyId}/termsAndConditions?id=${certID}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Authorization': token });
         const form_data: FormData = new FormData();
         form_data.append('file', file);
         return this.http
@@ -678,9 +660,6 @@ export class UserService {
         return this.http
             .get(url, { headers: headers, withCredentials: true })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
     }
 
@@ -694,9 +673,9 @@ export class UserService {
             .catch(this.handleError)
     }
 
-    private getAuthorizedHeaders(): Headers {
+    private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new HttpHeaders({ 'Accept': 'application/json', 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;

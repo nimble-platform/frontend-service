@@ -35,7 +35,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import 'zone.js';
 
-import { Headers, Http } from "@angular/http";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { selectValueOfTextObject } from "./common/utils";
 import { CallStatus } from "./common/call-status";
 import {DomSanitizer, Title} from '@angular/platform-browser';
@@ -90,7 +91,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     public confirmModalComponent: ConfirmModalComponent;
 
     constructor(
-        private http: Http,
+        private http: HttpClient,
         private cookieService: CookieService,
         private credentialsService: CredentialsService,
         private router: Router,
@@ -290,11 +291,11 @@ export class AppComponent implements OnInit, AfterViewInit {
             const url = myGlobals.user_mgmt_endpoint + `/federation/login`;
             this.submitCallStatus.submit();
             return this.http
-                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': myGlobals.frontendURL }), { headers: new Headers({ 'Content-Type': 'application/json' }) })
+                .post(url, JSON.stringify({ 'code': code, 'redirect_URL': myGlobals.frontendURL }), { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
                 .toPromise()
                 .then(res => {
                     this.submitCallStatus.callback(this.translate.instant("Login Successful"));
-                    this.response = res.json();
+                    this.response = res;
                     this.setCookiesForFederatedLogin();
 
                     if (catalogueId != null) {

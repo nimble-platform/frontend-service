@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import { CookieService } from 'ng2-cookies';
 import {BPDataService} from './bp-data-service';
@@ -29,7 +29,7 @@ import {FEDERATIONID} from '../../catalogue/model/constants';
 @Injectable()
 export class ContractService {
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
                 private bpDataService: BPDataService,
                 private bpeService: BPEService,
                 private catalogueService: CatalogueService,

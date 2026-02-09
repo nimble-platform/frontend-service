@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
@@ -24,14 +24,14 @@ import {DEFAULT_LANGUAGE} from '../catalogue/model/constants';
 @Injectable()
 export class AnalyticsService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private url_da = myGlobals.data_aggregation_endpoint;
     private url_bpe = `${myGlobals.bpe_endpoint}/statistics`;
     private url_trust = myGlobals.trust_service_endpoint;
     private url_identity = myGlobals.user_mgmt_endpoint;
 
     constructor(
-        private http: Http,
+        private http: HttpClient,
         private cookieService: CookieService
     ) {
     }
@@ -41,7 +41,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -50,7 +49,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -59,7 +57,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -69,7 +66,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -78,7 +74,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -87,7 +82,6 @@ export class AnalyticsService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -99,7 +93,7 @@ export class AnalyticsService {
             .toPromise()
             .then(res => {
                 // the server returns empty text if there is no global trust policy
-                return res.text() ? res.json(): res
+                return res
             })
             .catch(this.handleError);
     }
@@ -128,11 +122,10 @@ export class AnalyticsService {
         var url = `${this.url_identity}/admin/unverified_companies?page=${page}&sortBy=${sortBy}&orderBy=${orderBy}`;
         url += "&size=99999";
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': token });
         return this.http
             .get(url, { headers: headers_token, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -141,22 +134,20 @@ export class AnalyticsService {
         if (size)
             url += "&size=" + size;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': token });
         return this.http
             .get(url, { headers: headers_token, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
     getAllParties(page: number): Promise<any> {
         const url = `${this.url_identity}/parties/all?page=${page}`;
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers_token = new Headers({ 'Content-Type': 'application/json', 'Authorization': token });
+        const headers_token = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': token });
         return this.http
             .get(url, { headers: headers_token, withCredentials: true })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -194,9 +185,9 @@ export class AnalyticsService {
             .catch(this.handleError);
     }
 
-    private getAuthorizedHeaders(): Headers {
+    private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new HttpHeaders({ 'Accept': 'application/json', 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;

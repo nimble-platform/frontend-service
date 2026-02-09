@@ -42,7 +42,7 @@ import {Delivery} from '../../../catalogue/model/publish/delivery';
 import {QuotationWrapper} from './quotation-wrapper';
 import {AbstractControl, FormControl, Validators} from '@angular/forms';
 import {ChildFormBase} from '../../../common/validation/child-form-base';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import {stepValidator, ValidationService} from '../../../common/validation/validators';
 import {DocumentReference} from '../../../catalogue/model/publish/document-reference';
 

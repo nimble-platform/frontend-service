@@ -69,7 +69,7 @@ export class FactorsComponent implements OnInit {
             });
             this.service.getFactors()
                 .then((items) => {
-                    this.items = this.parseTree([new TreeviewItem(items)]);
+                    this.items = this.parseTree([new TreeviewItem(items as any)]);
                     this.countHighlightedFactors(this.items);
                 });
         });

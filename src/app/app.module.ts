@@ -20,7 +20,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import {CommonModule, DatePipe} from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
@@ -78,12 +77,11 @@ export function HttpLoaderFactory(http: HttpClient) {
         CommonModule,
         BrowserAnimationsModule,
         FormsModule,
-        HttpModule,
         HttpClientModule,
         AppRoutingModule,
         ReactiveFormsModule,
         AppCommonModule,
-        NgbModule.forRoot(),
+        NgbModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

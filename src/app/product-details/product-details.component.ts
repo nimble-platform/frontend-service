@@ -52,7 +52,7 @@ import {SearchContextService} from '../simple-search/search-context.service';
 import {UnshippedOrdersTransitionService} from '../bpe/unshipped-order-transition-service';
 import {Price} from '../catalogue/model/publish/price';
 import {AbstractControl, FormControl, Validators} from '@angular/forms';
-import {ValidatorFn} from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import {stepValidator, ValidationService} from '../common/validation/validators';
 import {AmountUI} from '../catalogue/model/ui/amount-ui';
 

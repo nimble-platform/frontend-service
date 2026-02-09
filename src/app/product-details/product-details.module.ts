@@ -18,7 +18,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AppCommonModule } from "../common/common.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
+import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ProductDetailsComponent } from "./product-details.component";
 import { ProductDetailsRoutingModule } from "./product-details-routing.module";
@@ -43,11 +43,11 @@ import { QuantityPriceOptionComponent } from './price-option/quantity-price-opti
         CommonModule,
         AppCommonModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         ReactiveFormsModule,
         ProductDetailsRoutingModule,
         UserMgmtModule,
-        NgbModule.forRoot(),
+        NgbModule,
         PieChartModule
     ],
     declarations: [

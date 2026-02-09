@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Headers, Http } from "@angular/http";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from "ng2-cookies";
 import { ProjectListType } from './model/projectlist-type';
 import { ResourceListType } from './model/resourcelist-type';
@@ -25,11 +25,11 @@ import { collaboration_endpoint } from "../../globals";
 
 @Injectable()
 export class CollaborationService {
-    private headers = new Headers({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json' });
     private baseUrl = collaboration_endpoint;
 
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private userService: UserService,
         private cookieService: CookieService) {
     }
@@ -43,7 +43,7 @@ export class CollaborationService {
             .post(url, params)
             .toPromise()
             .then(res => {
-                return res.json() as ProjectListType;
+                return res as ProjectListType;
             })
             .catch(this.handleError);
     }
@@ -53,7 +53,7 @@ export class CollaborationService {
         const params = { token: strtoken, projectName: prjName, url: null };
 
         return this.http
-            .post(url, params)
+            .post(url, params, { observe: 'response' })
             .toPromise()
             .then(res => {
                 return res.statusText as string;
@@ -69,7 +69,7 @@ export class CollaborationService {
             .post(url, params)
             .toPromise()
             .then(res => {
-                return res.json() as ResourceListType;
+                return res as ResourceListType;
             })
             .catch(this.handleError);
     }
@@ -82,7 +82,7 @@ export class CollaborationService {
             .post(url, params)
             .toPromise()
             .then(res => {
-                return res.json() as ResourceType;
+                return res as ResourceType;
             })
             .catch(this.handleError);
     }
@@ -95,7 +95,7 @@ export class CollaborationService {
             .post(url, params)
             .toPromise()
             .then(res => {
-                return res.json() as ResourceListType;
+                return res as ResourceListType;
             })
             .catch(this.handleError);
     }
@@ -105,7 +105,7 @@ export class CollaborationService {
         const params = { token: strtoken, resource: res };
 
         return this.http
-            .post(url, params)
+            .post(url, params, { observe: 'response' })
             .toPromise()
             .then(res => {
                 return res.statusText as string;

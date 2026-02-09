@@ -36,7 +36,7 @@ import { LegislationDetailsComponent } from './details/legislation-details.compo
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        NgbModule.forRoot()
+        NgbModule
     ],
     declarations: [
         LegislationComponent,

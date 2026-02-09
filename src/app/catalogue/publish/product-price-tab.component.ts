@@ -28,7 +28,7 @@ import { Party } from "../model/publish/party";
 import * as myGlobals from '../../globals';
 import { FormControl, Validators } from '@angular/forms';
 import { ChildFormBase } from '../../common/validation/child-form-base';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import { priceValidator } from '../../common/validation/validators';
 import { FIELD_NAME_PRODUCT_PRICE_AMOUNT, FIELD_NAME_PRODUCT_PRICE_BASE_QUANTITY } from '../../common/constants';
 import {Quantity} from '../model/publish/quantity';

@@ -504,7 +504,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
         this.submitted = true;
 
         this.publishStatus.submit();
-        this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid, JSON.stringify(catalogueLine))
+        this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid, catalogueLine)
             .then(() => this.onSuccessfulPublish(exitThePage, catalogueLine))
             .then(() => this.changePublishModeToCreate())
             .catch(err => {

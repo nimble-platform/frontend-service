@@ -146,7 +146,7 @@ export class FrameContractTabComponent implements OnInit {
             }
         }
 
-        return Array.from(correspondingPartyIds);
+        return Array.from(correspondingPartyIds) as string[];
     }
 
     getCorrespondingPartyFederationIds(frameContracts: DigitalAgreement[]): string[] {
@@ -161,7 +161,7 @@ export class FrameContractTabComponent implements OnInit {
             }
         }
 
-        return Array.from(correspondingPartyFederationIds);
+        return Array.from(correspondingPartyFederationIds) as string[];
     }
 
     getCorrespondingPartyName(frameContract: DigitalAgreement): string {

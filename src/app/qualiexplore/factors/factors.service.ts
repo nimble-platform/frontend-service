@@ -16,20 +16,20 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 
 export class FactorsService {
     private _factorsUrl = 'https://gist.githubusercontent.com/shantanoo-desai/5163182aba74baf7ec04d7ac426bd944/raw/Data.json';
 
-    constructor(private http: Http) { }
+    constructor(private http: HttpClient) { }
 
     async getFactors() {
         try {
             const response = await this.http.get(this._factorsUrl)
                 .toPromise();
-            return response.json();
+            return response;
         } catch (err) {
             return console.log(err);
         }

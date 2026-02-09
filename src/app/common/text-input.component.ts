@@ -18,7 +18,7 @@ import {Component, EventEmitter, OnInit, Input, Output, OnDestroy} from '@angula
 import { LANGUAGES } from '../catalogue/model/constants';
 import { ChildFormBase } from './validation/child-form-base';
 import { AbstractControl, FormControl, Validators } from '@angular/forms';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import { spaceValidator, ValidationService } from './validation/validators';
 import {sanitizeLink} from './utils';
 

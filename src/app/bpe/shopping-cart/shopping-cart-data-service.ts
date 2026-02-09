@@ -17,7 +17,7 @@ import { Catalogue } from '../../catalogue/model/publish/catalogue';
 import { CookieService } from 'ng2-cookies';
 import { getAuthorizedHeaders } from '../../common/utils';
 import * as myGlobals from '../../globals';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { CatalogueLine } from '../../catalogue/model/publish/catalogue-line';
 import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
 import { CategoryService } from '../../catalogue/category/category.service';
@@ -35,7 +35,7 @@ export class ShoppingCartDataService {
 
     constructor(private cookieService: CookieService,
         private categoryService: CategoryService,
-        private http: Http) {
+        private http: HttpClient) {
         this.fetchServiceRootCategories();
     }
 
@@ -59,7 +59,7 @@ export class ShoppingCartDataService {
             .post(url, null, { headers: headers })
             .toPromise()
             .then(res => {
-                this.cartCatalogue = res.json();
+                this.cartCatalogue = res as Catalogue;
                 return Promise.resolve(this.cartCatalogue);
             })
             .catch(error => {
@@ -103,7 +103,7 @@ export class ShoppingCartDataService {
             .post(url, null, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                this.cartCatalogue = res.json();
+                this.cartCatalogue = res as Catalogue;
                 return Promise.resolve(this.cartCatalogue);
             })
             .catch(error => {
@@ -121,10 +121,10 @@ export class ShoppingCartDataService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                if (res.text() === '') {
+                if (res === '') {
                     return this.createShoppingCart();
                 } else {
-                    this.cartCatalogue = res.json();
+                    this.cartCatalogue = res as Catalogue;
                     return this.cartCatalogue;
                 }
             })

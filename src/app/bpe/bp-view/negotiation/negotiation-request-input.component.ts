@@ -19,7 +19,7 @@ import { Quantity } from "../../../catalogue/model/publish/quantity";
 import { UnitService } from "../../../common/unit-service";
 import { ChildFormBase } from '../../../common/validation/child-form-base';
 import { FormControl} from '@angular/forms';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { ValidatorFn } from "@angular/forms";
 import { periodValidator, ValidationService } from '../../../common/validation/validators';
 import { PeriodRange } from '../../../user-mgmt/model/period-range';
 const FIELD_NAME_NEGOTIATION_REQUEST_QUANTITY_INPUT_VALUE = 'quantity_value';

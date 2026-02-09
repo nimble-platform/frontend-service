@@ -2,7 +2,7 @@ import {Demand} from '../catalogue/model/publish/demand';
 import {Injectable} from '@angular/core';
 import {catalogue_endpoint} from '../globals';
 import {getAuthorizedHeaders} from '../common/utils';
-import {Http} from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import {UserService} from '../user-mgmt/user.service';
 import {CookieService} from 'ng2-cookies';
 import {DemandPaginationResponse} from './model/demand-pagination-response';
@@ -18,7 +18,7 @@ export class DemandService {
     // demand last seen response for the active user
     public demandLastSeenResponse:DemandLastSeenResponse = null;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
                 private userService: UserService,
                 public datePipe: DatePipe,
                 private cookieService: CookieService) {
@@ -71,7 +71,7 @@ export class DemandService {
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
-            .then(res => new DemandPaginationResponse(res.json()))
+            .then(res => new DemandPaginationResponse(res))
             .catch(this.handleError);
     }
 
@@ -136,10 +136,10 @@ export class DemandService {
         let operator = conditionExist ? '&' : "?";
         url += `${operator}dueDate=${this.datePipe.transform(new Date(),'yyyy-MM-dd')}`;
         return this.http
-            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .get<any[]>(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                const resultJson: any[] = res.json();
+                const resultJson: any[] = res;
                 return resultJson.map(facetResponse => new Facet(facetResponse));
             })
             .catch(this.handleError);
@@ -181,7 +181,7 @@ export class DemandService {
             .get(catalogue_endpoint + `/demands/last-seen/response?dueDate=${this.datePipe.transform(new Date(),'yyyy-MM-dd')}`,  { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                this.demandLastSeenResponse = new DemandLastSeenResponse(res.json());
+                this.demandLastSeenResponse = new DemandLastSeenResponse(res);
             })
             .catch(this.handleError);
     }

@@ -17,7 +17,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Headers, Http} from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import * as myGlobals from '../globals';
 import {ProcessInstance} from './model/process-instance';
@@ -44,14 +44,14 @@ import {PlatformCompanyProductCount} from './model/platform-company-product-coun
 @Injectable()
 export class BPEService {
 
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     private url = myGlobals.bpe_endpoint;
     private certificateOfOriginUrl = myGlobals.certificate_of_origin_endpoint;
     private delegate_url = myGlobals.delegate_endpoint;
 
     private delegated = (FEDERATION() == "ON");
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private bpDataService: BPDataService,
         private cookieService: CookieService) { }
 
@@ -99,8 +99,8 @@ export class BPEService {
                     this.notifyAgentService(res['_body'], document)
                 }
                 if (myGlobals.debug)
-                    console.log(res.json());
-                return res.json();
+                    console.log(res);
+                return res;
             })
             .catch(this.handleError);
     }
@@ -117,7 +117,7 @@ export class BPEService {
                 .then(res => {
                     // Agent service init call
                     if (myGlobals.debug)
-                        console.log(res.json());
+                        console.log(res);
                 })
                 .catch(this.handleError);
         }
@@ -129,7 +129,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -139,7 +138,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -152,7 +150,6 @@ export class BPEService {
         return this.http
             .post(url, null, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -165,7 +162,6 @@ export class BPEService {
         return this.http
             .post(url, cancellationReason, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -178,7 +174,6 @@ export class BPEService {
         return this.http
             .post(url, null, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -190,7 +185,6 @@ export class BPEService {
         return this.http
             .patch(url, content, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -199,7 +193,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -211,7 +204,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -230,11 +222,10 @@ export class BPEService {
             url = `${this.delegate_url}/statistics/total-number/business-process/action-required?archived=false&role=buyer&partyId=${partyId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers.append("federationId", FEDERATIONID());
+        headers = headers.append("federationId", FEDERATIONID());
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -244,11 +235,10 @@ export class BPEService {
             url = `${this.delegate_url}/statistics/total-number/business-process/action-required?archived=false&role=seller&partyId=${partyId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers.append("federationId", FEDERATIONID());
+        headers = headers.append("federationId", FEDERATIONID());
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -257,7 +247,7 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.headers })
             .toPromise()
-            .then(res => res.json()[0])
+            .then(res => res[0])
             .catch(this.handleError);
     }
 
@@ -271,7 +261,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -283,7 +272,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -297,12 +285,11 @@ export class BPEService {
             url = `${this.delegate_url}/process-instance-groups/filters${urlPart}&delegateId=${delegateId}`;
         }
 
-        headers.append("federationId", FEDERATIONID())
+        headers = headers.append("federationId", FEDERATIONID())
 
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -314,12 +301,11 @@ export class BPEService {
         }
 
         let headers = this.getAuthorizedHeaders();
-        headers.append("federationId", FEDERATIONID())
+        headers = headers.append("federationId", FEDERATIONID())
 
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -336,7 +322,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -370,7 +355,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -386,7 +370,6 @@ export class BPEService {
         return this.http
             .post(url, null, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -399,7 +382,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -409,7 +391,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -419,7 +400,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -431,7 +411,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -444,7 +423,6 @@ export class BPEService {
         return this.http
             .patch(url, null, { headers: headers})
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -457,7 +435,6 @@ export class BPEService {
         return this.http
             .delete(url, { headers: headers})
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -470,7 +447,6 @@ export class BPEService {
         return this.http
             .post(url, null, { headers: headers})
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -483,7 +459,6 @@ export class BPEService {
         return this.http
             .post(url, null, { headers: headers})
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -495,7 +470,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -550,12 +524,11 @@ export class BPEService {
             url += `&tradingTerm=${tradingTerm}`;
         }
 
-        headers.append("initiatorFederationId", buyerFederationId);
+        headers = headers.append("initiatorFederationId", buyerFederationId);
 
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -568,7 +541,7 @@ export class BPEService {
         return this.http
             .get(url, { headers })
             .toPromise()
-            .then(res => res.json() || null)
+            .then(res => res || null)
             .catch(() => null);
     }
 
@@ -582,7 +555,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(res => {
                 if (res.status == 400) {
                     // no ratings
@@ -603,7 +575,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(res => {
                 if (res.status == 400) {
                     // no ratings
@@ -630,7 +601,7 @@ export class BPEService {
 
     ratingExists(processInstanceId: string, partyId: string, federationId: string, delegateId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token, "federationId": federationId });
+        let headers = new HttpHeaders({ 'Accept': 'text/plain', 'Authorization': token, "federationId": federationId });
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;
         if(defaultLanguage != "en"){
@@ -644,13 +615,12 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
     getProcessInstanceIdForDocument(documentId: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new Headers({ 'Accept': 'text/plain', 'Authorization': token });
+        let headers = new HttpHeaders({ 'Accept': 'text/plain', 'Authorization': token });
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;
         if(defaultLanguage != "en"){
@@ -661,7 +631,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -680,12 +649,11 @@ export class BPEService {
             url = `${this.delegate_url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}&delegateId=${responderFederationId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers.append("initiatorFederationId", initiatorFederationId);
-        headers.append("responderFederationId", responderFederationId);
+        headers = headers.append("initiatorFederationId", initiatorFederationId);
+        headers = headers.append("responderFederationId", responderFederationId);
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -697,7 +665,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -707,11 +674,10 @@ export class BPEService {
             url = `${this.delegate_url}/contract/digital-agreement/all?partyId=${partyId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers.append("federationId", FEDERATIONID());
+        headers = headers.append("federationId", FEDERATIONID());
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -723,7 +689,6 @@ export class BPEService {
         return this.http
             .delete(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.text())
             .catch(this.handleError);
     }
 
@@ -733,11 +698,10 @@ export class BPEService {
             url = `${this.delegate_url}/collaboration-groups/all-finished?partyId=${partyId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers.append("federationId", federationId);
+        headers = headers.append("federationId", federationId);
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -749,7 +713,6 @@ export class BPEService {
         return this.http
             .get(url, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -761,7 +724,6 @@ export class BPEService {
         return this.http
             .post(url, collaborationGroupMetadata, { headers: this.getAuthorizedHeaders() })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
     exportTransactions(partyId: string, userId: string, direction: string, archived: boolean): Promise<any> {
@@ -825,11 +787,10 @@ export class BPEService {
     public getExpectedOrders(partyId: string): Promise<string[]> {
         const url = `${this.url}/documents/expected-orders?partyId=${partyId}`;
         let headers = this.getAuthorizedHeaders()
-        headers.append("federationId", FEDERATIONID())
+        headers = headers.append("federationId", FEDERATIONID())
         return this.http
             .get(url, { headers: headers })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -838,13 +799,13 @@ export class BPEService {
         return this.http.post(`${this.url}/payment-intent/${orderId}`, {}, {headers: headers})
             .toPromise()
             .then(resp => {
-                return resp.text();
+                return resp.toString();
             })
     }
 
-    private getAuthorizedHeaders(): Headers {
+    private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new Headers({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new HttpHeaders({ 'Accept': 'application/json', 'Authorization': token });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;

@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 
@@ -24,13 +24,13 @@ export class FiltersService {
 
     private _filtersUrl = 'https://gist.githubusercontent.com/shantanoo-desai/02fcc931da4aed4db3eac7d53dd5f5c4/raw/Filters.json';
 
-    constructor(private http: Http) { }
+    constructor(private http: HttpClient) { }
 
     async getQuestions() {
         try {
             const response = await this.http.get(this._filtersUrl)
                 .toPromise();
-            return response.json();
+            return response;
         } catch (err) {
             console.log(err);
         }

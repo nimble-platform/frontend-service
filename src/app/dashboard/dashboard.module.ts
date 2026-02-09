@@ -16,7 +16,7 @@
 
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from "@angular/common";
 import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -39,7 +39,7 @@ import {DemandModule} from '../demand/demand.module';
         CommonModule,
         AppCommonModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         ReactiveFormsModule,
         DashboardRoutingModule,
         CatalogueModule,
@@ -47,7 +47,7 @@ import {DemandModule} from '../demand/demand.module';
         CollaborationModule,
         BPEModule,
         DemandModule,
-        NgbModule.forRoot()
+        NgbModule
     ],
     declarations: [
         DashboardThreadedComponent,

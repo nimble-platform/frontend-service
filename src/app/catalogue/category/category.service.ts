@@ -17,7 +17,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import {Category} from '../../common/model/category/category';
 import * as myGlobals from '../../globals';
 import {Code} from '../model/publish/code';
@@ -40,7 +40,7 @@ export class CategoryService {
     selectedCategories: Category[] = [];
     categoryFilter = myGlobals.config.categoryFilter;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private userService: UserService,
         private cookieService: CookieService) {
     }
@@ -51,7 +51,7 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json() as Category[];
+                return res as Category[];
             })
             .catch(this.handleError);
     }
@@ -82,7 +82,7 @@ export class CategoryService {
                 .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
                 .toPromise()
                 .then(res => {
-                    categories = categories.concat(res.json() as Category[]);
+                    categories = categories.concat(res as Category[]);
                     return categories;
                 })
                 .catch(this.handleError);
@@ -110,7 +110,6 @@ export class CategoryService {
         return this.http
             .post(url, searchObject, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
-            .then(res => res.json())
             .catch(this.handleError);
     }
 
@@ -120,7 +119,7 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json()[0] as Category;
+                return res[0] as Category;
             })
             .catch(this.handleError);
     }
@@ -151,9 +150,6 @@ export class CategoryService {
         return this.http
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
-            .then(res => {
-                return res.json();
-            })
             .catch(this.handleError);
     }
 
@@ -163,7 +159,7 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json() as ParentCategories;
+                return res as ParentCategories;
             })
             .catch(this.handleError);
     }
@@ -183,7 +179,7 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json() as Category;
+                return res as Category;
             })
             .catch(this.handleError);
     }
@@ -194,7 +190,7 @@ export class CategoryService {
             .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                return res.json() as Category;
+                return res as Category;
             })
             .catch(this.handleError);
     }
@@ -202,10 +198,10 @@ export class CategoryService {
     getAvailableTaxonomies() {
         const url = `${this.baseUrl}/taxonomies/id`;
         return this.http
-            .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .get<any[]>(url, { headers: getAuthorizedHeaders(this.cookieService) })
             .toPromise()
             .then(res => {
-                let availableTaxonomies = res.json();
+                let availableTaxonomies = res;
                 // consider only the taxonomies specified in the globals.categoryFilter
                 return availableTaxonomies.filter(taxonomyId => this.categoryFilter[taxonomyId]);
             })
@@ -223,10 +219,10 @@ export class CategoryService {
         for (let taxonomyId of availableTaxonomies) {
             let url = `${this.baseUrl}/taxonomies/${taxonomyId}/service-categories`;
             rootServiceCategoryPromises.push(this.http
-                .get(url, { headers: getAuthorizedHeaders(this.cookieService) })
+                .get<any[]>(url, { headers: getAuthorizedHeaders(this.cookieService) })
                 .toPromise()
                 .then(res => {
-                    result.push(...res.json());
+                    result.push(...res);
                 }));
         }
         return Promise.all([...rootServiceCategoryPromises]).then(() => {

@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as myGlobals from '../globals';
 import { CookieService } from 'ng2-cookies';
 
@@ -26,7 +26,7 @@ export class TnTService {
     private tntMasterDataEndpoint = myGlobals.tntMasterDataEndpoint;
     private iotBlockchainEndpoint = myGlobals.tntIoTBlockchainEndpoint;
 
-    constructor(private http: Http,
+    constructor(private http: HttpClient,
         private cookieService: CookieService) { }
 
     /**
@@ -35,13 +35,12 @@ export class TnTService {
      */
     async getMetaData(epcCode: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
-        let header = new Headers();
+        let header = new HttpHeaders();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({ headers: header });
-        const resp = await this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, reqOptions)
+        const resp = await this.http.get(`${this.tntEndpoint}/simpleTracking/${epcCode}`, { headers: header })
             .toPromise();
-        return resp.json();
+        return resp;
     }
 
     /**
@@ -50,13 +49,12 @@ export class TnTService {
      */
     async getTrackingInfo(code: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
-        let header = new Headers();
+        let header = new HttpHeaders();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({ headers: header });
-        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
+        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, { headers: header })
             .toPromise();
-        return resp.json()
+        return resp
 
     }
 
@@ -66,13 +64,12 @@ export class TnTService {
      */
     async getGateInfo(code: string): Promise<any> {
         const token = 'Bearer ' + this.cookieService.get('bearer_token');
-        let header = new Headers();
+        let header = new HttpHeaders();
         header.append('Content-Type', 'application/json');
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({ headers: header });
-        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, reqOptions)
+        const resp = await this.http.get(`${this.tntMasterDataEndpoint}${code}`, { headers: header })
             .toPromise();
-        return resp.json();
+        return resp;
     }
 
     /**
@@ -81,12 +78,11 @@ export class TnTService {
      */
     async verifyOnBC(code: any): Promise<string> {
         let token = 'Bearer' + this.cookieService.get('bearer_token');
-        let header = new Headers();
+        let header = new HttpHeaders();
         header.append('Authorization', token);
-        let reqOptions = new RequestOptions({ headers: header });
-        const resp = await this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, reqOptions)
+        const resp = await this.http.post(`${this.tntEndpoint}/verifyEventsInBlockChain`, code, { headers: header })
             .toPromise();
-        return resp.text();
+        return resp as string;
     }
 
     /**
@@ -97,6 +93,6 @@ export class TnTService {
         let verifyQuery = `?productID=${input['productID']}&from=${input['from']}&to=${input['to']}`;
         const resp = await this.http.get(`${this.iotBlockchainEndpoint}${verifyQuery}`)
             .toPromise();
-        return resp.json();
+        return resp;
     }
 }

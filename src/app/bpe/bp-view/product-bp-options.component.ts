@@ -36,7 +36,7 @@ import { CookieService } from "ng2-cookies";
 import { ThreadEventMetadata } from '../../catalogue/model/publish/thread-event-metadata';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as myGlobals from '../../globals';
-import { Headers, Http } from "@angular/http";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UBLModelUtils } from '../../catalogue/model/ubl-model-utils';
 import { Item } from "../../catalogue/model/publish/item";
@@ -105,7 +105,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         private router: Router,
         private cookieService: CookieService,
         private renderer: Renderer2,
-        private http: Http,
+        private http: HttpClient,
         private modalService: NgbModal,
         public appComponent: AppComponent) {
         this.renderer.setStyle(document.body, "background-image", "none");
@@ -130,14 +130,14 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
             createChannelRequest.initiatingPartyID = this.processMetadata.buyerPartyId;
         }
 
-        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         const url = `${this.identityEndpoint}/chat/createChannel`;
         this.http
             .post(url, JSON.stringify(createChannelRequest), { headers: headers })
             .toPromise()
             .then(res => {
-                let channelDetails = res.json();
-                this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails.channelName);
+                let channelDetails = res;
+                this.chatURL = this.sanitizer.bypassSecurityTrustResourceUrl(myGlobals.rocketChatEndpoint + "/channel/" + channelDetails["channelName"]);
                 this.appComponent.chatURL = this.chatURL;
                 this.appComponent.chatVisible = true;
                 //this.modalService.open(content, {})

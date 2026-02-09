@@ -16,7 +16,7 @@
 
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from "@angular/common";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CollaborationViewComponent } from "./collaboration-view.component";
@@ -28,9 +28,9 @@ import { UserMgmtModule } from "../../user-mgmt/user-mgmt.module";
         AppCommonModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpModule,
+        HttpClientModule,
         UserMgmtModule,
-        NgbModule.forRoot()
+        NgbModule
     ],
     declarations: [
         CollaborationViewComponent
