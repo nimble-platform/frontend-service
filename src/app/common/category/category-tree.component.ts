@@ -63,7 +63,7 @@ export class CategoryTreeComponent implements OnInit {
     }
 
     @Input() set parentCategories(parentCategories: ParentCategories) {
-        if (this.category.taxonomyId == "eClass" || (this.category.taxonomyId == "FurnitureOntology" && this.numberOfSteps > -1)) {
+        if (this.category.taxonomyId == "eClass" || (this.category.taxonomyId == "FurnitureOntology" && this.numberOfSteps > -1) || (this.category.taxonomyId == "HarWastingOntology" && this.numberOfSteps > -1)) {
             this._parentCategories = parentCategories;
             if (parentCategories && this.category.code === parentCategories.parents[this.level - 1].code && this.level < parentCategories.parents.length) {
                 this.expanded = true;

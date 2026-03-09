@@ -92,8 +92,10 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
     // available logistics services
     availableLogisticsServices = [];
     dialogBox = true;
-    // furniture ontology categories which are used to represent Logistic Services
+    // furniture ontology / HarWasting categories which are used to represent Logistic Services
     furnitureOntologyLogisticCategories: Category[] = null;
+    // the taxonomy id used for logistics (FurnitureOntology or HarWastingOntology)
+    furnitureTaxonomyId: string = null;
 
     showRoadTransportService: boolean = true;
     showMaritimeTransportService: boolean = false;
@@ -114,13 +116,14 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
             let keys = Object.keys(this.logisticRelatedServices);
             // get category uris for logistic services
             let eClassCategoryUris = keys.indexOf("eClass") != -1 ? this.getCategoryUrisForTaxonomyId("eClass") : null;
-            let furnitureOntologyCategoryUris = keys.indexOf("FurnitureOntology") != -1 ? this.getCategoryUrisForTaxonomyId("FurnitureOntology") : null;
+            this.furnitureTaxonomyId = keys.indexOf("FurnitureOntology") != -1 ? "FurnitureOntology" : (keys.indexOf("HarWastingOntology") != -1 ? "HarWastingOntology" : null);
+            let furnitureOntologyCategoryUris = this.furnitureTaxonomyId != null ? this.getCategoryUrisForTaxonomyId(this.furnitureTaxonomyId) : null;
             return Promise.all([
                 Promise.resolve(party),
                 this.catalogueService.getCatalogueResponse(userId),
                 this.userService.getCompanyNegotiationSettingsForParty(UBLModelUtils.getPartyId(party), party.federationInstanceID),
-                eClassCategoryUris ? this.categoryService.getCategoriesForIds(new Array(eClassCategoryUris.length).fill("eClass"), eClassCategoryUris) : Promise.resolve(null),
-                furnitureOntologyCategoryUris ? this.categoryService.getCategoriesForIds(new Array(furnitureOntologyCategoryUris.length).fill("FurnitureOntology"), furnitureOntologyCategoryUris) : Promise.resolve(null)
+                eClassCategoryUris && eClassCategoryUris.length > 0 ? this.categoryService.getCategoriesForIds(new Array(eClassCategoryUris.length).fill("eClass"), eClassCategoryUris) : Promise.resolve(null),
+                furnitureOntologyCategoryUris && furnitureOntologyCategoryUris.length > 0 ? this.categoryService.getCategoriesForIds(new Array(furnitureOntologyCategoryUris.length).fill(this.furnitureTaxonomyId), furnitureOntologyCategoryUris) : Promise.resolve(null)
             ]).then(([party, catalogueResponse, settings, eClassLogisticCategories, furnitureOntologyLogisticCategories]) => {
                 // set furniture ontology logistic categories
                 this.furnitureOntologyLogisticCategories = furnitureOntologyLogisticCategories;
@@ -230,7 +233,7 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
         } else {
             // new publishing is the first entry to the publishing page
             // i.e. publishing from scratch
-            this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories, this.furnitureOntologyLogisticCategories);
+            this.logisticCatalogueLines = UBLModelUtils.createCatalogueLinesForLogistics(catalogueResponse.catalogueUuid, userParty, settings, this.logisticRelatedServices, eClassLogisticCategories, this.furnitureOntologyLogisticCategories, this.furnitureTaxonomyId);
             this.getServiceTypesFromLogisticsCatalogueLines();
             this.populateLogisticPublishMode();
         }
@@ -276,6 +279,8 @@ export class LogisticServicePublishComponent implements OnInit , OnDestroy{
         let serviceCategoryMap;
         if (this.config.standardTaxonomy == "All" || this.config.standardTaxonomy == "FurnitureOntology") {
             serviceCategoryMap = this.logisticRelatedServices["FurnitureOntology"];
+        } else if (this.config.standardTaxonomy == "HarWastingOntology") {
+            serviceCategoryMap = this.logisticRelatedServices["HarWastingOntology"];
         }
         else {
             serviceCategoryMap = this.logisticRelatedServices["eClass"];

@@ -181,11 +181,11 @@ export class UBLModelUtils {
         );
     }
 
-    public static createCatalogueLinesForLogistics(catalogueUuid: string, providerParty: Party, settings: CompanyNegotiationSettings, logisticRelatedServices, eClassLogisticCategories: Category[], furnitureOntologyLogisticCategories: Category[]): Map<string, CatalogueLine> {
+    public static createCatalogueLinesForLogistics(catalogueUuid: string, providerParty: Party, settings: CompanyNegotiationSettings, logisticRelatedServices, eClassLogisticCategories: Category[], furnitureOntologyLogisticCategories: Category[], furnitureTaxonomyId: string = "FurnitureOntology"): Map<string, CatalogueLine> {
         let logisticCatalogueLines: Map<string, CatalogueLine> = new Map<string, CatalogueLine>();
-        // if we have furniture ontology categories for logistics services,then use them.
+        // if we have furniture ontology / HarWasting categories for logistics services, then use them.
         if (furnitureOntologyLogisticCategories) {
-            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices["FurnitureOntology"];
+            let furnitureOntologyLogisticRelatedServices = logisticRelatedServices[furnitureTaxonomyId];
             let eClassLogisticRelatedServices = logisticRelatedServices["eClass"];
 
             // for each service type, create a catalogue line

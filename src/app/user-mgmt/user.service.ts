@@ -675,7 +675,7 @@ export class UserService {
 
     private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        let headers = new HttpHeaders({ 'Accept': 'application/json', 'Authorization': token });
+        let headers = new HttpHeaders({ 'Accept': 'application/json', 'Authorization': token, 'Content-Type': 'application/json' });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         let defaultLanguage = DEFAULT_LANGUAGE();
         let acceptLanguageHeader = defaultLanguage;

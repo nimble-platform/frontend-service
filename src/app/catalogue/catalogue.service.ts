@@ -635,7 +635,7 @@ export class CatalogueService {
 
     private getAuthorizedHeaders(): HttpHeaders {
         const token = 'Bearer ' + this.cookieService.get("bearer_token");
-        const headers = new HttpHeaders({ 'Authorization': token });
+        const headers = new HttpHeaders({ 'Authorization': token, 'Content-Type': 'application/json'  });
         this.headers.keys().forEach(header => headers.append(header, this.headers.get(header)));
         return headers;
     }
