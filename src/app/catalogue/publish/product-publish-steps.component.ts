@@ -87,10 +87,12 @@ export class ProductPublishStepsComponent {
                 return 5;
             case 'Certificates':
                 return 6;
-            case 'LCPA':
+            case 'Visibility':
                 return 7;
-            default:
+            case 'LCPA':
                 return 8;
+            default:
+                return 9;
         }
     }
 }

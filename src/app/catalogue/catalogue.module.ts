@@ -31,6 +31,7 @@ import { ProductDeliveryTradingComponent } from "./publish/product-delivery-trad
 import { ProductDetailsModule } from "../product-details/product-details.module";
 import { ProductPriceTabComponent } from "./publish/product-price-tab.component";
 import { ProductCertificatesTabComponent } from "./publish/product-certificates-tab.component";
+import { ProductVisibilityStepComponent } from "./publish/product-visibility-step.component";
 import { UserMgmtModule } from "../user-mgmt/user-mgmt.module";
 import { NoteFileViewComponent } from './ubl-model-view/note-file-view.component';
 import { BulkPublishComponent } from "./publish/bulk-publish.component";
@@ -69,6 +70,7 @@ import {SinglePublishComponent} from './publish/single-publish.component';
         DeleteExportCatalogueModalComponent,
         CatalogueLinePanelComponent,
         ProductCertificatesTabComponent,
+        ProductVisibilityStepComponent,
         NoteFileViewComponent,
         FavouriteViewComponent,
         CompareViewComponent

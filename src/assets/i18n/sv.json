@@ -1,1 +1,19 @@
-{}
+{
+  "Add companies to blacklist:": "Lägg till företag i svartlistan:",
+  "Add companies to whitelist:": "Lägg till företag i vitlistan:",
+  "Added": "Tillagd",
+  "Blacklist": "Svartlista",
+  "Blacklisted companies:": "Svartlistade företag:",
+  "Hidden from selected companies": "Dold för valda företag",
+  "No companies added yet. All companies will be able to see this catalogue.": "Inga företag tillagda. Alla företag kommer att kunna se den här katalogen.",
+  "Only selected companies can see this catalogue": "Endast valda företag kan se den här katalogen",
+  "Public": "Offentlig",
+  "Search company name...": "Sök företagsnamn...",
+  "Search failed. Please try again.": "Sökning misslyckades. Vänligen försök igen.",
+  "Searching...": "Söker...",
+  "Set who can discover the products in this catalogue.": "Ange vem som kan se produkterna i den här katalogen.",
+  "Visibility": "Synlighet",
+  "Visible to all companies on the platform": "Synlig för alla företag på plattformen",
+  "Whitelist Only": "Endast Vitlista",
+  "Whitelisted companies:": "Vitlistade företag:"
+}

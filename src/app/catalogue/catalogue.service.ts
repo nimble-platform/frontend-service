@@ -262,6 +262,24 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    /**
+     * Updates the white/black list for a specific catalogue line.
+     * Parties in the white list are the only ones permitted to view the line;
+     * parties in the black list are explicitly excluded.
+     *
+     * @param catalogueId - UUID of the parent catalogue
+     * @param lineId      - id of the catalogue line (e.g. "HW-HC-RH-002")
+     * @param blackList   - VAT numbers of restricted parties
+     * @param whiteList   - VAT numbers of permitted parties
+     */
+    addBlackWhiteListToCatalogueLine(catalogueId: string, lineId: string, blackList: string[], whiteList: string[]) {
+        const url = this.baseUrl + `/catalogue/${catalogueId}/catalogueline/${lineId}/white-black-list?blackList=${blackList.join(",")}&whiteList=${whiteList.join(",")}`;
+        return this.http
+            .put(url, null, {headers: this.getAuthorizedHeaders()})
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     hidePriceForCatalogue(catalogueId: string, hidden:boolean) {
         const url = this.baseUrl + `/catalogue/${catalogueId}/hide-price?hidden=${hidden}`;
         return this.http

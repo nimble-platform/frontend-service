@@ -22,6 +22,7 @@ export type ProductPublishStep =
     | "Price"
     | "Delivery&Trading"
     | "Certificates"
+    | "Visibility"
     | "LCPA"
     | "Review"
     | "BulkUpload"

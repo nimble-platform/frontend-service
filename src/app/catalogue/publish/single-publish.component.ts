@@ -162,6 +162,11 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
     public publishingStep:ProductPublishStep = "Category";
     // whether the categories are selected for the publishing
     public categorySelectedForPublishing:boolean = false;
+    // whitelist and blacklist for catalogue visibility (applied after publish)
+    whiteListCompanies: any[] = [];
+    blackListCompanies: any[] = [];
+    // tracks the mode selected in the Visibility step child component
+    currentVisibilityMode: string = 'public';
 
     constructor(public categoryService: CategoryService,
                 private catalogueService: CatalogueService,
@@ -479,7 +484,17 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 catalogue.catalogueLine.push(catalogueLine);
 
                 this.catalogueService.postCatalogue(catalogue)
-                    .then(() => this.onSuccessfulPublish(exitThePage, catalogueLine))
+                    .then((createdCatalogue: any) => {
+                        // Apply visibility rules if any lists are set
+                        const uuid = createdCatalogue && createdCatalogue.uuid ? createdCatalogue.uuid : null;
+                        if (uuid && (this.whiteListCompanies.length > 0 || this.blackListCompanies.length > 0)) {
+                            const wl = this.whiteListCompanies.map(c => c.vatNumber);
+                            const bl = this.blackListCompanies.map(c => c.vatNumber);
+                            return this.catalogueService.addBlackWhiteListToCatalogueLine(uuid, catalogueLine.id, bl, wl)
+                                .then(() => this.onSuccessfulPublish(exitThePage, catalogueLine));
+                        }
+                        return this.onSuccessfulPublish(exitThePage, catalogueLine);
+                    })
                     .catch(err => {
                         this.onFailedPublish(err);
                     })
@@ -491,7 +506,14 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             catalogueLine.goodsItem.item.catalogueDocumentReference.id = this.selectedCatalogueuuid;
             this.catalogueService.addCatalogueLine(this.selectedCatalogueuuid, JSON.stringify(catalogueLine))
                 .then(() => {
-                    this.onSuccessfulPublish(exitThePage, catalogueLine);
+                    // Apply visibility rules if any lists are set
+                    if (this.whiteListCompanies.length > 0 || this.blackListCompanies.length > 0) {
+                        const wl = this.whiteListCompanies.map(c => c.vatNumber);
+                        const bl = this.blackListCompanies.map(c => c.vatNumber);
+                        return this.catalogueService.addBlackWhiteListToCatalogueLine(this.selectedCatalogueuuid, catalogueLine.id, bl, wl)
+                            .then(() => this.onSuccessfulPublish(exitThePage, catalogueLine));
+                    }
+                    return this.onSuccessfulPublish(exitThePage, catalogueLine);
                 })
                 .catch(err => this.onFailedPublish(err))
         }
@@ -505,8 +527,20 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
         this.publishStatus.submit();
         this.catalogueService.updateCatalogueLine(this.selectedCatalogueuuid, catalogueLine)
-            .then(() => this.onSuccessfulPublish(exitThePage, catalogueLine))
-            .then(() => this.changePublishModeToCreate())
+            .then(() => {
+                // Apply visibility rules if any lists are set
+                if (this.whiteListCompanies.length > 0 || this.blackListCompanies.length > 0) {
+                    const wl = this.whiteListCompanies.map(c => c.vatNumber);
+                    const bl = this.blackListCompanies.map(c => c.vatNumber);
+                    return this.catalogueService.addBlackWhiteListToCatalogueLine(this.selectedCatalogueuuid, catalogueLine.id, bl, wl)
+                        .then(() => {
+                            this.onSuccessfulPublish(exitThePage, catalogueLine);
+                            this.changePublishModeToCreate();
+                        });
+                }
+                this.onSuccessfulPublish(exitThePage, catalogueLine);
+                this.changePublishModeToCreate();
+            })
             .catch(err => {
                 this.onFailedPublish(err);
             });
@@ -1162,12 +1196,33 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
             case 'Certificates':
                 this.publishingStep = "Delivery&Trading";
                 break;
-            case 'LCPA':
+            case 'Visibility':
                 this.publishingStep = "Certificates";
                 break;
+            case 'LCPA':
+                this.publishingStep = "Visibility";
+                break;
             case 'Review':
-                this.publishingStep = this.config.showLCPA ? "LCPA" : "Certificates";
+                this.publishingStep = this.config.showLCPA ? "LCPA" : "Visibility";
         }
+    }
+
+    /**
+     * Returns false when the user is on the Visibility step and has selected
+     * whitelist or blacklist mode but has not added any companies yet.
+     * The Next button is disabled in that case.
+     */
+    isVisibilityStepValid(): boolean {
+        if (this.publishingStep !== 'Visibility') {
+            return true;
+        }
+        if (this.currentVisibilityMode === 'whitelist') {
+            return this.whiteListCompanies.length > 0;
+        }
+        if (this.currentVisibilityMode === 'blacklist') {
+            return this.blackListCompanies.length > 0;
+        }
+        return true; // 'public' — always valid
     }
 
     onNextStep(){
@@ -1192,6 +1247,9 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 this.publishingStep = "Certificates";
                 break;
             case 'Certificates':
+                this.publishingStep = "Visibility";
+                break;
+            case 'Visibility':
                 this.publishingStep = this.config.showLCPA ? "LCPA" : "Review";
                 break;
             case 'LCPA':

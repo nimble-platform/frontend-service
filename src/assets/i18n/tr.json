@@ -1,1 +1,19 @@
-{}
+{
+  "Add companies to blacklist:": "Engellenecekler listesine şirket ekle:",
+  "Add companies to whitelist:": "İzin verilenler listesine şirket ekle:",
+  "Added": "Eklendi",
+  "Blacklist": "Engellenenler",
+  "Blacklisted companies:": "Engellenen şirketler:",
+  "Hidden from selected companies": "Seçili şirketlerden gizlenir",
+  "No companies added yet. All companies will be able to see this catalogue.": "Henüz şirket eklenmedi. Tüm şirketler bu katalogu görebilecek.",
+  "Only selected companies can see this catalogue": "Yalnızca seçili şirketler bu katalogu görebilir",
+  "Public": "Herkese Açık",
+  "Search company name...": "Şirket adı ara...",
+  "Search failed. Please try again.": "Arama başarısız. Lütfen tekrar deneyin.",
+  "Searching...": "Aranıyor...",
+  "Set who can discover the products in this catalogue.": "Bu katalogdaki ürünleri kimlerin görebileceğini belirleyin.",
+  "Visibility": "Görünürlük",
+  "Visible to all companies on the platform": "Platformdaki tüm şirketler görebilir",
+  "Whitelist Only": "Yalnızca İzin Verilenler",
+  "Whitelisted companies:": "İzin verilen şirketler:"
+}

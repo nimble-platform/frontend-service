@@ -38,6 +38,9 @@
             <div [ngClass]="getStepClasses('Certificates')">
                 <span (click)="onStepClicked('Certificates')"><span [innerHTML]="'Certificates' | translate"></span></span>
             </div>
+            <div [ngClass]="getStepClasses('Visibility')">
+                <span (click)="onStepClicked('Visibility')"><span [innerHTML]="'Visibility' | translate"></span></span>
+            </div>
             <div *ngIf="config.showLCPA" [ngClass]="getStepClasses('LCPA')">
                 <span (click)="onStepClicked('LCPA')"><span [innerHTML]="'LCPA' | translate"></span></span>
             </div>

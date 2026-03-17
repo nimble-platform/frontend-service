@@ -1,1 +1,19 @@
-{}
+{
+  "Add companies to blacklist:": "Aggiungi aziende alla blacklist:",
+  "Add companies to whitelist:": "Aggiungi aziende alla whitelist:",
+  "Added": "Aggiunto",
+  "Blacklist": "Blacklist",
+  "Blacklisted companies:": "Aziende in blacklist:",
+  "Hidden from selected companies": "Nascosto alle aziende selezionate",
+  "No companies added yet. All companies will be able to see this catalogue.": "Nessuna azienda aggiunta. Tutte le aziende potranno vedere questo catalogo.",
+  "Only selected companies can see this catalogue": "Solo le aziende selezionate possono vedere questo catalogo",
+  "Public": "Pubblico",
+  "Search company name...": "Cerca nome azienda...",
+  "Search failed. Please try again.": "Ricerca non riuscita. Si prega di riprovare.",
+  "Searching...": "Ricerca in corso...",
+  "Set who can discover the products in this catalogue.": "Imposta chi può scoprire i prodotti di questo catalogo.",
+  "Visibility": "Visibilità",
+  "Visible to all companies on the platform": "Visibile a tutte le aziende sulla piattaforma",
+  "Whitelist Only": "Solo Whitelist",
+  "Whitelisted companies:": "Aziende in whitelist:"
+}
