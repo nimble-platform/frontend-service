@@ -51,8 +51,11 @@
         </name-description-panel>
     </ng-container>
 
-    <!-- Tabs for Product -->
-    <ng-container *ngIf="publishingStep != 'Review'">
+    <!-- Tabs for Product: use [hidden] instead of *ngIf so all step components stay in
+         the DOM at all times. Using *ngIf here causes components to be destroyed/recreated
+         whenever the user navigates to/from Review via the stepper, leading to
+         re-initialisation errors and broken rendering. -->
+    <div [hidden]="publishingStep == 'Review'">
         <!-- Product Details Tab -->
         <div class="row space-before" [hidden]="publishingStep != 'Details'">
             <!-- Dimensions -->
@@ -261,7 +264,7 @@
                 </product-lcpa-tab>
             </div>
         </div>
-    </ng-container>
+    </div>
 
     <!-- Review step -->
     <catalogue-line-panel

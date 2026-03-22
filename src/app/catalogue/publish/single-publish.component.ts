@@ -274,6 +274,15 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 return;
             }
 
+            // Restore line-level visibility settings saved by a previous publish or edit.
+            // The @Transient getter permittedPartyID is not included in the JSON response;
+            // read from the serialised JPA item collections instead (each item has an .item
+            // field containing the VAT string stored by addLineBlackWhiteList).
+            const permittedItems: any[] = (this.catalogueLine as any).permittedPartyIDItems || [];
+            const restrictedItems: any[] = (this.catalogueLine as any).restrictedPartyIDItems || [];
+            this.whiteListCompanies = permittedItems.map(it => ({ vatNumber: it.item, legalName: it.item }));
+            this.blackListCompanies = restrictedItems.map(it => ({ vatNumber: it.item, legalName: it.item }));
+
             this.productWrapper = new ProductWrapper(this.catalogueLine, settings.negotiationSettings);
 
             // Get categories of item to edit

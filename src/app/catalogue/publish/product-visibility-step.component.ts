@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { forkJoin, from, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { SimpleSearchService } from '../../simple-search/simple-search.service';
 import { CallStatus } from '../../common/call-status';
 import * as myGlobals from '../../globals';
@@ -22,7 +24,7 @@ import * as myGlobals from '../../globals';
     selector: 'product-visibility-step',
     templateUrl: './product-visibility-step.component.html'
 })
-export class ProductVisibilityStepComponent implements OnInit, OnDestroy {
+export class ProductVisibilityStepComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() whiteListCompanies: any[] = [];
     @Input() blackListCompanies: any[] = [];
@@ -46,17 +48,74 @@ export class ProductVisibilityStepComponent implements OnInit, OnDestroy {
     pendingCompanyIds: Set<string> = new Set();
 
     constructor(private simpleSearchService: SimpleSearchService,
-                private http: HttpClient) {}
+                private http: HttpClient,
+                private cdr: ChangeDetectorRef) {}
+
+    // Tracks whether we already enriched names to avoid re-running on every change
+    private enriched = false;
 
     ngOnInit() {
-        // Initialise mode from pre-loaded lists (edit mode)
-        if (this.whiteListCompanies && this.whiteListCompanies.length > 0) {
-            this.visibilityMode = 'whitelist';
-        } else if (this.blackListCompanies && this.blackListCompanies.length > 0) {
-            this.visibilityMode = 'blacklist';
-        }
         // Inform parent of the initial mode (important for edit mode)
         this.visibilityModeChange.emit(this.visibilityMode);
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        // Wait for the first time the pre-loaded lists arrive from the parent (edit mode).
+        // Because the component lives behind [hidden] it is created before @Input values
+        // are populated, so ngOnInit always sees empty arrays — ngOnChanges fires later.
+        if (this.enriched) { return; }
+
+        const wl: any[] = this.whiteListCompanies || [];
+        const bl: any[] = this.blackListCompanies || [];
+
+        if (wl.length > 0) {
+            this.enriched = true;
+            this.visibilityMode = 'whitelist';
+            this.enrichCompanyNames(wl);
+            this.visibilityModeChange.emit(this.visibilityMode);
+        } else if (bl.length > 0) {
+            this.enriched = true;
+            this.visibilityMode = 'blacklist';
+            this.enrichCompanyNames(bl);
+            this.visibilityModeChange.emit(this.visibilityMode);
+        }
+    }
+
+    // In edit mode, companies are loaded with legalName = vatNumber (VAT string).
+    // Look up the real company name from the indexing service by vatNumber field.
+    // Replaces the whole array reference so Angular change detection picks up the update.
+    private enrichCompanyNames(companies: any[]) {
+        const requests = companies.map((company, idx) => {
+            if (company.legalName !== company.vatNumber) { return of(null); }
+            return from(this.simpleSearchService.getCompanies('vatNumber:"' + company.vatNumber + '"', [], 1)).pipe(
+                map((res: any) => {
+                    const legalName = res && res.result && res.result.length > 0 ? res.result[0].legalName : null;
+                    return legalName ? { idx, legalName } : null;
+                }),
+                catchError(() => of(null))
+            );
+        });
+
+        forkJoin(requests).subscribe(results => {
+            const updated = companies.slice();
+            let changed = false;
+            results.forEach(r => {
+                if (r) {
+                    updated[r.idx] = Object.assign({}, updated[r.idx], { legalName: r.legalName });
+                    changed = true;
+                }
+            });
+            if (!changed) { return; }
+            // Replace array reference and force change detection
+            if (this.visibilityMode === 'whitelist') {
+                this.whiteListCompanies = updated;
+                this.whiteListCompaniesChange.emit(this.whiteListCompanies);
+            } else {
+                this.blackListCompanies = updated;
+                this.blackListCompaniesChange.emit(this.blackListCompanies);
+            }
+            this.cdr.detectChanges();
+        });
     }
 
     ngOnDestroy() {
@@ -91,7 +150,7 @@ export class ProductVisibilityStepComponent implements OnInit, OnDestroy {
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
-        if (!query || query.trim().length < 2) {
+        if (!query || query.trim().length < 1) {
             this.searchResults = [];
             return;
         }
@@ -184,9 +243,12 @@ export class ProductVisibilityStepComponent implements OnInit, OnDestroy {
     }
 
     isAlreadyAdded(companyId: string): boolean {
+        // companyId may be the numeric party id (from search results) or a VAT string (from edit mode).
+        // pendingCompanyIds stores numeric ids while whiteList/blackList store VAT strings,
+        // so check both collections against both representations.
         const idStr = String(companyId);
         return this.pendingCompanyIds.has(idStr)
-            || this.whiteListCompanies.some(c => c.vatNumber === idStr)
-            || this.blackListCompanies.some(c => c.vatNumber === idStr);
+            || this.whiteListCompanies.some(c => c.vatNumber === idStr || String(c.id) === idStr)
+            || this.blackListCompanies.some(c => c.vatNumber === idStr || String(c.id) === idStr);
     }
 }
