@@ -179,6 +179,9 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
     maxFacets = 5;
     manufacturerIdCountMap: any;
 
+    // tracks which company scorecard panels are expanded (keyed by company id)
+    expandedScorecards: Set<string> = new Set();
+
     imgEndpoint = myGlobals.user_mgmt_endpoint + '/company-settings/image/';
 
     config = myGlobals.config;
@@ -2039,6 +2042,21 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             }
         }
         return link;
+    }
+
+    toggleScorecard(companyId: any, event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const id = String(companyId);
+        if (this.expandedScorecards.has(id)) {
+            this.expandedScorecards.delete(id);
+        } else {
+            this.expandedScorecards.add(id);
+        }
+    }
+
+    isScorecardExpanded(companyId: any): boolean {
+        return this.expandedScorecards.has(String(companyId));
     }
 
     productSelected(productHjid): boolean {

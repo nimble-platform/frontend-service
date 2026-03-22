@@ -1193,6 +1193,17 @@
                                         </div>
                                     </div>
                                 </a>
+                                <!-- Supplier Scorecard Toggle -->
+                                <div class="card-footer p-1 text-center" style="background: #fff; border-top: 1px solid #eee;">
+                                    <a href="#" class="small text-primary"
+                                       (click)="toggleScorecard(result.id, $event)">
+                                        <i class="fa" [ngClass]="isScorecardExpanded(result.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                        {{isScorecardExpanded(result.id) ? 'Hide' : 'View'}} Supplier Scorecard
+                                    </a>
+                                </div>
+                                <supplier-scorecard *ngIf="isScorecardExpanded(result.id)"
+                                                    [companyId]="result.id">
+                                </supplier-scorecard>
                             </div>
 
                         </div>

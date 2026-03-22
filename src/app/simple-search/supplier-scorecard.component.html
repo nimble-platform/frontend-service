@@ -1,0 +1,79 @@
+<div *ngIf="callStatus.isLoading()" class="text-center p-3">
+    <i class="fa fa-spinner fa-spin"></i> Loading scorecard...
+</div>
+
+<div *ngIf="callStatus.isError()" class="alert alert-danger m-2">
+    Could not load supplier scorecard.
+</div>
+
+<div *ngIf="companySettings && !callStatus.isLoading()" class="p-3" style="background: #f8f9fa; border-top: 1px solid #dee2e6;">
+    <div class="row">
+        <!-- Experience -->
+        <div class="col-4">
+            <h6 class="text-muted mb-2"><i class="fa fa-briefcase mr-1"></i> Experience</h6>
+            <div class="small">
+                <div *ngIf="companySettings.details?.yearOfCompanyRegistration" class="mb-1">
+                    <strong>Active:</strong> {{getYearsActive()}}
+                </div>
+                <div *ngIf="companySettings.details?.businessType" class="mb-1">
+                    <strong>Type:</strong> {{companySettings.details.businessType}}
+                </div>
+                <div *ngIf="selectValue(companySettings.details?.industrySectors)" class="mb-1">
+                    <strong>Sectors:</strong> {{selectValue(companySettings.details.industrySectors)}}
+                </div>
+                <div *ngIf="selectValue(companySettings.details?.businessKeywords)" class="mb-1">
+                    <strong>Keywords:</strong> {{selectValue(companySettings.details.businessKeywords)}}
+                </div>
+                <div *ngIf="selectValue(companySettings.description?.companyStatement)" class="mb-1">
+                    <strong>About:</strong> {{selectValue(companySettings.description.companyStatement)}}
+                </div>
+                <div *ngIf="!companySettings.details?.yearOfCompanyRegistration &&
+                             !companySettings.details?.businessType &&
+                             !selectValue(companySettings.details?.industrySectors) &&
+                             !selectValue(companySettings.details?.businessKeywords) &&
+                             !selectValue(companySettings.description?.companyStatement)"
+                     class="text-muted">
+                    No experience data on file
+                </div>
+            </div>
+        </div>
+        <!-- Capacity -->
+        <div class="col-4 border-left">
+            <h6 class="text-muted mb-2"><i class="fa fa-industry mr-1"></i> Capacity</h6>
+            <div class="small">
+                <div class="mb-1">
+                    <strong>Published offerings:</strong> {{productCount !== null ? productCount : '-'}}
+                </div>
+                <div *ngIf="companySettings.details?.address?.country" class="mb-1">
+                    <strong>Location:</strong>
+                    <span *ngIf="companySettings.details.address.cityName">{{companySettings.details.address.cityName}}, </span>
+                    {{companySettings.details.address.country}}
+                </div>
+                <div *ngIf="companySettings.description?.website" class="mb-1">
+                    <strong>Website:</strong>
+                    <a [href]="companySettings.description.website" target="_blank" (click)="$event.stopPropagation()">
+                        {{companySettings.description.website}}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Compliance -->
+        <div class="col-4 border-left">
+            <h6 class="text-muted mb-2"><i class="fa fa-check-circle mr-1"></i> Compliance</h6>
+            <div class="small">
+                <div *ngIf="companySettings.certificates && companySettings.certificates.length > 0" class="mb-1">
+                    <strong>Certificates:</strong>
+                    <span *ngFor="let cert of companySettings.certificates; let last = last">
+                        {{cert.name || cert.type || 'Certificate'}}{{!last ? ', ' : ''}}
+                    </span>
+                </div>
+                <div *ngIf="!companySettings.certificates || companySettings.certificates.length === 0" class="mb-1 text-muted">
+                    No certificates on file
+                </div>
+                <div *ngIf="companySettings.details?.ppapComplianceLevel > 0" class="mb-1">
+                    <strong>PPAP Level:</strong> {{companySettings.details.ppapComplianceLevel}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

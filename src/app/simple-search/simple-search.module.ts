@@ -31,6 +31,7 @@ import { SimpleSearchFormComponent } from './simple-search-form.component';
 import { SearchNavigationGuardService } from './search-navigation-guard.service';
 import {SearchMapComponent} from './search-map.component';
 import {FilterSearchInputComponent} from './filter-search-input.component';
+import { SupplierScorecardComponent } from './supplier-scorecard.component';
 
 @NgModule({
     imports: [
@@ -49,6 +50,7 @@ import {FilterSearchInputComponent} from './filter-search-input.component';
         SimpleSearchFormComponent,
         SearchMapComponent,
         FilterSearchInputComponent,
+        SupplierScorecardComponent,
     ],
     exports: [
         SimpleSearchComponent,

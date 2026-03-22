@@ -28,6 +28,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CredentialsService } from './credentials.service';
 import { FEDERATIONID } from '../catalogue/model/constants';
 import { AgentService } from "./agent.service";
+import { SimpleSearchService } from '../simple-search/simple-search.service';
 
 type SelectedTab = "SELLING_AGENT"
     | "BUYING_AGENT";
@@ -56,6 +57,7 @@ export class CompanyDetailsComponent implements OnInit {
 
     showEmptyPageSA = false;
     showEmptyPageBA = false;
+    publishedProductCount: number = null;
 
     getSocialMediaClass = getSocialMediaClass;
     // the industry sectors translations to be displayed on the UI
@@ -69,6 +71,7 @@ export class CompanyDetailsComponent implements OnInit {
     constructor(private cookieService: CookieService,
         private agentService: AgentService,
         private userService: UserService,
+        private searchService: SimpleSearchService,
         public appComponent: AppComponent,
         private translate: TranslateService,
         private credentialsService: CredentialsService,
@@ -127,6 +130,7 @@ export class CompanyDetailsComponent implements OnInit {
                             this.industrySectorTranslations = industrySectors.map(industrySector => this.translate.instant(industrySector)).join("\n");
                         }
 
+                        this.loadProductCount(id);
                         this.initCallStatus.callback("Details successfully fetched", true);
                     })
                         .catch(error => {
@@ -138,6 +142,7 @@ export class CompanyDetailsComponent implements OnInit {
         else {
             this.party.partyId = this.details.companyID;
             this.setCompanyContacts();
+            this.loadProductCount(this.details.companyID);
         }
 
         this.getAllSellingAgents(this.party.partyId);
@@ -156,6 +161,16 @@ export class CompanyDetailsComponent implements OnInit {
                 this.companyContacts.push({name:person.firstName+" "+person.familyName,email:person.contact.electronicMail,telephone:person.contact.telephone,role:"external_representative"});
             }
         }
+    }
+
+    loadProductCount(companyId: string) {
+        this.searchService.getCompanyBasedProductsAndServices(
+            'manufacturerId:' + companyId, [], [], 1, '', ''
+        ).then(res => {
+            this.publishedProductCount = (res && res.totalElements) ? res.totalElements : 0;
+        }).catch(() => {
+            this.publishedProductCount = 0;
+        });
     }
 
     validateVAT() {
