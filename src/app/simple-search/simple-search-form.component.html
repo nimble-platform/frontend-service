@@ -1000,6 +1000,12 @@
                                                         <span class="badge badge-warning"
                                                               *ngIf="!result[product_price] || checkEmpty(result[product_price]) || result[product_price_hidden]"><span
                                                                 [innerHTML]="'Price: Upon request' | translate"></span></span><br/>
+                                                        <!-- Availability badge (HCDP-02.2 F3) -->
+                                                        <span *ngIf="getAvailability(result)"
+                                                              class="badge badge-success ml-1"
+                                                              style="font-size: 0.7rem;">
+                                                            <i class="fa fa-check-circle mr-1"></i>{{getAvailability(result)}}
+                                                        </span>
                                                         <!-- Shopping cart buttons -->
                                                         <ng-container
                                                                 *ngIf="shoppingCartDataService.isShoppingCartButtonVisible(result.classificationUri)">
@@ -1013,8 +1019,6 @@
                                                                     [callStatus]="getShoppingCartStatus(ind)"></call-status>
                                                         </ng-container>
                                                     </ng-container>
-                                                    <img *ngIf="result.circularEconomyCertificates"
-                                                         [src]="'assets/eco_label.png'" style="max-width: 25px">
                                                 </div>
                                             </ng-container>
                                             <!--  Vendor name and ratings-->
@@ -1074,8 +1078,11 @@
                                                         </ngb-rating>
                                                     </div>
                                                 </ng-container>
-                                                <img *ngIf="result[product_vendor].circularEconomyCertificates"
-                                                     [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                                <span *ngIf="result[product_vendor].circularEconomyCertificates"
+                                                      [title]="result[product_vendor].circularEconomyCertificates.join(', ')"
+                                                      style="cursor: help;">
+                                                    <img [src]="'assets/eco_label.png'" style="max-width: 25px">
+                                                </span>
                                             </div>
                                             <div *ngIf="!result[product_vendor]"
                                                  [ngClass]="{'col-2':display=='list','col-12':display=='panel'}">

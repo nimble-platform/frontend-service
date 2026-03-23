@@ -972,16 +972,28 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 if (underscoreIndex != -1) {
                     let resultFieldForFacet = facet.substring(underscoreIndex + 1);
                     let labels = res.result[i][resultFieldForFacet];
-                    values = selectNameFromLabelObject(labels);
-                    // append the language id to value for brand names
-                    if (facet.endsWith('_brandName') && labels) {
-                        let keys = Object.keys(labels);
-                        for (let key of keys) {
-                            if (labels[key] == values) {
-                                values = key + '@' + values;
+                    // Only use selectNameFromLabelObject if the label object exists.
+                    // Plain string fields (e.g. en_origin) store their value directly
+                    // on the language-prefixed key; there is no separate label object.
+                    if (labels != null) {
+                        values = selectNameFromLabelObject(labels);
+                        // append the language id to value for brand names
+                        if (facet.endsWith('_brandName') && labels) {
+                            let keys = Object.keys(labels);
+                            for (let key of keys) {
+                                if (labels[key] == values) {
+                                    values = key + '@' + values;
+                                }
                             }
                         }
+                    } else if (values == null) {
+                        // No label object AND no plain value → empty string.
+                        // Matches original selectNameFromLabelObject(null) === '' behavior
+                        // so brand-name dedup (brandName != '') continues to work correctly.
+                        values = '';
                     }
+                    // else: labels is null but values is a non-null plain string
+                    // (e.g. en_origin="Turkey") — keep the original value as-is.
                 }
                 // if the facet values are not an array, make it an array
                 if (!Array.isArray(values)) {
@@ -1066,6 +1078,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
                 let genName = name;
                 if (genName.indexOf(DEFAULT_LANGUAGE() + '_') != -1) {
                     genName = genName.replace(DEFAULT_LANGUAGE() + '_', '');
+                } else if (genName.indexOf('en_') != -1 && DEFAULT_LANGUAGE() !== 'en') {
+                    // Facet field is English-indexed (en_origin) but UI language is non-English.
+                    // Strip the English prefix so genName matches the product_filter_comp entry
+                    // (e.g. "manufacturer.en_origin" → "manufacturer.origin").
+                    genName = genName.replace('en_', '');
                 } else if (genName.indexOf('{NULL}_') != -1) {
                     genName = genName.replace('{NULL}_', '');
                 } else if (genName.indexOf(prefix + '_') == 0) {
@@ -2057,6 +2074,32 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     isScorecardExpanded(companyId: any): boolean {
         return this.expandedScorecards.has(String(companyId));
+    }
+
+    /**
+     * Extract availability value from search result's stringValue map.
+     * Custom STRING properties are returned as stringValue.{PropertyName} with values like ["In Stock@en"].
+     */
+    getAvailability(result: any): string {
+        const sv = result['stringValue'];
+        if (sv && sv['Availability'] && sv['Availability'].length > 0) {
+            // Strip language suffix (e.g., "In Stock@en" → "In Stock")
+            const val = sv['Availability'][0];
+            const atIdx = val.lastIndexOf('@');
+            return atIdx > 0 ? val.substring(0, atIdx) : val;
+        }
+        return null;
+    }
+
+    /**
+     * Get circular economy certificate names from search result.
+     */
+    getEcoCertificateNames(result: any): string {
+        const certs = result['circularEconomyCertificates'];
+        if (certs && certs.length > 0) {
+            return certs.join(', ');
+        }
+        return '';
     }
 
     productSelected(productHjid): boolean {

@@ -339,7 +339,7 @@ export const product_cat_mix = "commodityClassficationUri";
 export const product_filter_prod = ["freeOfCharge", "circularEconomyCertificates","certificateType", "applicableCountries", "customizable"];
 export const product_filter_comp = ["manufacturer.legalName", "manufacturer.brandName", "manufacturer.businessType", "manufacturer.activitySectors", "manufacturer.businessKeywords", "manufacturer.origin", "manufacturer.circularEconomyCertificates","manufacturer.certificateType", "manufacturer.ppapComplianceLevel", "manufacturer.ppapDocumentType"];
 export const party_identifying_regex_filters = ['manufacturer.*legalName', 'manufacturer.*brandName', 'manufacturer.id'];
-export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "{NULL}_origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
+export const party_facet_field_list = ["legalName", "{LANG}_brandName", "businessType", "{LANG}_activitySectors", "{LANG}_businessKeywords", "en_origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_main = ["businessType", "activitySectors", "businessKeywords", "origin", "circularEconomyCertificates","certificateType", "ppapComplianceLevel", "ppapDocumentType"];
 export const party_filter_trust = ["trustScore", "trustRating", "trustSellerCommunication", "trustFullfillmentOfTerms", "trustDeliveryPackaging", "trustNumberOfTransactions"];
 export const item_manufacturer_id = "manufacturerId";
@@ -351,14 +351,14 @@ export const product_filter_mappings = {
     "manufacturer.businessType": "Business Type",
     "manufacturer.activitySectors": "Activity Sectors",
     "manufacturer.businessKeywords": "Business Keywords",
-    "manufacturer.origin": "Vendor Origin",
+    "manufacturer.origin": "Supplier Country",
     "businessType": "Business Type",
     "activitySectors": "Activity Sectors",
     "businessKeywords": "Business Keywords",
     "origin": "Vendor Origin"
 };
 export const product_nonfilter_full = ["_text_", "_version_", "id", "image", "localName", "languages", "doctype", "manufacturerId", "manufacturerItemId", "allLabels", "sparePart"];
-export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf.", "manufacturer.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price","_deliveryTime", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
+export const product_nonfilter_regex = ["_baseQuantityUnit","_packageUnit", "lmf\\.", "manufacturer\\.", "_id", "_lowercaseLabel", "_txt", "_desc", "_label", "_key", "_price","_deliveryTime", "_currency", "httpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclasshttpwwwnimbleprojectorgresourceeclass"];
 export const product_nonfilter_data_type = []
 export const product_configurable = [];
 export const product_default = {};
