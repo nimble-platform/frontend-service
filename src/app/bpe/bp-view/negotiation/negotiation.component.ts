@@ -119,6 +119,11 @@ export class NegotiationComponent implements OnInit, OnDestroy {
 
     performInitCalls(): void {
         this.rfq = this.bpDataService.requestForQuotation;
+        // For new negotiations, bpActivityEvent.termsSources is null — initialize to an array of nulls
+        // so that for...of loops and array index accesses on primaryTermsSource don't crash
+        if (!this.primaryTermsSource) {
+            this.primaryTermsSource = Array(this.rfq.requestForQuotationLine.length).fill(null);
+        }
         this.setFrameContractNegotiationFlag();
         this.initializeLastOffer();
         this.initialDefaultTermsAndConditionsAndFrameContract();
@@ -240,7 +245,7 @@ export class NegotiationComponent implements OnInit, OnDestroy {
         let responseDocument: Promise<any> = this.getLastOfferQuotationPromise();
         this.lastOfferQuotation = await responseDocument;
         if (this.lastOfferQuotation != null) {
-            this.primaryTermsSource = Array(this.primaryTermsSource.length).fill('last_offer');
+            this.primaryTermsSource = Array(this.primaryTermsSource ? this.primaryTermsSource.length : 1).fill('last_offer');
         }
 
         this.lastOfferCalStatus.callback(null, true);

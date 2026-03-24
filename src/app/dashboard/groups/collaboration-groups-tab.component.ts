@@ -87,6 +87,7 @@ export class CollaborationGroupsTabComponent {
     selectedNegotiationIndex = -1;
 
     selectedId: string;
+    expandedComparisons: Set<string> = new Set<string>();
 
     queryStatus: CallStatus = new CallStatus();
     filterQueryStatus: CallStatus = new CallStatus();
@@ -171,6 +172,14 @@ export class CollaborationGroupsTabComponent {
             error => {
                 this.exportCallStatus.error('Failed to export transactions', error);
             });
+    }
+
+    toggleComparison(groupId: string) {
+        if (this.expandedComparisons.has(groupId)) {
+            this.expandedComparisons.delete(groupId);
+        } else {
+            this.expandedComparisons.add(groupId);
+        }
     }
 
     updateCollaborationGroupName(cgIndex: number, id: string, federationId: string, name: string) {

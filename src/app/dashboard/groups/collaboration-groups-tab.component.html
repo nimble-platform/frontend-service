@@ -216,6 +216,15 @@
                                     <div *ngIf="order.archived" class="inline" (click)="deleteGroup(order.id,order.federationId)" data-toggle="tooltip" data-placement="top" [title]="'Delete Permanently' | translate">
                                         <i class="fa fa-trash-alt p-1 pointer" aria-hidden="true"></i>
                                     </div>
+                                    <!-- HCDP-02.3: Compare Quotations button (visible when 2+ supplier threads) -->
+                                    <div *ngIf="queryParameters.tab === TABS.PURCHASES && order.associatedProcessInstanceGroups?.length > 1"
+                                         class="inline"
+                                         (click)="toggleComparison(order.id)"
+                                         data-toggle="tooltip" data-placement="top"
+                                         [title]="'Compare Quotations' | translate">
+                                        <i class="fa fa-balance-scale p-1 pointer" aria-hidden="true"
+                                           [class.text-primary]="expandedComparisons.has(order.id)"></i>
+                                    </div>
                                 </ng-container>
 
                                 <!-- Header for the projects -->
@@ -226,6 +235,15 @@
                                     <div *ngIf="order.id === selectedId" class="inline" (click)="onCollapseTimeline()" data-toggle="tooltip" data-placement="top" [title]="'Hide details' | translate">
                                         <i class="fa fa-angle-double-up p-1 pointer" aria-hidden="true"></i>
                                     </div>
+                                    <!-- HCDP-02.3: Compare Quotations for Projects -->
+                                    <div *ngIf="order.associatedProcessInstanceGroups?.length > 1"
+                                         class="inline"
+                                         (click)="toggleComparison(order.id)"
+                                         data-toggle="tooltip" data-placement="top"
+                                         [title]="'Compare Quotations' | translate">
+                                        <i class="fa fa-balance-scale p-1 pointer" aria-hidden="true"
+                                           [class.text-primary]="expandedComparisons.has(order.id)"></i>
+                                    </div>
                                 </ng-container>
                             </div>
                         </div>
@@ -233,6 +251,14 @@
                         <!-- Timeline part for projects -->
                         <div *ngIf="queryParameters.tab === TABS.PROJECTS" [ngStyle]="{'visibility':order.id === selectedId  ? 'visible' : 'hidden','height':order.id === selectedId  ? 'unset' : '0px', 'margin-bottom': order.id === selectedId? '30px' : '0px'}">
                             <project-timeline [collaborationGroup]="order"></project-timeline>
+                        </div>
+
+                        <!-- HCDP-02.3: Quotation Comparison Panel -->
+                        <div *ngIf="expandedComparisons.has(order.id)">
+                            <quotation-comparison
+                                [collaborationGroupId]="order.id"
+                                [processInstanceGroups]="order.associatedProcessInstanceGroups">
+                            </quotation-comparison>
                         </div>
 
                         <!-- Thread summary -->

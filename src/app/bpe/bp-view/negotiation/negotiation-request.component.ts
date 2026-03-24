@@ -83,7 +83,7 @@ export class NegotiationRequestComponent implements OnInit {
     deliverytermsOfBuyer = null;
 
     showPurchaseOrder: boolean = false;
-    showNotesAndAdditionalFiles: boolean = false;
+    showNotesAndAdditionalFiles: boolean = true;
 
     /**
      * View control fields

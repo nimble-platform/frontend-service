@@ -70,6 +70,7 @@ import { OrderItemComponent } from './bp-view/order/order-item.component';
 import { CommonCartTermsComponent } from './shopping-cart/common-cart-terms.component';
 import { ShoppingCartSummaryModalComponent } from './shopping-cart/shopping-cart-summary-modal.component';
 import {PurchaseOrderComponent} from './bp-view/contract/purchase-order.component';
+import {QuotationComparisonComponent} from './bp-view/negotiation/quotation-comparison.component';
 import {NegotiationClauseService} from './bp-view/negotiation/negotiation-clause-service';
 import {StripeComponent} from './payment/stripe.component';
 import {NgxStripeModule} from 'ngx-stripe';
@@ -133,7 +134,8 @@ import {stripe_publishable_key} from '../globals';
         CustomTermModalComponent,
         ShoppingCartComponent,
         CommonCartTermsComponent,
-        ShoppingCartSummaryModalComponent
+        ShoppingCartSummaryModalComponent,
+        QuotationComparisonComponent
     ],
     exports: [
         BPConfigureComponent,
@@ -148,7 +150,8 @@ import {stripe_publishable_key} from '../globals';
         ContractComponent,
         ClauseComponent,
         PpapClauseComponent,
-        ThreadSummaryComponent
+        ThreadSummaryComponent,
+        QuotationComparisonComponent
     ],
     providers: [
         NegotiationClauseService

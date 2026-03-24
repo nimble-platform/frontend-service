@@ -1,0 +1,96 @@
+<!--
+  HCDP-02.3: Quotation Comparison Table
+
+  Displays side-by-side comparison of quotation responses from multiple suppliers.
+  Shows: supplier name, product, unit price, quantity, delivery, warranty, incoterms,
+  payment method, and response status. Highlights best price (green) and fastest
+  delivery (blue). "View Details" navigates to the existing negotiation detail view.
+-->
+
+<div class="card mt-2 mb-3">
+    <div class="card-header d-flex align-items-center">
+        <h6 class="mb-0 mr-auto">
+            <i class="fa fa-balance-scale mr-2"></i>{{'Quotation Comparison' | translate}}
+        </h6>
+        <button class="btn btn-sm btn-outline-secondary" (click)="refresh()" [disabled]="callStatus.isLoading()">
+            <i class="fa fa-sync-alt"></i> {{'Refresh' | translate}}
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <!-- Loading -->
+        <div *ngIf="callStatus.isLoading()" class="text-center p-3">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-2 text-muted">{{'Loading quotations...' | translate}}</p>
+        </div>
+
+        <!-- Error -->
+        <call-status [callStatus]="callStatus"></call-status>
+
+        <!-- No data -->
+        <div *ngIf="!callStatus.isLoading() && rows.length === 0" class="text-center p-3 text-muted">
+            <i class="fa fa-inbox fa-2x mb-2"></i>
+            <p>{{'No quotations received yet. Responses will appear here as suppliers reply to your RFQs.' | translate}}</p>
+        </div>
+
+        <!-- Comparison table -->
+        <div *ngIf="!callStatus.isLoading() && rows.length > 0" class="table-responsive">
+            <table class="table table-striped table-hover table-sm mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th>{{'Supplier' | translate}}</th>
+                        <th>{{'Product(s)' | translate}}</th>
+                        <th>{{'Unit Price' | translate}}</th>
+                        <th>{{'Quantity' | translate}}</th>
+                        <th>{{'Delivery' | translate}}</th>
+                        <th>{{'Warranty' | translate}}</th>
+                        <th>{{'Incoterms' | translate}}</th>
+                        <th>{{'Payment' | translate}}</th>
+                        <th>{{'Status' | translate}}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of rows"
+                        [class.table-success]="isBestPrice(row)"
+                        [class.table-info]="isBestDelivery(row) && !isBestPrice(row)">
+                        <td class="font-weight-bold">{{ row.supplierName }}</td>
+                        <td>{{ row.productNames }}</td>
+                        <td>
+                            {{ row.unitPrice }}
+                            <i *ngIf="isBestPrice(row)" class="fa fa-trophy text-success ml-1" [title]="'Best price' | translate"></i>
+                        </td>
+                        <td>{{ row.quantity }}</td>
+                        <td>
+                            {{ row.deliveryPeriod }}
+                            <i *ngIf="isBestDelivery(row)" class="fa fa-bolt text-primary ml-1" [title]="'Fastest delivery' | translate"></i>
+                        </td>
+                        <td>{{ row.warranty }}</td>
+                        <td>{{ row.incoterms }}</td>
+                        <td>{{ row.paymentMeans }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="getStatusBadgeClass(row.status)">{{ row.status | translate }}</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" (click)="viewDetails(row)"
+                                    [title]="'View full negotiation details' | translate">
+                                <i class="fa fa-arrow-right"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary footer -->
+        <div *ngIf="!callStatus.isLoading() && rows.length > 1" class="card-footer bg-light">
+            <small>
+                <span *ngIf="bestPriceSupplier" class="mr-3">
+                    <i class="fa fa-trophy text-success"></i> {{'Best price' | translate}}: <strong>{{ bestPriceSupplier }}</strong>
+                </span>
+                <span *ngIf="bestDeliverySupplier">
+                    <i class="fa fa-bolt text-primary"></i> {{'Fastest delivery' | translate}}: <strong>{{ bestDeliverySupplier }}</strong>
+                </span>
+            </small>
+        </div>
+    </div>
+</div>

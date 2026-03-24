@@ -60,7 +60,7 @@ export class ContractService {
                 // use either the company terms or default ones
                 else{
                     let sellerNegotiationSettings = sellerSettings[i].negotiationSettings;
-                    if(sellerNegotiationSettings.company.salesTerms && sellerNegotiationSettings.company.salesTerms.termOrCondition.length > 0){
+                    if(sellerNegotiationSettings.company.salesTerms && sellerNegotiationSettings.company.salesTerms.termOrCondition && sellerNegotiationSettings.company.salesTerms.termOrCondition.length > 0){
                         termsAndConditions.push(copy(sellerNegotiationSettings.company.salesTerms.termOrCondition))
                     } else{
                         // adapt the terms and conditions for the other products by updating the terms including incoterm

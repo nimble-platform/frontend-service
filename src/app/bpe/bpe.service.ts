@@ -649,8 +649,8 @@ export class BPEService {
             url = `${this.delegate_url}/contract/digital-agreement?sellerId=${sellerId}&buyerId=${buyerId}&productIds=${productIds}&delegateId=${responderFederationId}`;
         }
         let headers = this.getAuthorizedHeaders();
-        headers = headers.append("initiatorFederationId", initiatorFederationId);
-        headers = headers.append("responderFederationId", responderFederationId);
+        headers = headers.append("initiatorFederationId", initiatorFederationId || '');
+        headers = headers.append("responderFederationId", responderFederationId || '');
         return this.http
             .get(url, { headers: headers })
             .toPromise()
