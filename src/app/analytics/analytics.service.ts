@@ -36,37 +36,139 @@ export class AnalyticsService {
     ) {
     }
 
+    private avgNonZero(a: number, b: number): number {
+        const nonZero = [a, b].filter(v => v !== 0);
+        return nonZero.length > 0 ? nonZero.reduce((s, v) => s + v, 0) / nonZero.length : 0;
+    }
+
+    private avgNonZeroMap(a: any, b: any): any {
+        const result: any = {};
+        Object.keys(a || {}).forEach(k => { result[k] = this.avgNonZero(a[k], (b || {})[k] || 0); });
+        Object.keys(b || {}).forEach(k => { if (result[k] === undefined) { result[k] = b[k]; } });
+        return result;
+    }
+
     getPlatAnalytics(): Promise<any> {
-        const url = `${this.url_da}`;
-        return this.http
-            .get(url, { headers: this.getAuthorizedHeaders() })
-            .toPromise()
-            .catch(this.handleError);
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        return Promise.all([
+            safe(this.http.get(`${this.url_identity}/statistics/`, {headers: h}).toPromise(), {totalUsers: 0, totalCompanies: 0}),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=Approved`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=WaitingResponse`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=Denied`, {headers: h}).toPromise(), 0)
+        ]).then(([identity, sApproved, sWaiting, sDenied, bApproved, bWaiting, bDenied, tvApproved, tvWaiting, tvDenied]) => ({
+            identity: identity,
+            businessProcessCount: {state: {
+                approved: Math.round(((sApproved || 0) + (bApproved || 0)) / 2),
+                waiting:  Math.round(((sWaiting  || 0) + (bWaiting  || 0)) / 2),
+                denied:   Math.round(((sDenied   || 0) + (bDenied   || 0)) / 2)
+            }},
+            tradingVolume: {approved: tvApproved || 0, waiting: tvWaiting || 0, denied: tvDenied || 0}
+        })).catch(this.handleError);
     }
 
     getPlatCollabAnalytics(): Promise<any> {
-        const url = `${this.url_da}/platform/collabaration`;
-        return this.http
-            .get(url, { headers: this.getAuthorizedHeaders() })
-            .toPromise()
-            .catch(this.handleError);
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        return Promise.all([
+            safe(this.http.get(`${bpe}/collaboration-time?role=SELLER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/collaboration-time?role=BUYER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/collaboration-time-months?role=SELLER`, {headers: h}).toPromise(), {}),
+            safe(this.http.get(`${bpe}/collaboration-time-months?role=BUYER`, {headers: h}).toPromise(), {}),
+            safe(this.http.get(`${bpe}/response-time`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/response-time-months`, {headers: h}).toPromise(), {})
+        ]).then(([collabSeller, collabBuyer, collabSellerMonths, collabBuyerMonths, responseTime, responseTimeMonths]) => ({
+            collaborationTime: {
+                averageCollabTime: this.avgNonZero(collabSeller || 0, collabBuyer || 0),
+                averageCollabTimeSales: collabSeller || 0,
+                averageCollabTimePurchases: collabBuyer || 0,
+                averageCollabTimeForMonths: this.avgNonZeroMap(collabSellerMonths, collabBuyerMonths),
+                averageCollabTimeSalesForMonths: collabSellerMonths || {},
+                averageCollabTimePurchasesForMonths: collabBuyerMonths || {}
+            },
+            responseTime: {
+                averageTime: responseTime || 0,
+                averageTimeForMonths: responseTimeMonths || {}
+            }
+        })).catch(this.handleError);
     }
 
     getPerfromanceAnalytics(comp: string): Promise<any> {
-        const url = `${this.url_da}/company?companyID=${comp}`;
-        return this.http
-            .get(url, { headers: this.getAuthorizedHeaders() })
-            .toPromise()
-            .catch(this.handleError);
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        return Promise.all([
+            safe(this.http.get(`${this.url_identity}/statistics/`, {headers: h}).toPromise(), {totalUsers: 0, totalCompanies: 0}),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&partyId=${comp}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&partyId=${comp}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&partyId=${comp}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&partyId=${comp}&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&partyId=${comp}&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&partyId=${comp}&role=buyer`, {headers: h}).toPromise(), 0)
+        ]).then(([identity, sApproved, sWaiting, sDenied, bApproved, bWaiting, bDenied]) => {
+            const totSeller = (sApproved || 0) + (sWaiting || 0) + (sDenied || 0);
+            const totBuyer  = (bApproved || 0) + (bWaiting || 0) + (bDenied || 0);
+            const totAll    = totSeller + totBuyer;
+            return {
+                identity: identity,
+                businessProcessCount: {
+                    total: totAll,
+                    state: {
+                        approved: (sApproved || 0) + (bApproved || 0),
+                        waiting:  (sWaiting  || 0) + (bWaiting  || 0),
+                        denied:   (sDenied   || 0) + (bDenied   || 0)
+                    },
+                    role: {
+                        seller: {approved: sApproved || 0, waiting: sWaiting || 0, denied: sDenied || 0, tot: totSeller},
+                        buyer:  {approved: bApproved || 0, waiting: bWaiting || 0, denied: bDenied || 0, tot: totBuyer}
+                    }
+                }
+            };
+        }).catch(this.handleError);
     }
 
-
     getCollabAnalytics(comp: string): Promise<any> {
-        const url = `${this.url_da}/company/collabaration?companyID=${comp}`;
-        return this.http
-            .get(url, { headers: this.getAuthorizedHeaders() })
-            .toPromise()
-            .catch(this.handleError);
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        return Promise.all([
+            safe(this.http.get(`${bpe}/trading-volume?status=Approved&partyId=${comp}&role=SELLER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=WaitingResponse&partyId=${comp}&role=SELLER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=Denied&partyId=${comp}&role=SELLER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=Approved&partyId=${comp}&role=BUYER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=WaitingResponse&partyId=${comp}&role=BUYER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/trading-volume?status=Denied&partyId=${comp}&role=BUYER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/collaboration-time?partyId=${comp}&role=SELLER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/collaboration-time?partyId=${comp}&role=BUYER`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/collaboration-time-months?partyId=${comp}&role=SELLER`, {headers: h}).toPromise(), {}),
+            safe(this.http.get(`${bpe}/collaboration-time-months?partyId=${comp}&role=BUYER`, {headers: h}).toPromise(), {}),
+            safe(this.http.get(`${bpe}/response-time?partyId=${comp}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/response-time-months?partyId=${comp}`, {headers: h}).toPromise(), {})
+        ]).then(([tvSellApproved, tvSellWaiting, tvSellDenied, tvBuyApproved, tvBuyWaiting, tvBuyDenied,
+                  collabSeller, collabBuyer, collabSellerMonths, collabBuyerMonths, responseTime, responseTimeMonths]) => ({
+            tradingVolumesales:    {approved: tvSellApproved || 0, waiting: tvSellWaiting || 0, denied: tvSellDenied || 0},
+            tradingVolumespurchase:{approved: tvBuyApproved  || 0, waiting: tvBuyWaiting  || 0, denied: tvBuyDenied  || 0},
+            collaborationTime: {
+                averageCollabTime: this.avgNonZero(collabSeller || 0, collabBuyer || 0),
+                averageCollabTimeSales:     collabSeller || 0,
+                averageCollabTimePurchases: collabBuyer  || 0,
+                averageCollabTimeForMonths:          this.avgNonZeroMap(collabSellerMonths, collabBuyerMonths),
+                averageCollabTimeSalesForMonths:     collabSellerMonths || {},
+                averageCollabTimePurchasesForMonths: collabBuyerMonths  || {}
+            },
+            responseTime: {
+                averageTime:         responseTime       || 0,
+                averageTimeForMonths: responseTimeMonths || {}
+            }
+        })).catch(this.handleError);
     }
 
     getCompAnalytics(comp: string): Promise<any> {

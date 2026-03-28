@@ -137,15 +137,16 @@ export class QuotationComparisonComponent implements OnInit {
             }
 
             // Extract supplier name — prefer party data from quotation/RFQ, fall back to group name
+            // Guard: partyName can be [] (empty array) — getPartyDisplayNameForPartyName throws on empty
             let supplierName = group.name || 'Unknown Supplier';
-            if (quotation && quotation.sellerSupplierParty && quotation.sellerSupplierParty.party) {
-                supplierName = UBLModelUtils.getPartyDisplayNameForPartyName(
-                    quotation.sellerSupplierParty.party.partyName
-                );
-            } else if (rfq && rfq.sellerSupplierParty && rfq.sellerSupplierParty.party) {
-                supplierName = UBLModelUtils.getPartyDisplayNameForPartyName(
-                    rfq.sellerSupplierParty.party.partyName
-                );
+            const qPartyNames = quotation && quotation.sellerSupplierParty && quotation.sellerSupplierParty.party
+                ? quotation.sellerSupplierParty.party.partyName : null;
+            const rPartyNames = rfq && rfq.sellerSupplierParty && rfq.sellerSupplierParty.party
+                ? rfq.sellerSupplierParty.party.partyName : null;
+            if (qPartyNames && qPartyNames.length > 0) {
+                supplierName = UBLModelUtils.getPartyDisplayNameForPartyName(qPartyNames);
+            } else if (rPartyNames && rPartyNames.length > 0) {
+                supplierName = UBLModelUtils.getPartyDisplayNameForPartyName(rPartyNames);
             }
 
             // If no quotation yet, return a "waiting" row
