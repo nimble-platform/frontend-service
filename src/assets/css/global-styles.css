@@ -12,5 +12,35 @@
    limitations under the License.
  */
 :root {
-    --main-color: #b77563;
+    /* Brand color — navbar, active menu, pagination, spinner */
+    --main-color:          #1b5e20;
+
+    /* Primary action — buttons, links, icons */
+    --primary-color:       #2e7d32;
+    --primary-hover:       #388e3c;
+    --primary-active:      #43a047;
+
+    /* Secondary action — neutral buttons (blue-grey / endüstriyel ton) */
+    --secondary-color:     #546e7a;
+    --secondary-hover:     #607d8b;
+    --secondary-active-bg: #455a64;
+    --secondary-active-bd: #37474f;
+
+    /* Danger — destructive buttons, warnings */
+    --danger-color:        #c62828;
+    --danger-hover-bg:     #b71c1c;
+    --danger-hover-bd:     #a51414;
+
+    /* Disabled state */
+    --disabled-color:      #909191;
+
+    /* Navigation */
+    --nav-link-hover:      #004d40;
+
+    /* Icons */
+    --icon-secondary:      #a1a1a1;
+
+    /* Form validation */
+    --valid-border:        #388e3c;
+    --invalid-border:      #c62828;
 }
