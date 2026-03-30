@@ -111,6 +111,45 @@ export class PlatformAnalyticsComponent implements OnInit {
 
     months = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+    // New KPI metrics
+    activeCompanyCount = 0;
+    recentActivity30 = -1;
+
+    get avgProductsPerCompany(): string {
+        if (this.registered_company_count <= 0 || this.product_count < 0) return '???';
+        return (this.product_count / this.registered_company_count).toFixed(1);
+    }
+
+    get negotiationSuccessRate(): string {
+        if (this.bp_count <= 0) return '—';
+        return this.green_perc + '%';
+    }
+
+    // --- New analytics charts ---
+    // Country distribution
+    countryChartData: any[] = [];
+    loadedCountry = false;
+
+    // Category distribution
+    categoryChartData: any[] = [];
+    loadedCategory = false;
+
+    // Top active companies
+    topCompaniesData: any[] = [];
+    loadedTopCompanies = false;
+
+    // BP success rate pie
+    bpPieData: any[] = [];
+
+    // Chart settings for new charts
+    barColorScheme = {domain: ['#2e7d32', '#546e7a', '#1b5e20', '#388e3c', '#43a047']};
+    pieColorScheme = {domain: ['#2e7d32', '#f9a825', '#c62828']};
+    bpCustomColors = [
+        {name: 'Approved', value: '#2e7d32'},
+        {name: 'Waiting',  value: '#f9a825'},
+        {name: 'Rejected', value: '#c62828'}
+    ];
+
 
     // process count modal
     @ViewChild(BusinessProcessCountModalComponent)
@@ -144,6 +183,12 @@ export class PlatformAnalyticsComponent implements OnInit {
         this.getProductAndServiceCounts();
         // get registered company count
         this.getRegisteredCompanyCount();
+        // new analytics charts
+        this.getCountryDistribution();
+        this.getCategoryDistribution();
+        this.getTopActiveCompanies();
+        // recent activity (last 30 days)
+        this.analyticsService.getRecentActivity(30).then(n => { this.recentActivity30 = n; }).catch(() => { this.recentActivity30 = 0; });
         this.analyticsService
             .getPlatAnalytics()
             .then(res => {
@@ -158,6 +203,11 @@ export class PlatformAnalyticsComponent implements OnInit {
                 this.yellow_perc_str = this.yellow_perc + "%";
                 this.red_perc = 100 - this.green_perc - this.yellow_perc;
                 this.red_perc_str = this.red_perc + "%";
+                this.bpPieData = [
+                    {name: 'Approved', value: this.green},
+                    {name: 'Waiting',  value: this.yellow},
+                    {name: 'Rejected', value: this.red}
+                ].filter(d => d.value > 0);
                 this.trade_count = Math.round(res.tradingVolume.approved + res.tradingVolume.waiting + res.tradingVolume.denied);
                 this.trade_green = Math.round(res.tradingVolume.approved);
                 this.trade_yellow = Math.round(res.tradingVolume.waiting);
@@ -298,15 +348,35 @@ export class PlatformAnalyticsComponent implements OnInit {
                 '',
                 'Prod');
 
-            Promise.all([catalogPromise, servicePromise]).then(([catalogResult, notServiceResult]) => {
+            // Also get active company count via manufacturerId facet (distinct publishers)
+            const activeCompPromise: Promise<any> = this.simpleSearchService.get(
+                '*',
+                ['manufacturerId'],
+                [],
+                1,
+                0,
+                'score desc',
+                '',
+                '',
+                'Prod');
+
+            Promise.all([catalogPromise, servicePromise, activeCompPromise]).then(([catalogResult, notServiceResult, activeCompResult]) => {
                 const totalItemCount: number = catalogResult.totalElements;
                 this.product_count = notServiceResult.totalElements;
                 this.service_count = totalItemCount - this.product_count;
+
+                // Count distinct companies that have published at least one product
+                const mfFacet = activeCompResult && activeCompResult.facets && activeCompResult.facets['manufacturerId'];
+                if (mfFacet && mfFacet.entry) {
+                    this.activeCompanyCount = mfFacet.entry.filter((e: any) => e.count > 0).length;
+                }
 
                 this.loadedps = true;
             });
         });
     }
+
+    onSelect(event: any): void {}
 
     onSelectTab(event: any, id: any): void {
         event.preventDefault();
@@ -318,6 +388,79 @@ export class PlatformAnalyticsComponent implements OnInit {
      * */
     openProcessCountModal() {
         this.processCountModal.open();
+    }
+
+    private getCountryDistribution(): void {
+        this.analyticsService.getAllParties(0)
+            .then(parties => {
+                const list = Array.isArray(parties) ? parties : (parties && (parties['parties'] || parties['content'] || []));
+                if (!list || !list.length) return;
+                const countMap: {[code: string]: number} = {};
+                const nameMap: {[code: string]: string} = {};
+                for (const party of list) {
+                    const addr = party.postalAddress;
+                    if (!addr || !addr.country) continue;
+                    const code = addr.country.identificationCode && addr.country.identificationCode.value
+                        ? addr.country.identificationCode.value : null;
+                    const name = addr.country.name && addr.country.name.value
+                        ? addr.country.name.value : code;
+                    if (!code) continue;
+                    countMap[code] = (countMap[code] || 0) + 1;
+                    nameMap[code] = name || code;
+                }
+                this.countryChartData = Object.keys(countMap)
+                    .map(code => ({name: nameMap[code] || code, value: countMap[code]}))
+                    .sort((a, b) => b.value - a.value);
+                this.loadedCountry = this.countryChartData.length > 0;
+            })
+            .catch(() => {});
+    }
+
+    private getCategoryDistribution(): void {
+        this.simpleSearchService.get('*', ['commodityClassficationUri'], [], 1, 0, 'score desc', '', '', 'Prod')
+            .then(res => {
+                const facet = res && res.facets && res.facets['commodityClassficationUri'];
+                if (!facet || !facet.entry || !facet.entry.length) return;
+                this.categoryChartData = facet.entry
+                    .filter((e: any) => e.count > 0)
+                    .map((e: any) => {
+                        let label: string = e.label || '';
+                        if (label.includes('#')) label = label.split('#').pop() || label;
+                        else if (label.includes('/')) label = label.split('/').pop() || label;
+                        label = label.replace(/([A-Z])/g, ' $1').trim();
+                        return {name: label || e.label, value: e.count};
+                    })
+                    .sort((a: any, b: any) => b.value - a.value)
+                    .slice(0, 10);
+                this.loadedCategory = this.categoryChartData.length > 0;
+            })
+            .catch(() => {});
+    }
+
+    private getTopActiveCompanies(): void {
+        this.analyticsService.getAllParties(0)
+            .then(parties => {
+                const list = Array.isArray(parties) ? parties : (parties && (parties['parties'] || parties['content'] || []));
+                if (!list || !list.length) { this.loadedTopCompanies = true; return; }
+                const promises = list.map(party => {
+                    const partyId = party.partyIdentification && party.partyIdentification[0]
+                        ? party.partyIdentification[0].id : null;
+                    const name = party.partyName && party.partyName[0] && party.partyName[0].name
+                        ? party.partyName[0].name.value : 'Unknown';
+                    if (!partyId) return Promise.resolve(null);
+                    return this.analyticsService.getCompanyBPCount(partyId)
+                        .then(count => ({name: name, value: count}))
+                        .catch(() => null);
+                });
+                return Promise.all(promises).then((results: any[]) => {
+                    this.topCompaniesData = results
+                        .filter((r: any) => r !== null && r.value > 0)
+                        .sort((a: any, b: any) => b.value - a.value)
+                        .slice(0, 5);
+                    this.loadedTopCompanies = true;
+                });
+            })
+            .catch(() => { this.loadedTopCompanies = true; });
     }
 
     showToolTip(content,key) {

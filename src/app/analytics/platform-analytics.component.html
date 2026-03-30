@@ -95,6 +95,52 @@
             </div>
         </div>
 
+        <!-- KPI Metrics Row -->
+        <div class="row justify-content-center mb-3" *ngIf="loadedps">
+            <!-- Active Companies -->
+            <div class="card col-2 mx-2">
+                <div class="card-body text-center p-3">
+                    <h4 class="card-title mb-1">
+                        <b>{{activeCompanyCount}}</b>
+                        <small class="text-muted"> / {{registered_company_count >= 0 ? registered_company_count : '?'}}</small>
+                    </h4>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Active Companies</h6>
+                    <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-industry" style="color:var(--primary-color)"></i></p>
+                    <small class="text-muted">with published products</small>
+                </div>
+            </div>
+            <!-- Avg Products/Company -->
+            <div class="card col-2 mx-2">
+                <div class="card-body text-center p-3">
+                    <h4 class="card-title mb-1"><b>{{avgProductsPerCompany}}</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Avg. Products / Company</h6>
+                    <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-boxes" style="color:var(--primary-color)"></i></p>
+                    <small class="text-muted">catalogue coverage</small>
+                </div>
+            </div>
+            <!-- Negotiation Success Rate -->
+            <div class="card col-2 mx-2">
+                <div class="card-body text-center p-3">
+                    <h4 class="card-title mb-1"><b>{{negotiationSuccessRate}}</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Negotiation Success Rate</h6>
+                    <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-handshake" style="color:var(--primary-color)"></i></p>
+                    <small class="text-muted">approved negotiations</small>
+                </div>
+            </div>
+            <!-- Recent Activity -->
+            <div class="card col-2 mx-2">
+                <div class="card-body text-center p-3">
+                    <h4 class="card-title mb-1">
+                        <b *ngIf="recentActivity30 >= 0">{{recentActivity30}}</b>
+                        <b *ngIf="recentActivity30 < 0">…</b>
+                    </h4>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Last 30 Days Activity</h6>
+                    <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-chart-line" style="color:var(--primary-color)"></i></p>
+                    <small class="text-muted">new negotiations</small>
+                </div>
+            </div>
+        </div>
+
         <hr>
 
         <div class="row justify-content-center">
@@ -110,16 +156,21 @@
                 </div>
             </div>
             <div class="col-1"></div>
-            <div class="col-6">
-                <div *ngIf="bp_count>0" class="progress mt-5">
-                    <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':green_perc_str}" [attr.aria-valuenow]="green_perc" aria-valuemin="0" aria-valuemax="100"></div>
-                    <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':yellow_perc_str}" [attr.aria-valuenow]="yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
-                    <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':red_perc_str}" [attr.aria-valuenow]="red_perc" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div *ngIf="bp_count>0" class="space-before text-center">
-                    <span class="badge badge-pill badge-success">{{green}} <span [innerHTML]="'Approved' | translate"></span> ({{green_perc_str}})</span>
-                    <span class="badge badge-pill badge-warning">{{yellow}} <span [innerHTML]="'Waiting' | translate"></span> ({{yellow_perc_str}})</span>
-                    <span class="badge badge-pill badge-danger">{{red}} <span [innerHTML]="'Rejected' | translate"></span> ({{red_perc_str}})</span>
+            <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                <div *ngIf="bp_count>0">
+                    <ngx-charts-pie-chart
+                        [view]="[260, 220]"
+                        [results]="bpPieData"
+                        [customColors]="bpCustomColors"
+                        [gradient]="false"
+                        [legend]="false"
+                        [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                    <div class="text-center mt-1">
+                        <span *ngIf="green > 0" class="badge badge-pill mr-2" style="background:#2e7d32;color:#fff">{{green}} Approved</span>
+                        <span *ngIf="yellow > 0" class="badge badge-pill mr-2" style="background:#f9a825;color:#fff">{{yellow}} Waiting</span>
+                        <span *ngIf="red > 0" class="badge badge-pill" style="background:#c62828;color:#fff">{{red}} Rejected</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -138,16 +189,23 @@
                 </div>
             </div>
             <div class="col-1"></div>
-            <div class="col-6">
-                <div *ngIf="trade_count>0" class="progress mt-5">
-                    <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str}" [attr.aria-valuenow]="trade_green_perc" aria-valuemin="0" aria-valuemax="100"></div>
-                    <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str}" [attr.aria-valuenow]="trade_yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
-                    <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="col-6 d-flex align-items-center justify-content-center">
+                <div *ngIf="trade_count>0" class="w-100">
+                    <div class="progress mt-5">
+                        <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':trade_green_perc_str}" [attr.aria-valuenow]="trade_green_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':trade_yellow_perc_str}" [attr.aria-valuenow]="trade_yellow_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-danger" role="progressbar" [ngStyle]="{'width':trade_red_perc_str}" [attr.aria-valuenow]="trade_red_perc" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="space-before text-center">
+                        <span class="badge badge-pill badge-success">{{trade_green}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str}})</span>
+                        <span class="badge badge-pill badge-warning">{{trade_yellow}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str}})</span>
+                        <span class="badge badge-pill badge-danger">{{trade_red}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str}})</span>
+                    </div>
                 </div>
-                <div *ngIf="trade_count>0" class="space-before text-center">
-                    <span class="badge badge-pill badge-success">{{trade_green}}€ <span [innerHTML]="'Approved' | translate"></span> ({{trade_green_perc_str}})</span>
-                    <span class="badge badge-pill badge-warning">{{trade_yellow}}€ <span [innerHTML]="'Waiting' | translate"></span> ({{trade_yellow_perc_str}})</span>
-                    <span class="badge badge-pill badge-danger">{{trade_red}}€ <span [innerHTML]="'Rejected' | translate"></span> ({{trade_red_perc_str}})</span>
+                <div *ngIf="trade_count===0" class="text-center text-muted">
+                    <i class="fa fa-chart-bar fa-3x mb-2" style="color:#d0d0d0"></i>
+                    <p class="mb-0">No completed transactions yet.</p>
+                    <small>Trading volume will appear here once negotiations are finalized.</small>
                 </div>
             </div>
         </div>
@@ -269,6 +327,69 @@
 
         </div>
         <hr />
+
+        <!-- Country Distribution -->
+        <div *ngIf="loadedCountry" class="row justify-content-center space-before" style="overflow-x:hidden">
+            <div class="col-12 text-center mb-2">
+                <h5>Company Distribution by Country</h5>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <ngx-charts-bar-horizontal
+                    [view]="[520, 200]"
+                    [scheme]="barColorScheme"
+                    [results]="countryChartData"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="false"
+                    [showXAxisLabel]="true"
+                    [xAxisLabel]="'Number of Companies'"
+                    [showDataLabel]="true">
+                </ngx-charts-bar-horizontal>
+            </div>
+        </div>
+        <hr *ngIf="loadedCountry" />
+
+        <!-- Category Distribution -->
+        <div *ngIf="loadedCategory" class="row justify-content-center space-before" style="overflow-x:hidden">
+            <div class="col-12 text-center mb-2">
+                <h5>Product Distribution by Category</h5>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <ngx-charts-bar-horizontal
+                    [view]="[520, 240]"
+                    [scheme]="barColorScheme"
+                    [results]="categoryChartData"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="false"
+                    [showXAxisLabel]="true"
+                    [xAxisLabel]="'Number of Products'"
+                    [showDataLabel]="true">
+                </ngx-charts-bar-horizontal>
+            </div>
+        </div>
+        <hr *ngIf="loadedCategory" />
+
+        <!-- Top Active Companies -->
+        <div *ngIf="loadedTopCompanies && topCompaniesData.length > 0" class="row justify-content-center space-before" style="overflow-x:hidden">
+            <div class="col-12 text-center mb-2">
+                <h5>Most Active Companies</h5>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+                <ngx-charts-bar-horizontal
+                    [view]="[520, 220]"
+                    [scheme]="barColorScheme"
+                    [results]="topCompaniesData"
+                    [xAxis]="true"
+                    [yAxis]="true"
+                    [legend]="false"
+                    [showXAxisLabel]="true"
+                    [xAxisLabel]="'Business Processes'"
+                    [showDataLabel]="true">
+                </ngx-charts-bar-horizontal>
+            </div>
+        </div>
+        <hr *ngIf="loadedTopCompanies && topCompaniesData.length > 0" />
 
     </div>
 

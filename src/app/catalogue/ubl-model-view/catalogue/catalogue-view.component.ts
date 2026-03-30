@@ -236,7 +236,9 @@ export class CatalogueViewComponent implements OnInit {
                 this.partyNameMap = new Map<string, string>();
 
                 for (let party of parties) {
-                    this.partyNameMap.set(party.vatNumber,party.legalName);
+                    // party/search response lacks vatNumber (PartyType Java model has no vatNumber field),
+                    // so fall back to party.id (numeric party ID stored as vatNumber in Solr)
+                    this.partyNameMap.set(party.vatNumber || party.id, party.legalName);
                 }
 
                 this.whiteListCompanies = [];

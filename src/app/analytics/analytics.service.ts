@@ -74,6 +74,43 @@ export class AnalyticsService {
         })).catch(this.handleError);
     }
 
+    getRecentActivity(days: number = 30): Promise<number> {
+        const now = new Date(), past = new Date();
+        past.setDate(now.getDate() - days);
+        const fmt = (d: Date) =>
+            `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+        const startDate = fmt(past), endDate = fmt(now);
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, f: any) => p.catch(() => f);
+        return Promise.all([
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&role=seller&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&role=seller&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&role=seller&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&role=buyer&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&role=buyer&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&role=buyer&startDate=${startDate}&endDate=${endDate}`, {headers: h}).toPromise(), 0)
+        ]).then(([sA, sW, sD, bA, bW, bD]) =>
+            Math.round(((sA || 0) + (sW || 0) + (sD || 0) + (bA || 0) + (bW || 0) + (bD || 0)) / 2)
+        );
+    }
+
+    getCompanyBPCount(partyId: string): Promise<number> {
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        return Promise.all([
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&partyId=${partyId}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&partyId=${partyId}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&partyId=${partyId}&role=seller`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Approved&partyId=${partyId}&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=WaitingResponse&partyId=${partyId}&role=buyer`, {headers: h}).toPromise(), 0),
+            safe(this.http.get(`${bpe}/total-number/business-process?status=Denied&partyId=${partyId}&role=buyer`, {headers: h}).toPromise(), 0)
+        ]).then(([sA, sW, sD, bA, bW, bD]) =>
+            Math.round(((sA||0) + (sW||0) + (sD||0) + (bA||0) + (bW||0) + (bD||0)) / 2)
+        );
+    }
+
     getPlatCollabAnalytics(): Promise<any> {
         const h = this.getAuthorizedHeaders();
         const bpe = this.url_bpe;

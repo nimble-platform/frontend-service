@@ -2185,12 +2185,15 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
 
     onToggleCompanySelectForWhiteBlackList(toggledCompany: any, event): void {
         event.preventDefault();
+        // Ensure vatNumber is set — party/search response lacks vatNumber field (PartyType Java model),
+        // so fall back to the numeric party id which matches the Solr vatNumber field we store.
+        const company = toggledCompany.vatNumber ? toggledCompany : Object.assign({}, toggledCompany, {vatNumber: toggledCompany.id});
         // set timeout is required since the default checkbox implementation prevents updating status of the checkbox
         setTimeout(() => {
-            if (this.whiteBlackListService.isCompanySelected(toggledCompany.vatNumber)) {
-                this.onRemoveSelectedCompany(toggledCompany.vatNumber);
+            if (this.whiteBlackListService.isCompanySelected(company.vatNumber)) {
+                this.onRemoveSelectedCompany(company.vatNumber);
             } else {
-                this.whiteBlackListService.onAddSelectedCompany(toggledCompany)
+                this.whiteBlackListService.onAddSelectedCompany(company)
             }
         });
     }
