@@ -195,7 +195,10 @@ export class SimpleSearchService {
         // when the page reference is catalogue, we retrieve eFactory companies for white/black list
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
             let querySettings = {
-                'fields': [this.party_legal_name, ('{LANG}_' + this.party_brand_name)],
+                // Use legalNameText (text_general) for partial/full-text search.
+                // legalName is a string field (exact match only) managed by indexing-service;
+                // legalNameText is a separate analyzed field populated by seed + Solr copyField.
+                'fields': ['legalNameText', ('{LANG}_' + this.party_brand_name)],
                 'boosting': false,
                 'boostingFactors': {}
             };
@@ -203,8 +206,7 @@ export class SimpleSearchService {
             url = this.eFactoryIndexingEndpoint + `/party/search`;
             searchObject.q =  'hasRegisteredUser:true AND ' + queryRes.queryStr;
             searchObject.fq = [];
-            // EFPF companies might not have lowercaseLegalName field, so, replace it with legalName
-            sort = sort.replace("lowercaseLegalName","legalName");
+            // lowercaseLegalName is a sortable string field in our local Solr — keep it as-is
         }
         else {
             let queryRes;
