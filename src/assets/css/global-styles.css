@@ -11,20 +11,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
+
+/*
+ * HarWASTing Brand Guidelines — Color Palette
+ * Primary Green : #38b34a  (R56  G179 B74  / Pantone 2270 C)
+ * Brand Blue    : #2a3b8f  (R41  G60  B143 / Pantone 7686 C)
+ * Warm Gold     : #c59656  (R197 G150 B86  / Pantone 465 C)
+ * Light Green   : #8ec441  (R142 G196 B65  / Pantone 2291 C)
+ * Light Blue    : #299fd9  (R41  G159 B217 / Pantone 7688 C)
+ * Typography    : Manrope (digital), Arial (documents)
+ */
 :root {
     /* Brand color — navbar, active menu, pagination, spinner */
-    --main-color:          #1b5e20;
+    --main-color:          #2d9140;   /* slightly darker than brand primary for navbar contrast */
 
     /* Primary action — buttons, links, icons */
-    --primary-color:       #2e7d32;
-    --primary-hover:       #388e3c;
-    --primary-active:      #43a047;
+    --primary-color:       #38b34a;   /* HarWASTing primary green */
+    --primary-hover:       #2d9140;
+    --primary-active:      #247a33;
 
-    /* Secondary action — neutral buttons (blue-grey / endüstriyel ton) */
-    --secondary-color:     #546e7a;
-    --secondary-hover:     #607d8b;
-    --secondary-active-bg: #455a64;
-    --secondary-active-bd: #37474f;
+    /* Secondary action — HarWASTing brand blue */
+    --secondary-color:     #2a3b8f;
+    --secondary-hover:     #3449a8;
+    --secondary-active-bg: #1e2c6e;
+    --secondary-active-bd: #162259;
 
     /* Danger — destructive buttons, warnings */
     --danger-color:        #c62828;
@@ -35,12 +45,17 @@
     --disabled-color:      #909191;
 
     /* Navigation */
-    --nav-link-hover:      #004d40;
+    --nav-link-hover:      #247a33;
 
     /* Icons */
     --icon-secondary:      #a1a1a1;
 
     /* Form validation */
-    --valid-border:        #388e3c;
+    --valid-border:        #38b34a;
     --invalid-border:      #c62828;
+
+    /* HarWASTing extended brand palette */
+    --brand-gold:          #c59656;   /* Pantone 465 C — warm accent */
+    --brand-light-green:   #8ec441;   /* Pantone 2291 C — secondary green */
+    --brand-light-blue:    #299fd9;   /* Pantone 7688 C — info / highlight */
 }
