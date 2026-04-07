@@ -643,6 +643,23 @@ export class CatalogueService {
             .catch(this.handleError);
     }
 
+    /**
+     * Sends collaboration invitation emails to the given partner companies.
+     * @param partnerPartyIds list of numeric party IDs to invite
+     * @param collaborationContext name/description of the project or collaboration
+     * @param message optional personal message from the sender
+     */
+    sendCollaborationInvitation(partnerPartyIds: string[], collaborationContext: string, message: string): Promise<any> {
+        const params = partnerPartyIds.map(id => `partnerPartyIds=${encodeURIComponent(id)}`).join('&')
+            + `&collaborationContext=${encodeURIComponent(collaborationContext)}`
+            + (message ? `&message=${encodeURIComponent(message)}` : '');
+        const url = this.baseUrl + `/catalogue/collaboration-invite?${params}`;
+        return this.http
+            .post(url, null, { headers: this.getAuthorizedHeaders() })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     getTaxRates(): Promise<any> {
         const url = `https://raw.githubusercontent.com/ibericode/vat-rates/master/vat-rates.json`;
         return this.http

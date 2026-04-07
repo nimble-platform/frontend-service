@@ -69,10 +69,87 @@
                         </button>
                     </div>
                 </div>
+                <!-- Invite to Collaboration button — only visible when group has at least one company -->
+                <div class="col-2" *ngIf="network.vatNumber.length > 0 && partyNameMap">
+                    <button class="btn btn-primary btn-sm" (click)="openInviteModal(i, inviteModal)">
+                        <i class="fa fa-envelope mr-1"></i>
+                        <span [innerHTML]="'Invite to Collaboration' | translate"></span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Collaboration Invitation Modal -->
+<ng-template #inviteModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <i class="fa fa-envelope mr-2"></i>
+            <span [innerHTML]="'Invite to Collaboration' | translate"></span>
+        </h4>
+        <button type="button" class="close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <!-- Collaboration Context -->
+        <div class="form-group row">
+            <label class="col-3 col-form-label">
+                <strong><span [innerHTML]="'Project / Context' | translate"></span></strong>
+            </label>
+            <div class="col-9">
+                <input type="text" class="form-control"
+                       [(ngModel)]="inviteCollaborationContext"
+                       [placeholder]="'e.g. Biomass Supply Chain Q3 2026' | translate">
+            </div>
+        </div>
+
+        <!-- Partners to invite -->
+        <div class="form-group row" *ngIf="inviteModalNetworkIndex >= 0 && networkGroups[inviteModalNetworkIndex]">
+            <label class="col-3 col-form-label">
+                <strong><span [innerHTML]="'Partners' | translate"></span></strong>
+            </label>
+            <div class="col-9">
+                <div *ngFor="let vatNumber of networkGroups[inviteModalNetworkIndex].vatNumber" class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           [id]="'invite_' + vatNumber"
+                           [checked]="isInviteCompanySelected(vatNumber)"
+                           (change)="toggleInviteCompany(vatNumber)">
+                    <label class="form-check-label" [for]="'invite_' + vatNumber">
+                        {{ partyNameMap?.get(vatNumber) || vatNumber }}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional message -->
+        <div class="form-group row">
+            <label class="col-3 col-form-label">
+                <span [innerHTML]="'Message (optional)' | translate"></span>
+            </label>
+            <div class="col-9">
+                <textarea class="form-control" rows="3"
+                          [(ngModel)]="inviteMessage"
+                          [placeholder]="'Add a personal message...' | translate"></textarea>
+            </div>
+        </div>
+
+        <call-status [callStatus]="inviteCallStatus" [large]="true"></call-status>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="modal.dismiss()">
+            <span [innerHTML]="'Cancel' | translate"></span>
+        </button>
+        <button class="btn btn-primary"
+                [disabled]="!inviteCollaborationContext || inviteSelectedVatNumbers.length === 0 || inviteCallStatus.isLoading()"
+                (click)="onSendCollaborationInvitation(modal)">
+            <i class="fa fa-paper-plane mr-1"></i>
+            <span [innerHTML]="'Send Invitations' | translate"></span>
+        </button>
+    </div>
+</ng-template>
 
 <!-- Actions -->
 <div *ngIf="(networkGroups && networkGroups.length > 0) || (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before row actions-row space-before">

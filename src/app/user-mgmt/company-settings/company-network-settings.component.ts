@@ -13,6 +13,7 @@
  */
 
 import { Component, OnInit, Input } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { CompanySettings } from "../model/company-settings";
 import { CallStatus } from "../../common/call-status";
 import { UserService } from "../user.service";
@@ -26,6 +27,7 @@ import {copy} from '../../common/utils';
 import {Network} from '../../catalogue/model/publish/network';
 import {Text} from '../../catalogue/model/publish/text';
 import {SimpleSearchService} from '../../simple-search/simple-search.service';
+import {CatalogueService} from '../../catalogue/catalogue.service';
 
 @Component({
     selector: "company-network-settings",
@@ -40,6 +42,13 @@ export class CompanyNetworkSettingsComponent implements OnInit {
     product_vendor_brand_name = myGlobals.product_vendor_brand_name;
 
     callStatus: CallStatus = new CallStatus();
+    inviteCallStatus: CallStatus = new CallStatus();
+
+    // Collaboration invitation modal state
+    inviteModalNetworkIndex: number = -1;
+    inviteCollaborationContext: string = '';
+    inviteMessage: string = '';
+    inviteSelectedVatNumbers: string[] = [];
 
     addSelectedCompanies:boolean = false;
     // party vat number - party name
@@ -56,6 +65,8 @@ export class CompanyNetworkSettingsComponent implements OnInit {
                 public networkCompanyListService: NetworkCompanyListService,
                 private userService: UserService,
                 public simpleSearchService: SimpleSearchService,
+                private catalogueService: CatalogueService,
+                private modalService: NgbModal,
                 public route: ActivatedRoute,
                 public router: Router) {
 
@@ -196,6 +207,48 @@ export class CompanyNetworkSettingsComponent implements OnInit {
 
     onRemoveCompanyFromList(networkIndex:number,companyIndex:number) {
         this.networkGroups[networkIndex].vatNumber.splice(companyIndex,1);
+    }
+
+    openInviteModal(networkIndex: number, content: any): void {
+        this.inviteModalNetworkIndex = networkIndex;
+        this.inviteCollaborationContext = '';
+        this.inviteMessage = '';
+        // pre-select all companies in the group
+        this.inviteSelectedVatNumbers = this.networkGroups[networkIndex].vatNumber.slice();
+        this.inviteCallStatus.reset();
+        this.modalService.open(content, { size: 'lg' });
+    }
+
+    toggleInviteCompany(vatNumber: string): void {
+        const idx = this.inviteSelectedVatNumbers.indexOf(vatNumber);
+        if (idx === -1) {
+            this.inviteSelectedVatNumbers.push(vatNumber);
+        } else {
+            this.inviteSelectedVatNumbers.splice(idx, 1);
+        }
+    }
+
+    isInviteCompanySelected(vatNumber: string): boolean {
+        return this.inviteSelectedVatNumbers.indexOf(vatNumber) !== -1;
+    }
+
+    onSendCollaborationInvitation(modal: any): void {
+        if (!this.inviteCollaborationContext || this.inviteSelectedVatNumbers.length === 0) {
+            return;
+        }
+        // resolve vatNumbers to party IDs via partyNameMap keys → Solr vatNumber field
+        // We pass vatNumbers as party IDs since getEFactoryCompanies resolves by vatNumber
+        this.inviteCallStatus.submit();
+        this.simpleSearchService.getEFactoryCompanies(this.inviteSelectedVatNumbers).then(response => {
+            const partyIds: string[] = response.result.map((p: any) => p.id);
+            return this.catalogueService.sendCollaborationInvitation(
+                partyIds, this.inviteCollaborationContext, this.inviteMessage);
+        }).then(() => {
+            this.inviteCallStatus.callback(this.translate.instant('Invitations sent successfully.'));
+            setTimeout(() => modal.dismiss(), 1500);
+        }).catch(error => {
+            this.inviteCallStatus.error(this.translate.instant('Failed to send invitations.'), error);
+        });
     }
 
     onAddCompanyToList(networkIndex:number): void {

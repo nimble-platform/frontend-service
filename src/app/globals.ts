@@ -157,7 +157,7 @@ export const config = {
     "logoPath": "./assets/harwasting_logo.png",
     "federationLogoPath": "./assets/logo_mvp_efactory.png",
     "logoRequired": false,
-    "networkEnabled": false,
+    "networkEnabled": true,
     "nonPublicInformationFunctionalityEnabled": false,
     "paymentMeans": [
         "Credit Card",
