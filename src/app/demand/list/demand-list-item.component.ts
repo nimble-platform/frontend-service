@@ -130,6 +130,23 @@ export class DemandListItemComponent {
         this.router.navigate(['/user-mgmt/login'], { queryParams: { redirectURL: this.router.url } });
     }
 
+    // HCDP-03-02: Navigate to product search pre-filtered by this demand's category
+    // Buyer can quickly find matching products to send RFQs for this tender.
+    onFindSuppliersClicked(): void {
+        const categoryUri  = this.demand.itemClassificationCode && this.demand.itemClassificationCode.length > 0
+            ? this.demand.itemClassificationCode[0].uri : '';
+        const categoryName = this.leafCategory ? selectNameFromLabelObject(this.leafCategory.label) : '';
+        this.router.navigate(['/simple-search'], {
+            queryParams: {
+                q: '*',
+                p: 1,
+                cat: categoryName,
+                catID: categoryUri,
+                sTop: 'prod'
+            }
+        });
+    }
+
 
     private getOwnerCompanyDetails(): void {
         this.userService.getParty(this.demand.metadata.ownerCompany[0]).then(party => {
@@ -140,36 +157,13 @@ export class DemandListItemComponent {
     onContactClicked(companyData): void {
         // create interest activity for the demand
         this.demandService.createInterestActivity(this.demand.hjid);
-        // get contact details of the party and open a mail template
-        this.userService.getParty(companyData.uri, FEDERATIONID(), true).then(party => {
-            // find the email address of purchasers, monitors and legal representatives
-            let purchasers = [];
-            let monitors = [];
-            let legalRepresentatives = [];
-            for (let person of party.person) {
-                if (person.role.indexOf('purchaser') != -1) {
-                    purchasers.push(person.contact.electronicMail)
-                } else if (person.role.indexOf('monitor') != -1) {
-                    monitors.push(person.contact.electronicMail)
-                } else if (person.role.indexOf('legal_representative') != -1) {
-                    legalRepresentatives.push(person.contact.electronicMail)
-                }
+        // Navigate to buyer's company profile page so supplier can review details and initiate RFQ
+        this.router.navigate(['/user-mgmt/company-details'], {
+            queryParams: {
+                id: companyData.id,
+                delegateId: FEDERATIONID()
             }
-            // decide who will receive the email
-            let mailto = 'mailto:';
-            if (purchasers.length > 0) {
-                mailto += purchasers.join();
-            } else if (monitors.length > 0) {
-                mailto += monitors.join();
-            } else if (legalRepresentatives.length > 0) {
-                mailto += legalRepresentatives.join();
-            }
-            // add mail subject
-            var subject = this.translateService.instant('Demand Interest');
-            mailto += '?subject=' + encodeURIComponent(subject);
-            // open mail template
-            window.location.href = mailto;
-        })
+        });
     }
 
     getPreferredValue(texts:Text[]){

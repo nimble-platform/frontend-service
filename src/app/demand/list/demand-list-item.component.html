@@ -57,8 +57,14 @@
             </div>
         </div>
         <div class="col-2">
-            <!-- show delete and edit buttons if the demand list shows company specific demands -->
+            <!-- show delete, edit and find-suppliers buttons for company's own demands -->
             <div *ngIf="showActionButtons">
+                <!-- HCDP-03-02: Find Suppliers navigates to product search filtered by this demand's category -->
+                <button type="button" class="btn btn-success space-after col d-block" (click)="onFindSuppliersClicked()"
+                        [title]="'Search for products matching this tender and send RFQs' | translate">
+                    <i class="fa fa-search mr-1"></i>
+                    <span [innerHTML]="'Find Suppliers' | translate"></span>
+                </button>
                 <button type="button" class="btn btn-primary space-after col d-block" (click)="onEditClicked()">
                     <span [innerHTML]="'Edit' | translate"></span>
                 </button>
@@ -81,7 +87,10 @@
                         </ng-template>
                     </ngb-rating>
                 </div>
-                <div *ngIf="companyData.id !== userCompanyId" class="btn btn-primary">{{'Contact' | translate}}</div>
+                <div *ngIf="companyData.id !== userCompanyId" class="btn btn-primary mt-1"
+                     [title]="'View buyer profile and initiate contact' | translate">
+                    <i class="fa fa-building mr-1"></i>{{'View Buyer' | translate}}
+                </div>
             </div>
         </div>
     </div>

@@ -39,6 +39,7 @@ export class DateInputComponent extends ChildFormBase implements OnInit, OnDestr
     @Input() placeholder: string = "...";
     @Input() valueDateClass: string = "";
     @Input() required = false;
+    @Input() minDate: string = '';
 
     private dateValue: string;
     dateFormControl: FormControl;
@@ -76,6 +77,15 @@ export class DateInputComponent extends ChildFormBase implements OnInit, OnDestr
         let validators: ValidatorFn[] = [];
         if (this.required) {
             validators.push(Validators.required);
+        }
+        if (this.minDate) {
+            const min = this.minDate;
+            validators.push((control) => {
+                if (control.value && control.value < min) {
+                    return { minDate: true };
+                }
+                return null;
+            });
         }
         this.dateFormControl = new FormControl(this.date, validators);
         this.addToCurrentForm(FIELD_NAME_DATE_VALUE, this.dateFormControl);

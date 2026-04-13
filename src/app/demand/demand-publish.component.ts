@@ -61,6 +61,10 @@ export class DemandPublishComponent extends ChildFormBase implements OnInit, OnD
     // flag whether the category search page is displayed
     categorySearchPage:boolean = false;
 
+    get todayString(): string {
+        return new Date().toISOString().substring(0, 10);
+    }
+
     constructor(
         private demandPublishService: DemandPublishService,
         private demandService: DemandService,

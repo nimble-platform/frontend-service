@@ -12,110 +12,138 @@
    limitations under the License.
  -->
 <ng-container *ngIf="!categorySearchPage">
-    <h3 class="mb-4">{{'Publish Demand'|translate}}</h3>
-    <hr>
+<div class="row mt-4 mb-5 justify-content-center">
+<div class="col-12 col-md-10 col-xl-8">
+
+    <h3 class="mb-3">{{'Publish Demand'|translate}}</h3>
+    <hr class="mb-4">
 
     <!-- title -->
-    <div *ngFor="let title of demand.title; let i = index" class="space-after">
-        <div class="d-flex w-100">
-            <text-input class="w-75" [label]="'Title' | translate" [(text)]="title.value" [rows]="1" [rowClass]="'no-gutters'" [valueClass]="'col-8'"
-                        [(languageId)]="title.languageID" [availableLanguages]="getAvailableLanguages(demand.title)" [languageIdClass]="'col ml-2'"
-                        (languageIdChange)="title.languageID = $event;"
+    <div class="form-group row" *ngFor="let title of demand.title; let i = index">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Title' | translate}}</label>
+        <div class="col-sm-9 d-flex align-items-start">
+            <text-input class="flex-grow-1" [label]="''" [(text)]="title.value" [rows]="1"
+                        [rowClass]="'no-gutters'" [valueClass]="'col'"
+                        [(languageId)]="title.languageID" [availableLanguages]="getAvailableLanguages(demand.title)"
+                        [languageIdClass]="'col-auto ml-2'" (languageIdChange)="title.languageID = $event;"
                         [forbiddenPrecedingTrailingSpace]="true"
                         [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_title'" [componentIndex]="i">
             </text-input>
-            <div *ngIf="i > 0" class="btn btn-outline-danger ml-3" (click)="onDeleteTitle(i)">{{'Delete Title'|translate}}</div>
+            <button *ngIf="i > 0" class="btn btn-sm btn-outline-danger ml-2" (click)="onDeleteTitle(i)">&times;</button>
         </div>
-        <div class="d-flex flex-row-reverse w-75">
-            <div *ngIf="i === demand.title.length - 1" class="btn btn-outline-primary mt-3" (click)="onAddTitle()">{{'Add Title'|translate}}</div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-9 offset-sm-3">
+            <button class="btn btn-sm btn-outline-primary" (click)="onAddTitle()">{{'Add Title'|translate}}</button>
         </div>
     </div>
 
     <!-- description -->
-    <div class="mt-4">
-        <div *ngFor="let description of demand.description; let i = index" class="space-after">
-            <div class="d-flex w-100">
-                <div class="w-75">
-                    <text-input [label]="'Description' | translate" [(text)]="description.value" [rows]="3" [rowClass]="'no-gutters'" [valueClass]="'col-8'"
-                                [(languageId)]="description.languageID" [availableLanguages]="getAvailableLanguages(demand.description)"
-                                [languageIdClass]="'col ml-2'" (languageIdChange)="description.languageID = $event;"
-                                [forbiddenPrecedingTrailingSpace]="true"
-                                [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_description'" [componentIndex]="i">
-                    </text-input>
-                </div>
-                <div *ngIf="i > 0" class="btn btn-outline-danger ml-3 delete-description-btn" (click)="onDeleteDescription(i)">{{'Delete Description' | translate}}</div>
-            </div>
-            <div class="d-flex flex-row-reverse w-75">
-                <div *ngIf="i === demand.description.length - 1" class="btn btn-outline-primary mt-3 delete-description-btn" (click)="onAddDescription()">{{'Add Description' | translate}}</div>
-            </div>
+    <div class="form-group row mt-2" *ngFor="let description of demand.description; let i = index">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Description' | translate}}</label>
+        <div class="col-sm-9 d-flex align-items-start">
+            <text-input class="flex-grow-1" [label]="''" [(text)]="description.value" [rows]="4"
+                        [rowClass]="'no-gutters'" [valueClass]="'col'"
+                        [(languageId)]="description.languageID" [availableLanguages]="getAvailableLanguages(demand.description)"
+                        [languageIdClass]="'col-auto ml-2'" (languageIdChange)="description.languageID = $event;"
+                        [forbiddenPrecedingTrailingSpace]="true"
+                        [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_description'" [componentIndex]="i">
+            </text-input>
+            <button *ngIf="i > 0" class="btn btn-sm btn-outline-danger ml-2" (click)="onDeleteDescription(i)">&times;</button>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-9 offset-sm-3">
+            <button class="btn btn-sm btn-outline-primary" (click)="onAddDescription()">{{'Add Description'|translate}}</button>
         </div>
     </div>
 
     <!-- due date -->
-    <div class="w-75">
-        <date-input [label]="'Due Date' | translate" [rowClass]="'no-gutters'" [valueClass]="'col-9'" [(date)]="demand.dueDate" [presentationMode]="'edit'" [required]="true" [parentForm]="formGroup" [formFieldName]="'demand_due_date'">
-        </date-input>
+    <div class="form-group row align-items-center mt-2">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Due Date' | translate}}</label>
+        <div class="col-sm-9">
+            <date-input [rowClass]="'no-gutters'" [valueClass]="'col'" [(date)]="demand.dueDate"
+                        [presentationMode]="'edit'" [required]="true" [minDate]="todayString"
+                        [parentForm]="formGroup" [formFieldName]="'demand_due_date'">
+            </date-input>
+        </div>
     </div>
 
     <!-- delivery country -->
-    <div class="d-flex w-75 no-gutters space-before">
-        <label class="col-3 col-form-label"><span [innerHTML]="'Delivery Country:' | translate"></span></label>
-        <div class="col">
-            <!-- added ngModel also as the typeahead directive overrides the value -->
+    <div class="form-group row align-items-center mt-2">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Delivery Country:' | translate}}</label>
+        <div class="col-sm-9">
             <input type="text" class="form-control" name="Country" placeholder="{{'e.g. Spain' | translate}}"
-                   [formControl]="countryFormControl" [ngbTooltip]="getValidationErrorMessage(countryFormControl)" [placement]="'bottom-left'"
-                   [ngbTypeahead]="getSuggestions" [inputFormatter]="countrySuggestionFormatter" [resultFormatter]="countrySuggestionFormatter"
+                   [formControl]="countryFormControl"
+                   [ngbTooltip]="getValidationErrorMessage(countryFormControl)" [placement]="'bottom-left'"
+                   [ngbTypeahead]="getSuggestions"
+                   [inputFormatter]="countrySuggestionFormatter"
+                   [resultFormatter]="countrySuggestionFormatter"
                    (selectItem)="onCountrySelected($event)">
         </div>
     </div>
 
     <!-- product category -->
-    <div class="d-flex w-75 no-gutters space-before">
-        <label class="col-3 col-form-label"><span [innerHTML]="'Product Category:' | translate"></span></label>
-        <!-- standard category -->
-        <div class="col mr-2">
-            <input type="text" class="form-control" [attr.disabled]="true" [formControl]="categoryFormControl" [ngModel]="selectPreferredName(selectedCategory)">
+    <div class="form-group row align-items-center mt-2">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Product Category:' | translate}}</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" [attr.disabled]="true"
+                   [formControl]="categoryFormControl"
+                   [ngModel]="selectPreferredName(selectedCategory)">
         </div>
-
-        <div class="btn btn-outline-primary mr-2" (click)="onSelectCategory()">{{'Select Category' | translate}}</div>
+        <div class="col-sm-3">
+            <button class="btn btn-outline-primary btn-block" (click)="onSelectCategory()">{{'Select Category' | translate}}</button>
+        </div>
     </div>
 
     <!-- additional document -->
-    <div class="w-75 space-before">
-        <file-input [label]="'Additional Document' | translate " [rowClass]="'no-gutters'" [binaryObjects]="additionalFiles"
-                    (onSelectFile)="onFileSelected($event)" (onClearFile)="onFileDeleted()">
-        </file-input>
+    <div class="form-group row align-items-center mt-2">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Additional Document' | translate}}</label>
+        <div class="col-sm-9">
+            <file-input [rowClass]="'no-gutters'" [binaryObjects]="additionalFiles"
+                        (onSelectFile)="onFileSelected($event)" (onClearFile)="onFileDeleted()">
+            </file-input>
+        </div>
     </div>
 
-    <!-- image button -->
-    <div class="w-75 space-before">
-        <file-input [label]="'Image' | translate " [rowClass]="'no-gutters'" [binaryObjects]="image"
-                    (onSelectFile)="onImageSelected($event)" (onClearFile)="onImageDeleted()">
-        </file-input>
+    <!-- image -->
+    <div class="form-group row align-items-center mt-2">
+        <label class="col-sm-3 col-form-label font-weight-bold">{{'Image' | translate}}</label>
+        <div class="col-sm-9">
+            <file-input [rowClass]="'no-gutters'" [binaryObjects]="image"
+                        (onSelectFile)="onImageSelected($event)" (onClearFile)="onImageDeleted()">
+            </file-input>
+            <img *ngIf="demand.image" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" class="mt-2 image"/>
+        </div>
     </div>
 
-    <div class="d-flex w-75 no-gutters space-before">
-        <img *ngIf="demand.image" src="data:{{demand.image.mimeCode}};base64,{{demand.image.value}}" class="offset-3 image"/>
-    </div>
-
-    <!-- Certificates -->
-    <div class="w-75">
+    <!-- certificates -->
+    <div class="mt-3">
         <product-certificates-tab [certificates]="demand.certificate" [disabled]="callStatus.isLoading()">
         </product-certificates-tab>
     </div>
 
     <!-- publish button -->
-    <div class="d-flex flex-row-reverse w-75 space-before">
-        <div class="ml-4" [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
-            <button *ngIf="publishMode === 'create'" singleClick class="btn btn-primary" [disabled]="!formGroup.valid || callStatus.isLoading()" (click)="onPublishDemand()">
-                {{'Publish Demand' | translate}}
-            </button>
-            <button *ngIf="publishMode === 'edit'" singleClick class="btn btn-primary" [disabled]="!formGroup.valid || callStatus.isLoading()" (click)="onEditDemand()">
-                {{'Save Changes' | translate}}
-            </button>
+    <div class="form-group row mt-4">
+        <div class="col-sm-9 offset-sm-3 d-flex align-items-center">
+            <div [ngbTooltip]="getValidationError()" [placement]="'auto'" title="">
+                <button *ngIf="publishMode === 'create'" singleClick class="btn btn-primary"
+                        [disabled]="!formGroup.valid || callStatus.isLoading()"
+                        (click)="onPublishDemand()">
+                    {{'Publish Demand' | translate}}
+                </button>
+                <button *ngIf="publishMode === 'edit'" singleClick class="btn btn-primary"
+                        [disabled]="!formGroup.valid || callStatus.isLoading()"
+                        (click)="onEditDemand()">
+                    {{'Save Changes' | translate}}
+                </button>
+            </div>
+            <call-status class="ml-3" [callStatus]="callStatus"></call-status>
         </div>
-        <call-status [callStatus]="callStatus"></call-status>
     </div>
+
+</div>
+</div>
 </ng-container>
 
 <ng-container *ngIf="categorySearchPage">

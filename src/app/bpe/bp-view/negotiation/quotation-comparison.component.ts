@@ -1,5 +1,6 @@
 /*
  * HCDP-02.3: Quotation Comparison Component
+ * HCDP-03-02: Extended with Award action for tender bid evaluation
  *
  * WHY THIS COMPONENT EXISTS:
  * When a buyer sends RFQs to multiple suppliers (via shopping cart or individually),
@@ -7,6 +8,12 @@
  * within a CollaborationGroup. This component fetches the quotation documents from
  * each thread and renders a side-by-side comparison table so the buyer can compare
  * prices, delivery terms, warranty, incoterms, and payment means across suppliers.
+ *
+ * AWARD FLOW (HCDP-03-02):
+ * Clicking "Award" on a row shows an inline confirmation. On confirm, the buyer
+ * is navigated directly to that supplier's negotiation detail view to formally
+ * accept the quotation. This completes the tender bid evaluation workflow:
+ *   Publish Tender → Collect Bids → Compare → Award → Order
  *
  * DATA FLOW:
  * 1. Receives ProcessInstanceGroup[] from parent (collaboration-groups-tab)
@@ -57,6 +64,12 @@ export class QuotationComparisonComponent implements OnInit {
     callStatus: CallStatus = new CallStatus();
     bestPriceProcessId: string = '';
     bestDeliveryProcessId: string = '';
+
+    // HCDP-03-02: Award flow state
+    // pendingAwardRow: the row awaiting buyer confirmation before navigating
+    // awardedProcessId: the row that was awarded (shows checkmark badge)
+    pendingAwardRow: ComparisonRow = null;
+    awardedProcessId: string = '';
 
     constructor(
         private bpeService: BPEService,
@@ -251,6 +264,42 @@ export class QuotationComparisonComponent implements OnInit {
         // Navigate to the existing negotiation detail view
         // Same route used by thread-summary.component when clicking a thread event
         this.router.navigate(['/bpe/bpe-exec', row.processInstanceId, row.federationId]);
+    }
+
+    // ── HCDP-03-02: Award actions ────────────────────────────────────
+
+    /** Step 1: buyer clicks Award — show inline confirmation on that row */
+    onAwardClicked(row: ComparisonRow) {
+        this.pendingAwardRow = row;
+    }
+
+    /** Step 2a: buyer confirms → mark as awarded and navigate to negotiation detail */
+    onAwardConfirmed() {
+        if (!this.pendingAwardRow) { return; }
+        this.awardedProcessId = this.pendingAwardRow.processInstanceId;
+        const row = this.pendingAwardRow;
+        this.pendingAwardRow = null;
+        // Navigate to the negotiation detail where the buyer formally accepts the quotation
+        this.router.navigate(['/bpe/bpe-exec', row.processInstanceId, row.federationId]);
+    }
+
+    /** Step 2b: buyer cancels — dismiss confirmation */
+    onAwardCancelled() {
+        this.pendingAwardRow = null;
+    }
+
+    isAwarded(row: ComparisonRow): boolean {
+        return row.processInstanceId === this.awardedProcessId;
+    }
+
+    isPendingAward(row: ComparisonRow): boolean {
+        return this.pendingAwardRow !== null
+            && this.pendingAwardRow.processInstanceId === row.processInstanceId;
+    }
+
+    /** Award is only available for rows that have actually responded */
+    canAward(row: ComparisonRow): boolean {
+        return row.status !== 'Awaiting Response' && row.status !== 'Rejected';
     }
 
     getStatusBadgeClass(status: string): string {

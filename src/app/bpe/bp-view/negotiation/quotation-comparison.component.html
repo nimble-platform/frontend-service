@@ -1,10 +1,12 @@
 <!--
   HCDP-02.3: Quotation Comparison Table
+  HCDP-03-02: Extended with Award action for tender bid evaluation
 
   Displays side-by-side comparison of quotation responses from multiple suppliers.
   Shows: supplier name, product, unit price, quantity, delivery, warranty, incoterms,
   payment method, and response status. Highlights best price (green) and fastest
   delivery (blue). "View Details" navigates to the existing negotiation detail view.
+  "Award" shows inline confirmation then navigates to the negotiation detail to accept.
 -->
 
 <div class="card mt-2 mb-3">
@@ -50,33 +52,68 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let row of rows"
-                        [class.table-success]="isBestPrice(row)"
-                        [class.table-info]="isBestDelivery(row) && !isBestPrice(row)">
-                        <td class="font-weight-bold">{{ row.supplierName }}</td>
-                        <td>{{ row.productNames }}</td>
-                        <td>
-                            {{ row.unitPrice }}
-                            <i *ngIf="isBestPrice(row)" class="fa fa-trophy text-success ml-1" [title]="'Best price' | translate"></i>
-                        </td>
-                        <td>{{ row.quantity }}</td>
-                        <td>
-                            {{ row.deliveryPeriod }}
-                            <i *ngIf="isBestDelivery(row)" class="fa fa-bolt text-primary ml-1" [title]="'Fastest delivery' | translate"></i>
-                        </td>
-                        <td>{{ row.warranty }}</td>
-                        <td>{{ row.incoterms }}</td>
-                        <td>{{ row.paymentMeans }}</td>
-                        <td>
-                            <span class="badge" [ngClass]="getStatusBadgeClass(row.status)">{{ row.status | translate }}</span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" (click)="viewDetails(row)"
-                                    [title]="'View full negotiation details' | translate">
-                                <i class="fa fa-arrow-right"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    <!-- HCDP-03-02: ng-container lets us pair each data row with its confirmation row -->
+                    <ng-container *ngFor="let row of rows">
+                        <tr [class.table-success]="isBestPrice(row)"
+                            [class.table-info]="isBestDelivery(row) && !isBestPrice(row)">
+                            <td class="font-weight-bold">
+                                {{ row.supplierName }}
+                                <!-- Awarded badge -->
+                                <span *ngIf="isAwarded(row)" class="badge badge-success ml-1">
+                                    <i class="fa fa-check mr-1"></i>{{'Awarded' | translate}}
+                                </span>
+                            </td>
+                            <td>{{ row.productNames }}</td>
+                            <td>
+                                {{ row.unitPrice }}
+                                <i *ngIf="isBestPrice(row)" class="fa fa-trophy text-success ml-1" [title]="'Best price' | translate"></i>
+                            </td>
+                            <td>{{ row.quantity }}</td>
+                            <td>
+                                {{ row.deliveryPeriod }}
+                                <i *ngIf="isBestDelivery(row)" class="fa fa-bolt text-primary ml-1" [title]="'Fastest delivery' | translate"></i>
+                            </td>
+                            <td>{{ row.warranty }}</td>
+                            <td>{{ row.incoterms }}</td>
+                            <td>{{ row.paymentMeans }}</td>
+                            <td>
+                                <span class="badge" [ngClass]="getStatusBadgeClass(row.status)">{{ row.status | translate }}</span>
+                            </td>
+                            <td class="text-nowrap">
+                                <!-- View Details -->
+                                <button class="btn btn-sm btn-outline-secondary mr-1" (click)="viewDetails(row)"
+                                        [title]="'View full negotiation details' | translate">
+                                    <i class="fa fa-arrow-right"></i>
+                                </button>
+                                <!-- HCDP-03-02: Award button — only for rows with a received quotation -->
+                                <button *ngIf="canAward(row) && !isAwarded(row) && !isPendingAward(row)"
+                                        class="btn btn-sm btn-success"
+                                        (click)="onAwardClicked(row)"
+                                        [title]="'Award this supplier the tender' | translate">
+                                    <i class="fa fa-award mr-1"></i>{{'Award' | translate}}
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- HCDP-03-02: Inline confirmation row — appears directly below awarded row -->
+                        <tr *ngIf="isPendingAward(row)" class="table-warning">
+                            <td colspan="10">
+                                <div class="d-flex align-items-center py-1">
+                                    <i class="fa fa-exclamation-triangle text-warning mr-2"></i>
+                                    <span class="mr-3">
+                                        {{'Award this tender to' | translate}}
+                                        <strong>{{ row.supplierName }}</strong>?
+                                        {{'You will be taken to the negotiation page to formally accept their offer.' | translate}}
+                                    </span>
+                                    <button class="btn btn-sm btn-success mr-2" (click)="onAwardConfirmed()">
+                                        <i class="fa fa-check mr-1"></i>{{'Yes, Award' | translate}}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" (click)="onAwardCancelled()">
+                                        {{'Cancel' | translate}}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
         </div>
