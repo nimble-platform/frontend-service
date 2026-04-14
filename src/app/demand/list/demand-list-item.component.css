@@ -15,3 +15,9 @@
 .new-demand {
     border-color: red;
 }
+
+/* HCDP-03-03: inline modal panel for Propose Offer */
+.modal-backdrop-inline {
+    position: relative;
+    z-index: 10;
+}

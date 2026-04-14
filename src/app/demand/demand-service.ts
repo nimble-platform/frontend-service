@@ -161,6 +161,39 @@ export class DemandService {
             .catch(this.handleError);
     }
 
+    // HCDP-03-03: Demand Response API methods
+
+    public submitDemandResponse(demandHjid: number, response: {
+        responderCompanyName: string;
+        catalogueLineHjid: number;
+        catalogueUuid: string;
+        lineId: string;
+        productName: string;
+        message: string;
+    }): Promise<number> {
+        const url = catalogue_endpoint + `/demands/${demandHjid}/responses`;
+        return this.http
+            .post<number>(url, response, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    public getDemandResponses(demandHjid: number): Promise<any[]> {
+        const url = catalogue_endpoint + `/demands/${demandHjid}/responses`;
+        return this.http
+            .get<any[]>(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    public deleteDemandResponse(demandHjid: number, responseHjid: number): Promise<any> {
+        const url = catalogue_endpoint + `/demands/${demandHjid}/responses/${responseHjid}`;
+        return this.http
+            .delete(url, { headers: getAuthorizedHeaders(this.cookieService) })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     public createInterestActivity(demandHjid: number): Promise<any> {
         let url = catalogue_endpoint + `/demands/${demandHjid}/visit?visitorCompanyId=${this.cookieService.get('company_id')}`;
         return this.http

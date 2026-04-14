@@ -12,7 +12,7 @@
    limitations under the License.
  */
 
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Demand} from '../../catalogue/model/publish/demand';
 import {selectNameFromLabelObject, selectPartyName, selectPreferredValue} from '../../common/utils';
 import {Router} from '@angular/router';
@@ -33,6 +33,7 @@ import {TranslateService} from '@ngx-translate/core';
 import * as myGlobals from '../../globals';
 import {Certificate} from '../../catalogue/model/publish/certificate';
 import { Text } from '../../catalogue/model/publish/text';
+import {CatalogueService} from '../../catalogue/catalogue.service';
 
 @Component({
     selector: 'demand-list-item',
@@ -59,12 +60,27 @@ export class DemandListItemComponent {
     selectNameFromLabelObject = selectNameFromLabelObject;
     selectPartyName = selectPartyName;
     getCountryByISO = CountryUtil.getCountryByISO;
-    // flag if the demand is new for the user or not (in other words, the demand is already seen by the user or not)
+    // flag if the demand is new for the user or not
     isNewDemand:boolean = true;
     // flag if the certificates are displayed
     displayCertificates:boolean = false;
 
     config = myGlobals.config;
+
+    // HCDP-03-03: Propose Offer (supplier side)
+    showProposeModal: boolean = false;
+    supplierProducts: any[] = [];
+    selectedProduct: any = null;
+    offerMessage: string = '';
+    offerCallStatus: CallStatus = new CallStatus();
+    loadProductsCallStatus: CallStatus = new CallStatus();
+
+    // HCDP-03-03: View Responses (buyer side)
+    showResponses: boolean = false;
+    demandResponses: any[] = [];
+    responseCount: number = 0;
+    responseCallStatus: CallStatus = new CallStatus();
+    deleteResponseCallStatus: CallStatus = new CallStatus();
 
     constructor(
         private demandService: DemandService,
@@ -73,6 +89,7 @@ export class DemandListItemComponent {
         private translateService: TranslateService,
         private bpeService: BPEService,
         private userService: UserService,
+        private catalogueService: CatalogueService,
         private cookieService: CookieService,
         private appComponent:AppComponent,
         private router: Router
@@ -88,6 +105,13 @@ export class DemandListItemComponent {
         }
         if (this.isLoggedIn) {
             this.getOwnerCompanyDetails();
+            // HCDP-03-03: pre-load response count for buyer's own demands
+            if (this.showActionButtons) {
+                this.demandService.getDemandResponses(this.demand.hjid).then(responses => {
+                    this.demandResponses = responses || [];
+                    this.responseCount = this.demandResponses.length;
+                }).catch(() => { this.responseCount = 0; });
+            }
         }
         // initialize circular economy and arbitrary demand certificates if they exist
         if(this.demand.certificate && this.demand.certificate.length){
@@ -168,5 +192,110 @@ export class DemandListItemComponent {
 
     getPreferredValue(texts:Text[]){
         return selectPreferredValue(texts, this.translateService.currentLang);
+    }
+
+    // =========================================================================
+    // HCDP-03-03: Propose Offer (supplier side)
+    // =========================================================================
+
+    onProposeOfferClicked(): void {
+        this.showProposeModal = true;
+        this.selectedProduct = null;
+        this.offerMessage = '';
+        this.offerCallStatus = new CallStatus();
+        if (this.supplierProducts.length === 0) {
+            this.loadProductsCallStatus.submit();
+            const userId = this.cookieService.get('user_id');
+            this.catalogueService.getCatalogueResponse(userId, null, null, 50).then(res => {
+                this.supplierProducts = (res && res.catalogueLines) ? res.catalogueLines : [];
+                this.loadProductsCallStatus.callback(null, true);
+            }).catch(e => {
+                this.loadProductsCallStatus.error('Failed to load products', e);
+            });
+        }
+    }
+
+    onSelectProduct(product: any): void {
+        this.selectedProduct = product;
+    }
+
+    getProductDisplayName(product: any): string {
+        if (!product) { return ''; }
+        if (product.goodsItem && product.goodsItem.item && product.goodsItem.item.name && product.goodsItem.item.name.length > 0) {
+            return product.goodsItem.item.name[0].value;
+        }
+        return product.id || '';
+    }
+
+    onSubmitOffer(): void {
+        if (!this.selectedProduct) { return; }
+        this.offerCallStatus.submit();
+        const userId = this.cookieService.get('user_id');
+        this.userService.getSettingsForParty(this.userCompanyId).then(settings => {
+            let companyName: string = this.userCompanyId;
+            if (settings && settings.details && settings.details.legalName) {
+                const ln = settings.details.legalName;
+                companyName = typeof ln === 'string' ? ln : (Object.values(ln as object)[0] as string) || this.userCompanyId;
+            }
+            const payload = {
+                responderCompanyName: companyName,
+                catalogueLineHjid: this.selectedProduct.hjid,
+                catalogueUuid: this.selectedProduct.goodsItem && this.selectedProduct.goodsItem.item ?
+                    this.selectedProduct.goodsItem.item.catalogueDocumentReference ?
+                        this.selectedProduct.goodsItem.item.catalogueDocumentReference.id : '' : '',
+                lineId: this.selectedProduct.id || '',
+                productName: this.getProductDisplayName(this.selectedProduct),
+                message: this.offerMessage
+            };
+            return this.demandService.submitDemandResponse(this.demand.hjid, payload);
+        }).then(() => {
+            this.offerCallStatus.callback(null, true);
+            // Delay closing the modal so the 'Offer submitted!' flash is briefly visible (U20)
+            setTimeout(() => { this.showProposeModal = false; }, 1500);
+        }).catch(e => {
+            this.offerCallStatus.error(this.translateService.instant('Failed to submit offer'), e);
+        });
+    }
+
+    onCancelPropose(): void {
+        this.showProposeModal = false;
+    }
+
+    // =========================================================================
+    // HCDP-03-03: View Responses (buyer side)
+    // =========================================================================
+
+    onViewResponsesClicked(): void {
+        this.showResponses = !this.showResponses;
+    }
+
+    onViewProductClicked(response: any): void {
+        if (response.catalogueUuid && response.lineId) {
+            this.router.navigate(['/product-details'], {
+                queryParams: { catalogueId: response.catalogueUuid, id: response.lineId }
+            });
+        }
+    }
+
+    onSendRfqClicked(response: any): void {
+        // Navigate to product search to find the specific product and initiate RFQ
+        if (response.lineId) {
+            this.router.navigate(['/simple-search'], {
+                queryParams: { q: response.productName || '*', p: 1, sTop: 'prod' }
+            });
+        }
+    }
+
+    onDeleteResponseClicked(response: any): void {
+        this.appComponent.confirmModalComponent.open(
+            this.translateService.instant('Are you sure you want to remove this offer?')
+        ).then(confirmed => {
+            if (confirmed) {
+                this.demandService.deleteDemandResponse(this.demand.hjid, response.hjid).then(() => {
+                    this.demandResponses = this.demandResponses.filter(r => r.hjid !== response.hjid);
+                    this.responseCount = this.demandResponses.length;
+                }).catch(e => console.error('Failed to delete demand response', e));
+            }
+        });
     }
 }
