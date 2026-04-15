@@ -28,6 +28,11 @@
                     <span [innerHTML]="'Collaboration stats' | translate"></span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href id="Processing" class="nav-link" [ngClass]="{ active: selectedTab === 'Processing'}" (click)="onSelectTab($event,'Processing')">
+                    <span [innerHTML]="'Processing Operations' | translate"></span>
+                </a>
+            </li>
             <li *ngIf="!hideVisitStats" class="nav-item">
                 <a href id="Visits" class="nav-link" [ngClass]="{ active: selectedTab === 'Visits'}" (click)="onSelectTab($event,'Visits')">
                     <span [innerHTML]="'Visit stats' | translate"></span>
@@ -39,6 +44,7 @@
 
 <call-status [callStatus]="callStatus" [large]="true"></call-status>
 <call-status [callStatus]="callStatusCollab" [large]="true"></call-status>
+<call-status [callStatus]="callStatusProcessing" [large]="true"></call-status>
 
 <div class="space-before">
 
@@ -348,6 +354,140 @@
                 </div>
             </div>
 
+        </div>
+        <hr />
+
+    </div>
+
+    <!-- HCDP-04-01 Processing Operations tab -->
+    <div [hidden]="isProcessingLoading()" *ngIf="selectedTab === 'Processing'">
+
+        <!-- Section 1: Process Type Distribution -->
+        <h6 class="space-before"><i class="fa fa-sitemap mr-2"></i><span [innerHTML]="'Process Type Distribution' | translate"></span></h6>
+        <div class="row justify-content-center space-before">
+            <div class="card col-3">
+                <div class="card-body text-center">
+                    <h4 class="card-title"><b>{{processTypeTotalCount}}</b></h4>
+                    <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Total Business Processes' | translate"></span></h6>
+                    <p class="card-text" style="font-size:32px"><i class="fa fa-briefcase"></i></p>
+                </div>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                <div *ngIf="processTypeTotalCount > 0">
+                    <ngx-charts-pie-chart [view]="[260, 220]"
+                                          [results]="processTypePieData"
+                                          [customColors]="processTypeCustomColors"
+                                          [gradient]="false"
+                                          [legend]="false"
+                                          [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                    <div class="text-center mt-1">
+                        <span *ngFor="let p of processTypePieData" class="badge badge-pill mr-2"
+                              [ngStyle]="{'background': getColorForProcessType(p.name), 'color':'#fff'}">
+                            {{p.value}} {{p.name}}
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="processTypeTotalCount === 0" class="text-muted text-center">
+                    <i class="fa fa-chart-pie fa-3x mb-2" style="color:#d0d0d0"></i>
+                    <p><span [innerHTML]="'No business processes yet' | translate"></span></p>
+                </div>
+            </div>
+        </div>
+        <hr />
+
+        <!-- Section 2: Order & Fulfilment Completion Rates -->
+        <h6><i class="fa fa-check-circle mr-2"></i><span [innerHTML]="'Completion Rates' | translate"></span></h6>
+        <div class="row justify-content-center space-before">
+            <!-- Orders -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="card-title"><b>{{orderCompletionRate}}</b></h4>
+                        <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Order Completion Rate' | translate"></span></h6>
+                        <p class="card-text" style="font-size:24px"><i class="fa fa-shopping-cart"></i></p>
+                        <small class="text-muted">{{orderApproved}} <span [innerHTML]="'approved of' | translate"></span> {{orderTotal}}</small>
+                    </div>
+                    <div *ngIf="orderTotal > 0" class="progress mx-3 mb-2">
+                        <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':orderApprovedPercStr}"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':orderWaitingPercStr}"></div>
+                        <div class="progress-bar bg-danger"  role="progressbar" [ngStyle]="{'width':orderDeniedPercStr}"></div>
+                    </div>
+                    <div *ngIf="orderTotal > 0" class="text-center mb-3">
+                        <span class="badge badge-pill badge-success">{{orderApproved}} <span [innerHTML]="'Approved' | translate"></span></span>
+                        <span class="badge badge-pill badge-warning">{{orderWaiting}} <span [innerHTML]="'Waiting' | translate"></span></span>
+                        <span class="badge badge-pill badge-danger">{{orderDenied}} <span [innerHTML]="'Rejected' | translate"></span></span>
+                    </div>
+                    <div *ngIf="orderTotal === 0" class="text-center mb-3 text-muted">
+                        <small><span [innerHTML]="'No orders yet' | translate"></span></small>
+                    </div>
+                </div>
+            </div>
+            <!-- Fulfilment -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="card-title"><b>{{fulfilmentRate}}</b></h4>
+                        <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Fulfilment Completion Rate' | translate"></span></h6>
+                        <p class="card-text" style="font-size:24px"><i class="fa fa-truck"></i></p>
+                        <small class="text-muted">{{fulfilmentApproved}} <span [innerHTML]="'approved of' | translate"></span> {{fulfilmentTotal}}</small>
+                    </div>
+                    <div *ngIf="fulfilmentTotal > 0" class="progress mx-3 mb-2">
+                        <div class="progress-bar bg-success" role="progressbar" [ngStyle]="{'width':fulfilmentApprovedPercStr}"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" [ngStyle]="{'width':fulfilmentWaitingPercStr}"></div>
+                        <div class="progress-bar bg-danger"  role="progressbar" [ngStyle]="{'width':fulfilmentDeniedPercStr}"></div>
+                    </div>
+                    <div *ngIf="fulfilmentTotal > 0" class="text-center mb-3">
+                        <span class="badge badge-pill badge-success">{{fulfilmentApproved}} <span [innerHTML]="'Approved' | translate"></span></span>
+                        <span class="badge badge-pill badge-warning">{{fulfilmentWaiting}} <span [innerHTML]="'Waiting' | translate"></span></span>
+                        <span class="badge badge-pill badge-danger">{{fulfilmentDenied}} <span [innerHTML]="'Rejected' | translate"></span></span>
+                    </div>
+                    <div *ngIf="fulfilmentTotal === 0" class="text-center mb-3 text-muted">
+                        <small><span [innerHTML]="'No fulfilments yet' | translate"></span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+
+        <!-- Section 3: Non-Ordered Products -->
+        <h6><i class="fa fa-box-open mr-2"></i><span [innerHTML]="'Non-Ordered Products' | translate"></span></h6>
+        <div class="row justify-content-center space-before">
+            <div class="col-10">
+                <div *ngIf="nonOrderedProducts !== null && nonOrderedCount > 0" class="card border-warning">
+                    <div class="card-body">
+                        <h5 class="text-warning">
+                            <i class="fa fa-exclamation-triangle mr-2"></i>
+                            {{nonOrderedCount}} <span [innerHTML]="'products have not received any orders' | translate"></span>
+                        </h5>
+                        <ul class="mb-0">
+                            <li *ngFor="let n of nonOrderedProductNames">{{n}}</li>
+                        </ul>
+                        <small *ngIf="nonOrderedCount > 10" class="text-muted">
+                            <span [innerHTML]="'... and' | translate"></span> {{nonOrderedCount - 10}} <span [innerHTML]="'more' | translate"></span>
+                        </small>
+                    </div>
+                </div>
+                <div *ngIf="nonOrderedProducts !== null && nonOrderedCount === 0" class="card border-success">
+                    <div class="card-body text-center">
+                        <i class="fa fa-check-circle text-success mr-2"></i>
+                        <span [innerHTML]="'All products have received orders' | translate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+
+        <!-- Section 4: Workflow Configuration Quick Link -->
+        <h6><i class="fa fa-cog mr-2"></i><span [innerHTML]="'Workflow Configuration' | translate"></span></h6>
+        <div class="row justify-content-center space-before">
+            <div class="col-10 text-center">
+                <p class="text-muted"><span [innerHTML]="'Adjust active workflow types, payment terms and incoterms in company settings.' | translate"></span></p>
+                <a class="btn btn-outline-primary" [routerLink]="['/user-mgmt/company-settings']">
+                    <i class="fa fa-cog mr-2"></i><span [innerHTML]="'Configure Workflows' | translate"></span>
+                </a>
+            </div>
         </div>
         <hr />
 

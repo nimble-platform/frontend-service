@@ -158,6 +158,34 @@ export class PerformanceAnalyticsComponent implements OnInit {
     categoriesCallStatus: CallStatus = new CallStatus();
     callStatusCollab: CallStatus = new CallStatus();
 
+    // ---- Processing Operations tab (HCDP-04-01) ----
+    callStatusProcessing: CallStatus = new CallStatus();
+
+    // Section 1: Process Type Distribution (doughnut)
+    processTypePieData: any[] = [];
+    processTypeCustomColors: any[] = [
+        { name: 'Negotiation',  value: '#2e7d32' },
+        { name: 'Order',        value: '#1565c0' },
+        { name: 'Fulfilment',   value: '#f9a825' },
+        { name: 'Transport',    value: '#6a1b9a' },
+        { name: 'Info Request', value: '#e65100' }
+    ];
+    processTypeTotalCount = 0;
+
+    // Section 2: Order & Fulfilment completion rates
+    orderTotal = 0; orderApproved = 0; orderWaiting = 0; orderDenied = 0;
+    orderCompletionRate = '0%';
+    orderApprovedPercStr = '0%'; orderWaitingPercStr = '0%'; orderDeniedPercStr = '0%';
+
+    fulfilmentTotal = 0; fulfilmentApproved = 0; fulfilmentWaiting = 0; fulfilmentDenied = 0;
+    fulfilmentRate = '0%';
+    fulfilmentApprovedPercStr = '0%'; fulfilmentWaitingPercStr = '0%'; fulfilmentDeniedPercStr = '0%';
+
+    // Section 3: Non-ordered products
+    nonOrderedProducts: any = null;    // null = not loaded yet
+    nonOrderedCount = 0;
+    nonOrderedProductNames: string[] = [];
+
     product_cat_mix = myGlobals.product_cat_mix;
     getMultilingualLabel = selectNameFromLabelObject;
     config = myGlobals.config;
@@ -257,6 +285,15 @@ export class PerformanceAnalyticsComponent implements OnInit {
 
     isCollabLoading(): boolean {
         return this.callStatusCollab.fb_submitted;
+    }
+
+    isProcessingLoading(): boolean {
+        return this.callStatusProcessing.fb_submitted;
+    }
+
+    getColorForProcessType(name: string): string {
+        const match = this.processTypeCustomColors.find(c => c.name === name);
+        return match ? match.value : '#AAAAAA';
     }
 
     private getCatTree(): void {
@@ -441,12 +478,94 @@ export class PerformanceAnalyticsComponent implements OnInit {
             });
     }
 
+    getProcessingStats() {
+        this.callStatusProcessing.submit();
+        Promise.all([
+            this.analyticsService.getProcessingAnalytics(this.comp_id),
+            this.analyticsService.getNonOrdered(this.comp_id).catch(() => ({ companies: {} }))
+        ]).then(([proc, nonOrdered]) => {
+            // --- Section 1: Process Type Distribution ---
+            const pc = proc.processTypeCounts;
+            this.processTypePieData = [
+                { name: 'Negotiation',  value: pc.NEGOTIATION },
+                { name: 'Order',        value: pc.ORDER },
+                { name: 'Fulfilment',   value: pc.FULFILMENT },
+                { name: 'Transport',    value: pc.TRANSPORT_EXECUTION_PLAN },
+                { name: 'Info Request', value: pc.ITEM_INFORMATION_REQUEST }
+            ].filter(d => d.value > 0);
+            this.processTypeTotalCount = (pc.NEGOTIATION || 0) + (pc.ORDER || 0)
+                + (pc.FULFILMENT || 0) + (pc.TRANSPORT_EXECUTION_PLAN || 0)
+                + (pc.ITEM_INFORMATION_REQUEST || 0);
+
+            // --- Section 2: Order completion rate ---
+            const o = proc.orderStatus;
+            this.orderApproved = o.approved;
+            this.orderWaiting  = o.waiting;
+            this.orderDenied   = o.denied;
+            this.orderTotal    = o.total;
+            if (this.orderTotal > 0) {
+                const a = Math.round(o.approved * 100 / o.total);
+                const w = Math.round(o.waiting  * 100 / o.total);
+                this.orderApprovedPercStr = a + '%';
+                this.orderWaitingPercStr  = w + '%';
+                this.orderDeniedPercStr   = (100 - a - w) + '%';
+                this.orderCompletionRate  = a + '%';
+            } else {
+                this.orderApprovedPercStr = '0%';
+                this.orderWaitingPercStr  = '0%';
+                this.orderDeniedPercStr   = '0%';
+                this.orderCompletionRate  = '0%';
+            }
+
+            // --- Section 2: Fulfilment completion rate ---
+            const f = proc.fulfilmentStatus;
+            this.fulfilmentApproved = f.approved;
+            this.fulfilmentWaiting  = f.waiting;
+            this.fulfilmentDenied   = f.denied;
+            this.fulfilmentTotal    = f.total;
+            if (this.fulfilmentTotal > 0) {
+                const a = Math.round(f.approved * 100 / f.total);
+                const w = Math.round(f.waiting  * 100 / f.total);
+                this.fulfilmentApprovedPercStr = a + '%';
+                this.fulfilmentWaitingPercStr  = w + '%';
+                this.fulfilmentDeniedPercStr   = (100 - a - w) + '%';
+                this.fulfilmentRate            = a + '%';
+            } else {
+                this.fulfilmentApprovedPercStr = '0%';
+                this.fulfilmentWaitingPercStr  = '0%';
+                this.fulfilmentDeniedPercStr   = '0%';
+                this.fulfilmentRate            = '0%';
+            }
+
+            // --- Section 3: Non-Ordered Products ---
+            const companies = (nonOrdered && nonOrdered.companies) || {};
+            const firstKey  = Object.keys(companies)[0];
+            const products  = firstKey ? (companies[firstKey].products || []) : [];
+            this.nonOrderedProducts     = nonOrdered || {};
+            this.nonOrderedCount        = products.length;
+            this.nonOrderedProductNames = products
+                .map((p: any) => (p && p.name && p.name[0] && p.name[0].value)
+                    || (p && p.manufacturersItemIdentification && p.manufacturersItemIdentification.id)
+                    || 'Unknown')
+                .slice(0, 10);
+
+            this.callStatusProcessing.callback('Successfully loaded processing analytics', true);
+        }).catch(error => {
+            this.callStatusProcessing.error('Error while loading processing analytics', error);
+        });
+    }
+
     onSelectTab(event: any, id: any): void {
         event.preventDefault();
         this.selectedTab = id;
         if (id == "Performance") {
         } else if (id == "Collaboration") {
             this.getCollabStats();
+        } else if (id == "Processing") {
+            // Load once, then cache
+            if (this.processTypeTotalCount === 0 && this.nonOrderedProducts === null) {
+                this.getProcessingStats();
+            }
         }
     }
 

@@ -208,6 +208,75 @@ export class AnalyticsService {
         })).catch(this.handleError);
     }
 
+    getProcessingAnalytics(comp: string): Promise<any> {
+        const h = this.getAuthorizedHeaders();
+        const bpe = this.url_bpe;
+        const safe = (p: Promise<any>, fallback: any) => p.catch(() => fallback);
+        // Simple types: total counts per role (no status filter)
+        // NEGOTIATION, TRANSPORT_EXECUTION_PLAN, ITEM_INFORMATION_REQUEST
+        const simpleTypes = ['NEGOTIATION', 'TRANSPORT_EXECUTION_PLAN', 'ITEM_INFORMATION_REQUEST'];
+        // Tracked types: counts broken out by status (needed for completion rates)
+        const trackedTypes = ['ORDER', 'FULFILMENT'];
+        const statuses = ['Approved', 'WaitingResponse', 'Denied'];
+        const roles = ['seller', 'buyer'];
+
+        const calls: Promise<any>[] = [];
+        // 6 simple calls: 3 types × 2 roles (index 0..5)
+        simpleTypes.forEach(t => {
+            roles.forEach(r => {
+                calls.push(safe(this.http.get(`${bpe}/total-number/business-process?partyId=${comp}&businessProcessType=${t}&role=${r}`, {headers: h}).toPromise(), 0));
+            });
+        });
+        // 12 tracked calls: 2 types × 3 statuses × 2 roles (index 6..17)
+        trackedTypes.forEach(t => {
+            statuses.forEach(s => {
+                roles.forEach(r => {
+                    calls.push(safe(this.http.get(`${bpe}/total-number/business-process?partyId=${comp}&businessProcessType=${t}&status=${s}&role=${r}`, {headers: h}).toPromise(), 0));
+                });
+            });
+        });
+
+        return Promise.all(calls).then(r => {
+            const n = (v: any) => Number(v) || 0;
+            // Simple types: sum seller + buyer
+            const negotiationCount      = n(r[0]) + n(r[1]);
+            const transportCount        = n(r[2]) + n(r[3]);
+            const infoRequestCount      = n(r[4]) + n(r[5]);
+            // ORDER: indices 6..11 (Approved s,b / Waiting s,b / Denied s,b)
+            const orderApproved = n(r[6])  + n(r[7]);
+            const orderWaiting  = n(r[8])  + n(r[9]);
+            const orderDenied   = n(r[10]) + n(r[11]);
+            const orderTotal    = orderApproved + orderWaiting + orderDenied;
+            // FULFILMENT: indices 12..17
+            const fulfilmentApproved = n(r[12]) + n(r[13]);
+            const fulfilmentWaiting  = n(r[14]) + n(r[15]);
+            const fulfilmentDenied   = n(r[16]) + n(r[17]);
+            const fulfilmentTotal    = fulfilmentApproved + fulfilmentWaiting + fulfilmentDenied;
+
+            return {
+                processTypeCounts: {
+                    NEGOTIATION: negotiationCount,
+                    ORDER: orderTotal,
+                    FULFILMENT: fulfilmentTotal,
+                    TRANSPORT_EXECUTION_PLAN: transportCount,
+                    ITEM_INFORMATION_REQUEST: infoRequestCount
+                },
+                orderStatus: {
+                    approved: orderApproved,
+                    waiting:  orderWaiting,
+                    denied:   orderDenied,
+                    total:    orderTotal
+                },
+                fulfilmentStatus: {
+                    approved: fulfilmentApproved,
+                    waiting:  fulfilmentWaiting,
+                    denied:   fulfilmentDenied,
+                    total:    fulfilmentTotal
+                }
+            };
+        }).catch(this.handleError);
+    }
+
     getCompAnalytics(comp: string): Promise<any> {
         const url = `${this.url_da}?companyID=${comp}`;
         return this.http
