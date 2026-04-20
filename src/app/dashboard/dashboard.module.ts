@@ -33,6 +33,9 @@ import { CollaborationGroupsTabComponent } from './groups/collaboration-groups-t
 import { ProjectTimeline } from './groups/project-timeline.component';
 import { ProcessInstanceGroupsTabComponent } from './groups/process-instance-groups-tab.component';
 import {DemandModule} from '../demand/demand.module';
+import {MonitorComponent} from './monitor/monitor.component';
+import {MonitorService} from './monitor/monitor.service';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
     imports: [
@@ -47,6 +50,7 @@ import {DemandModule} from '../demand/demand.module';
         CollaborationModule,
         BPEModule,
         DemandModule,
+        RouterModule,
         NgbModule
     ],
     declarations: [
@@ -56,13 +60,15 @@ import {DemandModule} from '../demand/demand.module';
         ProjectTimeline,
         FacetComponent,
         FrameContractTabComponent,
-        UnshippedOrdersTabComponent
+        UnshippedOrdersTabComponent,
+        MonitorComponent
     ],
     exports: [
         DashboardThreadedComponent,
         FacetComponent
     ],
     providers: [
+        MonitorService
     ]
 })
 

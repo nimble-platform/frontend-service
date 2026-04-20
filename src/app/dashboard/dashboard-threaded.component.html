@@ -84,6 +84,12 @@
                 <li class="nav-item">
                     <a href id="PERFORMANCE" *ngIf="this.appComponent.checkRoles('performance')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PERFORMANCE}" (click)="onChangeTab($event,'PERFORMANCE')"><span [innerHTML]="'Performance' | translate"></span></a>
                 </li>
+                <li class="nav-item">
+                    <a href id="MONITOR" [ngClass]="{'nav-link': true, active: selectedTab === TABS.MONITOR}" (click)="onChangeTab($event,'MONITOR')">
+                        <span [innerHTML]="'Monitor' | translate"></span>
+                        <span *ngIf="monitorBadgeCount > 0" class="badge badge-pill badge-danger ml-1">{{monitorBadgeCount}}</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -188,6 +194,13 @@
     <div *ngIf="selectedTab === TABS.PERFORMANCE" class="row">
         <div class="col-12">
             <performance-analytics></performance-analytics>
+        </div>
+    </div>
+
+    <!-- Monitor tab (HCDP-04-02) -->
+    <div *ngIf="selectedTab === TABS.MONITOR" class="row">
+        <div class="col-12">
+            <monitor-tab></monitor-tab>
         </div>
     </div>
 

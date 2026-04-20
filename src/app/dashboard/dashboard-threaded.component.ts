@@ -27,6 +27,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/constants';
 import { Subject } from 'rxjs';
 import {NetworkCompanyListService} from '../user-mgmt/network-company-list.service';
+import {MonitorService} from './monitor/monitor.service';
 
 @Component({
     selector: "dashboard-threaded",
@@ -41,6 +42,8 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
 
     buyerCounter = 0;
     sellerCounter = 0;
+    monitorBadgeCount = 0;
+    private monitorBadgeInterval: any = null;
 
     catalogueViewMode:"OwnerView"|"ContractView"|"OfferView" = "OwnerView";
     ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -58,7 +61,8 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
         private networkCompanyListService: NetworkCompanyListService,
         private router: Router,
         private route: ActivatedRoute,
-        public appComponent: AppComponent
+        public appComponent: AppComponent,
+        private monitorService: MonitorService
     ) { }
 
     ngOnInit() {
@@ -68,6 +72,11 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
             this.welcomeMessage = this.config.welcomeMessage["en"];
         this.computeUserFromCookies();
         this.getTabCounters();
+        // Poll badge count every 30 seconds for the MONITOR tab (lightweight endpoint)
+        if (this.cookieService.get('user_id')) {
+            this.refreshMonitorBadge();
+            this.monitorBadgeInterval = setInterval(() => this.refreshMonitorBadge(), 30000);
+        }
         this.route.queryParams.subscribe(params => {
             if (params['ins'])
                 this.instance = params['ins'];
@@ -87,6 +96,9 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+        if (this.monitorBadgeInterval) {
+            clearInterval(this.monitorBadgeInterval);
+        }
     }
 
     onChangeTab(event: any, id: any): void {
@@ -158,6 +170,13 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
             });
     }
 
+    private refreshMonitorBadge() {
+        if (!this.cookieService.get('bearer_token')) return;
+        this.monitorService.getBadgeCount()
+            .then(count => { this.monitorBadgeCount = count || 0; })
+            .catch(() => {});
+    }
+
     private sanitizeTab(tab: string): string {
         if (!tab) {
             if (this.selectedTab) {
@@ -178,7 +197,8 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
                 upped == TABS.PERFORMANCE ||
                 upped == TABS.FRAME_CONTRACTS ||
                 upped == TABS.UNSHIPPED_ORDERS ||
-                upped == TABS.COLLABORATION) {
+                upped == TABS.COLLABORATION ||
+                upped == TABS.MONITOR) {
                 return upped;
             }
         }

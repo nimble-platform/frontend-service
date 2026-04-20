@@ -1,0 +1,257 @@
+<div class="space-before">
+
+    <!-- Loading spinner -->
+    <call-status [callStatus]="callStatus" [large]="true"></call-status>
+
+    <div *ngIf="!callStatus.fb_submitted">
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: Notification Inbox                                 -->
+        <!-- ============================================================ -->
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="mb-0">
+                <i class="fa fa-bell mr-2"></i>
+                {{'Notifications' | translate}}
+                <span *ngIf="unreadCount > 0" class="badge badge-danger ml-1">{{unreadCount}}</span>
+            </h5>
+            <div *ngIf="notifications.length > 0">
+                <button class="btn btn-sm btn-outline-secondary mr-2" (click)="markAllRead()">
+                    <i class="fa fa-check-double mr-1"></i>{{'Mark all read' | translate}}
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="clearAll()">
+                    <i class="fa fa-trash mr-1"></i>{{'Clear all' | translate}}
+                </button>
+            </div>
+        </div>
+
+        <!-- Inbox list -->
+        <div *ngIf="notifications.length > 0">
+            <div *ngFor="let n of notifications"
+                 class="card mb-2"
+                 [ngClass]="severityClass(n)"
+                 style="border-left-width: 4px;">
+                <div class="card-body py-2 px-3 d-flex align-items-start">
+                    <!-- Icon -->
+                    <i class="fa {{severityIcon(n)}} fa-lg mr-3 mt-1"></i>
+                    <!-- Content -->
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <strong [ngClass]="{'font-weight-bold': isUnread(n)}">{{n.title}}</strong>
+                            <span *ngIf="isUnread(n)"
+                                  class="badge badge-pill badge-primary ml-2"
+                                  style="font-size:10px">NEW</span>
+                        </div>
+                        <small class="text-muted" *ngIf="n.message">{{n.message}}</small>
+                        <br *ngIf="n.message">
+                        <small class="text-muted">{{n.createdAt | date:'dd MMM yyyy HH:mm'}}</small>
+                    </div>
+                    <!-- Actions -->
+                    <div class="ml-3 text-nowrap">
+                        <!-- STATUS_CHANGE / ANOMALY_DELAY: direct link to the process -->
+                        <a *ngIf="n.relatedProcessId"
+                           [routerLink]="['/bpe/bpe-exec', n.relatedProcessId, federationId]"
+                           class="btn btn-sm btn-outline-primary mr-1">
+                            <i class="fa fa-eye mr-1"></i>{{'View Process' | translate}}
+                        </a>
+                        <!-- NEW_PROCESS: links to Purchases AND Sales (can't know which role) -->
+                        <ng-container *ngIf="!n.relatedProcessId && n.notificationType === 'NEW_PROCESS'">
+                            <a [routerLink]="['/dashboard']" [queryParams]="{tab: 'purchases'}"
+                               class="btn btn-sm btn-outline-primary mr-1"
+                               [attr.title]="'View Purchases' | translate">
+                                <i class="fa fa-shopping-cart mr-1"></i>{{'Purchases' | translate}}
+                            </a>
+                            <a [routerLink]="['/dashboard']" [queryParams]="{tab: 'sales'}"
+                               class="btn btn-sm btn-outline-success mr-1"
+                               [attr.title]="'View Sales' | translate">
+                                <i class="fa fa-tag mr-1"></i>{{'Sales' | translate}}
+                            </a>
+                        </ng-container>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="dismiss(n)"
+                                [attr.title]="'Dismiss' | translate">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty inbox state -->
+        <div *ngIf="notifications.length === 0"
+             class="card text-center p-4 text-muted mb-3">
+            <i class="fa fa-bell-slash fa-2x mb-2" style="color:#d0d0d0"></i>
+            <p class="mb-0">{{'No notifications yet. Add items to your watchlist below.' | translate}}</p>
+        </div>
+
+        <hr>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: Watchlist                                          -->
+        <!-- ============================================================ -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="mb-0">
+                <i class="fa fa-eye mr-2"></i>{{'Watchlist' | translate}}
+            </h5>
+            <div>
+                <button class="btn btn-sm btn-outline-success mr-2" (click)="openAddBpModal()">
+                    <i class="fa fa-plus mr-1"></i>{{'Watch a Process' | translate}}
+                </button>
+                <button class="btn btn-sm btn-outline-info" (click)="openAddPartnerModal()">
+                    <i class="fa fa-plus mr-1"></i>{{'Watch a Partner' | translate}}
+                </button>
+            </div>
+        </div>
+
+        <!-- BP watchlist -->
+        <h6 class="text-muted"><i class="fa fa-briefcase mr-1"></i>{{'Processes' | translate}} ({{bpWatchlist.length}})</h6>
+        <div *ngIf="bpWatchlist.length > 0" class="mb-3">
+            <div class="card">
+                <ul class="list-group list-group-flush">
+                    <li *ngFor="let entry of bpWatchlist"
+                        class="list-group-item d-flex align-items-center justify-content-between py-2">
+                        <div class="flex-grow-1">
+                            <i class="fa fa-circle mr-2"
+                               [ngStyle]="{'color': entry.lastSeenStatus === 'Approved' ? '#28a745' : (entry.lastSeenStatus === 'Denied' ? '#dc3545' : '#ffc107')}"></i>
+                            <span>{{entry.targetLabel || entry.targetId}}</span>
+                            <span *ngIf="entry.lastSeenStatus"
+                                  class="badge badge-pill ml-2"
+                                  [ngClass]="{'badge-success': entry.lastSeenStatus === 'Approved', 'badge-danger': entry.lastSeenStatus === 'Denied', 'badge-warning': entry.lastSeenStatus === 'WaitingResponse', 'badge-secondary': entry.lastSeenStatus !== 'Approved' && entry.lastSeenStatus !== 'Denied' && entry.lastSeenStatus !== 'WaitingResponse'}">
+                                {{entry.lastSeenStatus}}
+                            </span>
+                            <i *ngIf="entry.lastAnomalyAlerted"
+                               class="fa fa-exclamation-triangle text-danger ml-2"
+                               [attr.title]="'Anomaly detected: no response for too long' | translate"></i>
+                        </div>
+                        <div class="text-nowrap">
+                            <a [routerLink]="['/bpe/bpe-exec', entry.targetId, federationId]"
+                               class="btn btn-sm btn-outline-primary mr-2"
+                               [attr.title]="'open process' | translate">
+                                <i class="fa fa-external-link-alt"></i>
+                            </a>
+                            <button class="btn btn-sm btn-link text-danger p-0" (click)="removeWatch(entry)"
+                                    [attr.title]="'Stop watching' | translate">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div *ngIf="bpWatchlist.length === 0" class="text-muted small mb-3">
+            {{'No processes being watched.' | translate}}
+        </div>
+
+        <!-- Partner watchlist -->
+        <h6 class="text-muted"><i class="fa fa-building mr-1"></i>{{'Partners' | translate}} ({{partnerWatchlist.length}})</h6>
+        <div *ngIf="partnerWatchlist.length > 0" class="mb-3">
+            <div class="card">
+                <ul class="list-group list-group-flush">
+                    <li *ngFor="let entry of partnerWatchlist"
+                        class="list-group-item d-flex align-items-center justify-content-between py-2">
+                        <div>
+                            <i class="fa fa-building mr-2 text-info"></i>
+                            <span>{{entry.targetLabel || entry.targetId}}</span>
+                            <span class="badge badge-pill badge-light ml-2">
+                                {{entry.lastSeenBpCount || 0}} {{'processes' | translate}}
+                            </span>
+                        </div>
+                        <button class="btn btn-sm btn-link text-danger p-0" (click)="removeWatch(entry)"
+                                [attr.title]="'Stop watching' | translate">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div *ngIf="partnerWatchlist.length === 0" class="text-muted small mb-3">
+            {{'No partners being watched.' | translate}}
+        </div>
+
+    </div><!-- /ngIf callStatus -->
+</div>
+
+<!-- ================================================================== -->
+<!-- MODAL: Watch a Process                                               -->
+<!-- ================================================================== -->
+<div *ngIf="showAddBpModal" class="modal-backdrop-inline">
+    <div class="modal d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-briefcase mr-2"></i>{{'Watch a Business Process' | translate}}
+                    </h5>
+                    <button type="button" class="close" (click)="showAddBpModal = false">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">{{'Select a collaboration group to monitor status changes and delays.' | translate}}</p>
+                    <select class="form-control" [(ngModel)]="selectedBpEntry">
+                        <option [ngValue]="null" disabled>{{'-- Select a process --' | translate}}</option>
+                        <option *ngFor="let bp of availableBps" [ngValue]="bp">
+                            {{bp.label}} — {{bp.status}}
+                        </option>
+                    </select>
+                    <div *ngIf="availableBps.length === 0" class="text-muted small mt-2">
+                        {{'No active processes found.' | translate}}
+                    </div>
+                    <div *ngIf="selectedBpEntry" class="mt-2">
+                        <label class="small text-muted mb-1">{{'Custom name (optional)' | translate}}</label>
+                        <input type="text" class="form-control form-control-sm"
+                               [(ngModel)]="bpCustomName"
+                               placeholder="{{'e.g. RFQ for Hydrochar with BioTech' | translate}}">
+                        <small class="text-muted">{{'Leave blank to use the auto-generated label.' | translate}}</small>
+                    </div>
+                    <call-status [callStatus]="addBpStatus"></call-status>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" (click)="showAddBpModal = false">{{'Cancel' | translate}}</button>
+                    <button class="btn btn-success" [disabled]="!selectedBpEntry || addBpStatus.fb_submitted"
+                            (click)="confirmAddBp()">
+                        <i class="fa fa-eye mr-1"></i>{{'Watch' | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================== -->
+<!-- MODAL: Watch a Partner                                               -->
+<!-- ================================================================== -->
+<div *ngIf="showAddPartnerModal" class="modal-backdrop-inline">
+    <div class="modal d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-building mr-2"></i>{{'Watch a Partner' | translate}}
+                    </h5>
+                    <button type="button" class="close" (click)="showAddPartnerModal = false">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">{{'Get notified when new processes are started with this partner.' | translate}}</p>
+                    <select class="form-control" [(ngModel)]="selectedPartnerEntry">
+                        <option [ngValue]="null" disabled>{{'-- Select a partner --' | translate}}</option>
+                        <option *ngFor="let p of availablePartners" [ngValue]="p">
+                            {{p.name}}
+                        </option>
+                    </select>
+                    <div *ngIf="availablePartners.length === 0" class="text-muted small mt-2">
+                        {{'No trading partners found (or all are already being watched).' | translate}}
+                    </div>
+                    <call-status [callStatus]="addPartnerStatus"></call-status>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" (click)="showAddPartnerModal = false">{{'Cancel' | translate}}</button>
+                    <button class="btn btn-info" [disabled]="!selectedPartnerEntry || addPartnerStatus.fb_submitted"
+                            (click)="confirmAddPartner()">
+                        <i class="fa fa-eye mr-1"></i>{{'Watch' | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
