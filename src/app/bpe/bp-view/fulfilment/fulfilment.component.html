@@ -14,6 +14,91 @@
    limitations under the License.
  -->
 
+<!-- HCDP-05-01 F1 — Delivery Timeline -->
+<div *ngIf="!isLoading()" class="delivery-timeline mb-3">
+    <div class="timeline-track">
+        <!-- Node 1: Order Placed (always complete once we reach the fulfilment view) -->
+        <div class="timeline-node completed">
+            <div class="node-circle"><i class="fa fa-check-circle"></i></div>
+            <div class="node-label">{{'Order Placed' | translate}}</div>
+        </div>
+
+        <div class="timeline-connector"
+             [ngClass]="{'connector-active': hasDespatch || hasReceipt}"></div>
+
+        <!-- Node 2: Dispatched -->
+        <div class="timeline-node"
+             [ngClass]="{
+                'completed': hasDespatch || hasReceipt,
+                'pending': !hasDespatch && !hasReceipt
+             }">
+            <div class="node-circle">
+                <i class="fa" [ngClass]="(hasDespatch || hasReceipt) ? 'fa-check-circle' : 'fa-circle-o'"></i>
+            </div>
+            <div class="node-label">{{'Dispatched' | translate}}</div>
+            <div *ngIf="dispatchTimestamp && (hasDespatch || hasReceipt)" class="node-sub text-muted">
+                {{dispatchTimestamp | date:'dd MMM yyyy'}}
+            </div>
+            <div *ngIf="carrierLabel && (hasDespatch || hasReceipt)" class="node-sub text-muted" [title]="carrierLabel">
+                <i class="fa fa-truck mr-1"></i>{{carrierLabel}}
+            </div>
+            <div *ngIf="!carrierLabel && (hasDespatch || hasReceipt)" class="node-sub text-muted fst-italic">
+                {{'Carrier not specified' | translate}}
+            </div>
+        </div>
+
+        <div class="timeline-connector"
+             [ngClass]="{'connector-active': hasDespatch || hasReceipt, 'connector-overdue': timelineState === 'IN_TRANSIT_OVERDUE'}"></div>
+
+        <!-- Node 3: In Transit -->
+        <div class="timeline-node"
+             [ngClass]="{
+                'completed': hasReceipt,
+                'active': timelineState === 'IN_TRANSIT_ONTIME',
+                'overdue': timelineState === 'IN_TRANSIT_OVERDUE',
+                'pending': !hasDespatch && !hasReceipt
+             }">
+            <div class="node-circle">
+                <i class="fa"
+                   [ngClass]="{
+                     'fa-check-circle': hasReceipt,
+                     'fa-circle': timelineState === 'IN_TRANSIT_ONTIME',
+                     'fa-exclamation-triangle': timelineState === 'IN_TRANSIT_OVERDUE',
+                     'fa-circle-o': !hasDespatch && !hasReceipt
+                   }"></i>
+            </div>
+            <div class="node-label">{{'In Transit' | translate}}</div>
+            <div *ngIf="timelineState === 'IN_TRANSIT_OVERDUE'" class="node-sub overdue-badge">
+                {{'Overdue' | translate}} — {{daysSinceDispatch}} {{'days late' | translate}}
+            </div>
+            <div *ngIf="timelineState === 'IN_TRANSIT_ONTIME' && daysSinceDispatch !== null" class="node-sub text-muted">
+                {{daysSinceDispatch}} {{'days in transit' | translate}}
+            </div>
+        </div>
+
+        <div class="timeline-connector"
+             [ngClass]="{'connector-active': hasReceipt}"></div>
+
+        <!-- Node 4: Delivered -->
+        <div class="timeline-node"
+             [ngClass]="{
+                'completed': hasReceipt,
+                'pending': !hasReceipt
+             }">
+            <div class="node-circle">
+                <i class="fa" [ngClass]="hasReceipt ? 'fa-check-circle' : 'fa-circle-o'"></i>
+            </div>
+            <div class="node-label">{{'Delivered' | translate}}</div>
+            <div *ngIf="!hasReceipt" class="node-sub text-muted fst-italic">
+                {{'Awaiting confirmation' | translate}}
+            </div>
+            <div *ngIf="hasReceipt && rejectReasonBadge" class="node-sub">
+                <span class="badge badge-danger">{{rejectReasonBadge | translate}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--Show fulfilment statistics-->
 <div *ngIf="!isLoading()" class="row justify-content-center">
     <div class="card col-3 borderless">

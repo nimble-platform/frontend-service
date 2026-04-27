@@ -45,6 +45,10 @@ export class ReceiptAdviceComponent implements OnInit {
 
     quantityToString = quantityToString;
 
+    // HCDP-05-01 F3 — Structured reject reason (tag-prefixed into existing rejectReason[0] string)
+    readonly reasonCodes = ['DAMAGED', 'QUANTITY_MISMATCH', 'LATE', 'QUALITY_ISSUE', 'OTHER'];
+    selectedReasonCode = '';
+
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
         private location: Location,
@@ -59,6 +63,30 @@ export class ReceiptAdviceComponent implements OnInit {
         this.receiptAdvice = this.bpDataService.receiptAdvice;
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
+
+        // HCDP-05-01 F3 — hydrate dropdown from existing [CODE] tag when viewing a saved receipt
+        const existing = this.receiptAdvice && this.receiptAdvice.receiptLine
+            && this.receiptAdvice.receiptLine[0] && this.receiptAdvice.receiptLine[0].rejectReason
+            && this.receiptAdvice.receiptLine[0].rejectReason[0];
+        if (existing) {
+            const m = existing.match(/^\[([A-Z_]+)\]/);
+            if (m && this.reasonCodes.indexOf(m[1]) >= 0) {
+                this.selectedReasonCode = m[1];
+            }
+        }
+    }
+
+    /** HCDP-05-01 F3 — re-applies the selected [CODE] tag to rejectReason[0], stripping any prior tag. */
+    onReasonCodeChange(): void {
+        if (!this.receiptAdvice || !this.receiptAdvice.receiptLine || !this.receiptAdvice.receiptLine[0]) return;
+        const line = this.receiptAdvice.receiptLine[0];
+        if (!line.rejectReason || line.rejectReason.length === 0) {
+            line.rejectReason = [''];
+        }
+        const stripped = (line.rejectReason[0] || '').replace(/^\[[A-Z_]+\]\s*/, '');
+        line.rejectReason[0] = this.selectedReasonCode
+            ? `[${this.selectedReasonCode}] ${stripped}`
+            : stripped;
     }
 
     /*

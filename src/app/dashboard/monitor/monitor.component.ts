@@ -110,6 +110,7 @@ export class MonitorComponent implements OnInit, OnDestroy {
     }
 
     severityIcon(n: MonitorNotification): string {
+        if (n.notificationType === 'DELIVERY_DELAY') return 'fa-truck text-danger';
         if (n.notificationType === 'ANOMALY_DELAY') return 'fa-exclamation-triangle text-danger';
         if (n.notificationType === 'STATUS_CHANGE') return 'fa-exchange-alt text-primary';
         return 'fa-plus-circle text-success';
@@ -129,20 +130,26 @@ export class MonitorComponent implements OnInit, OnDestroy {
         this.addBpStatus = new CallStatus();
         this.monitorService.getMyCollaborationGroups().then(groups => {
             // First pass: build BP rows with the date-based fallback label.
-            const baseRows = groups.map(cg => {
-                const pig = cg.associatedProcessInstanceGroups && cg.associatedProcessInstanceGroups[0];
-                const status = pig ? (pig.status || 'Unknown') : 'Unknown';
-                const processInstanceId = (pig && pig.processInstanceIDs && pig.processInstanceIDs[0]) || null;
-                let fallbackLabel: string;
-                if (pig && pig.firstActivityTime) {
-                    const d = new Date(pig.firstActivityTime);
-                    const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-                    fallbackLabel = `${this.translateService.instant('Process started')} ${dateStr}`;
-                } else {
-                    fallbackLabel = cg.name || `${this.translateService.instant('Process')} #${cg.id}`;
-                }
-                return { label: fallbackLabel, id: cg.id, processInstanceId, status };
-            }).filter(bp => bp.processInstanceId);
+            // Expand each collaboration group into one row PER process instance group (PIG)
+            // so that sub-processes (e.g. Fulfilment inside an Order group) are individually watchable.
+            const baseRows: any[] = [];
+            groups.forEach(cg => {
+                const pigs: any[] = (cg.associatedProcessInstanceGroups as any[]) || [];
+                pigs.forEach(pig => {
+                    const status = pig.status || 'Unknown';
+                    const processInstanceId: string = (pig.processInstanceIDs && pig.processInstanceIDs[0]) || null;
+                    if (!processInstanceId) return;
+                    let fallbackLabel: string;
+                    if (pig.firstActivityTime) {
+                        const d = new Date(pig.firstActivityTime);
+                        const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        fallbackLabel = `${this.translateService.instant('Process started')} ${dateStr}`;
+                    } else {
+                        fallbackLabel = cg.name || `${this.translateService.instant('Process')} #${cg.id}`;
+                    }
+                    baseRows.push({ label: fallbackLabel, id: cg.id, processInstanceId, status });
+                });
+            });
 
             this.availableBps = baseRows;
 

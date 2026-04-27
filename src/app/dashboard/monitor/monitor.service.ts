@@ -31,7 +31,7 @@ export interface MonitorNotification {
     hjid?: number;
     userId: string;
     watchlistEntryHjid?: number;
-    notificationType: 'STATUS_CHANGE' | 'NEW_PROCESS' | 'ANOMALY_DELAY';
+    notificationType: 'STATUS_CHANGE' | 'NEW_PROCESS' | 'ANOMALY_DELAY' | 'DELIVERY_DELAY';
     severity: 'INFO' | 'WARNING' | 'CRITICAL';
     title: string;
     message?: string;
@@ -44,16 +44,21 @@ export interface MonitorNotification {
 /** Number of days a BP must be in WaitingResponse before it's flagged as an anomaly */
 const ANOMALY_THRESHOLD_DAYS = 7;
 
+/** HCDP-05-01 F2 — fallback overdue threshold when no ETA is known for a fulfilment */
+const DELIVERY_DELAY_FALLBACK_DAYS = 5;
+
 /** Lightweight metadata about a single BPE process instance, returned by the
  *  BPE `/monitor/process-summary/{processInstanceID}` endpoint. Used to enrich
  *  the watchlist label so users see the BP type and product name instead of an
  *  opaque "Group 13". */
 export interface ProcessSummary {
     processInstanceID: string;
-    type?: string;          // REQUESTFORQUOTATION | QUOTATION | ORDER | ...
+    type?: string;          // REQUESTFORQUOTATION | QUOTATION | ORDER | DESPATCHADVICE | ...
     products?: string[];    // related product names (best-effort)
     partner?: string;       // partner legal name (best-effort)
     submissionDate?: string;
+    hasReceiptAdvice?: boolean; // HCDP-05-01 F2 — true when a ReceiptAdvice exists for a fulfilment process
+    eta?: string | null;        // HCDP-05-01 F2 — ISO string or null; null triggers fallback threshold
 }
 
 @Injectable()
@@ -257,9 +262,52 @@ export class MonitorService {
 
         if (entry.watchType === 'BUSINESS_PROCESS') {
             await this.detectBpChanges(entry);
+            await this.detectDeliveryDelay(entry);
         } else if (entry.watchType === 'PARTNER') {
             await this.detectPartnerChanges(entry);
         }
+    }
+
+    /**
+     * HCDP-05-01 F2 — raises a DELIVERY_DELAY notification when a watched fulfilment
+     * process has a DespatchAdvice but no ReceiptAdvice past ETA+1d (or a 5-day fallback).
+     * Dedupes against the current notification list so repeated detection runs don't spam.
+     */
+    private async detectDeliveryDelay(entry: WatchlistEntry): Promise<void> {
+        const summary = await this.getProcessSummary(entry.targetId);
+        // Only fulfilment processes are eligible — their originating document is a DespatchAdvice.
+        if (!summary || !summary.type || summary.type.toUpperCase() !== 'DESPATCHADVICE') return;
+        // Already delivered, skip.
+        if (summary.hasReceiptAdvice) return;
+
+        const despatchMs = summary.submissionDate ? new Date(summary.submissionDate).getTime() : NaN;
+        if (isNaN(despatchMs)) return;
+
+        const thresholdMs = summary.eta
+            ? new Date(summary.eta).getTime() + 24 * 3600 * 1000
+            : despatchMs + DELIVERY_DELAY_FALLBACK_DAYS * 24 * 3600 * 1000;
+        if (Date.now() < thresholdMs) return;
+
+        // Dedupe: skip if an active DELIVERY_DELAY already exists for this entry.
+        const existing = await this.getNotifications();
+        const alreadyFired = existing.some(n =>
+            n.notificationType === 'DELIVERY_DELAY'
+            && n.watchlistEntryHjid === entry.hjid
+            && !n.dismissedAt);
+        if (alreadyFired) return;
+
+        const days = Math.max(1, Math.floor((Date.now() - despatchMs) / (24 * 3600 * 1000)));
+        const label = entry.targetLabel || this.t('Fulfilment');
+        const title = `${label}: ${this.t('delivery overdue')}`;
+        const message = `${this.t('DispatchAdvice sent')} ${days} ${this.t('days ago without a receipt')}.`;
+        await this.createNotification({
+            watchlistEntryHjid: entry.hjid,
+            notificationType: 'DELIVERY_DELAY',
+            severity: 'CRITICAL',
+            title,
+            message,
+            relatedProcessId: entry.targetId
+        });
     }
 
     private async detectBpChanges(entry: WatchlistEntry): Promise<void> {
@@ -402,7 +450,9 @@ export class MonitorService {
                 type: s['type'],
                 products: s['products'] || [],
                 partner: s['partner'],
-                submissionDate: s['submissionDate']
+                submissionDate: s['submissionDate'],
+                hasReceiptAdvice: s['hasReceiptAdvice'] === true,
+                eta: s['eta'] != null ? s['eta'] : null
             }) : null)
             .catch(() => null);
     }

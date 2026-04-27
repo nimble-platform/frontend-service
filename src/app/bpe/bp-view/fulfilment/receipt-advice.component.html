@@ -54,6 +54,18 @@
             </shipment-input>
         </div>
         <div class="col-6">
+            <!-- HCDP-05-01 F3 — Issue Category dropdown (tag-prefixes the existing rejectReason[0] string) -->
+            <div class="mb-2">
+                <label class="form-label mb-1"><span [innerHTML]="'Issue Category' | translate"></span></label>
+                <select class="form-control form-control-sm" [(ngModel)]="selectedReasonCode" (change)="onReasonCodeChange()" [disabled]="isLoading() || isReadOnly()">
+                    <option value="">{{'Select issue category...' | translate}}</option>
+                    <option value="DAMAGED">{{'Damaged on arrival' | translate}}</option>
+                    <option value="QUANTITY_MISMATCH">{{'Quantity mismatch' | translate}}</option>
+                    <option value="LATE">{{'Late delivery' | translate}}</option>
+                    <option value="QUALITY_ISSUE">{{'Quality issue' | translate}}</option>
+                    <option value="OTHER">{{'Other' | translate}}</option>
+                </select>
+            </div>
             <!-- Reject Reason -->
             <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]" rows="6">
             </text-input>

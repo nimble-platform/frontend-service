@@ -49,10 +49,71 @@ export class FulfilmentComponent implements OnInit {
 
     fulfilmentStatisticsCallStatus: CallStatus = new CallStatus();
 
+    // HCDP-05-01 F1 — Delivery Timeline threshold: fulfilments with a despatch older
+    // than this and no receipt are rendered as "Overdue" on the In-Transit node.
+    static readonly OVERDUE_DAYS_THRESHOLD = 5;
+
     ngOnInit() {
         this.line = this.bpDataService.getCatalogueLine();
 
         this.initializeFulfilmentStatisticsSection();
+    }
+
+    // ---- HCDP-05-01 F1 — Delivery Timeline state + helpers --------------------
+
+    get hasDespatch(): boolean {
+        return !!this.bpDataService.despatchAdvice && !!this.bpDataService.despatchAdvice.id;
+    }
+
+    get hasReceipt(): boolean {
+        // True only when the ReceiptAdvice has been fully submitted (processStatus = Completed).
+        // showReceiptAdvice() is intentionally NOT used here: it returns true even when the
+        // buyer is just opening the form (bpDataService.receiptAdvice is pre-initialized as
+        // an empty object), which would incorrectly mark all timeline nodes as Delivered.
+        const pm = this.bpDataService.bpActivityEvent && this.bpDataService.bpActivityEvent.processMetadata;
+        return !!(pm && pm.processStatus === 'Completed');
+    }
+
+    get timelineState(): 'ORDER' | 'DISPATCHED' | 'IN_TRANSIT_ONTIME' | 'IN_TRANSIT_OVERDUE' | 'DELIVERED' {
+        if (this.hasReceipt) return 'DELIVERED';
+        if (!this.hasDespatch) return 'ORDER';
+        const days = this.daysSinceDispatch;
+        if (days !== null && days > FulfilmentComponent.OVERDUE_DAYS_THRESHOLD) return 'IN_TRANSIT_OVERDUE';
+        return 'IN_TRANSIT_ONTIME';
+    }
+
+    /** Process start time of the fulfilment BP — doubles as the despatch timestamp for display. */
+    get dispatchTimestamp(): string | null {
+        const pm = this.bpDataService.bpActivityEvent && this.bpDataService.bpActivityEvent.processMetadata;
+        return (pm && pm.startTime) ? pm.startTime : null;
+    }
+
+    get daysSinceDispatch(): number | null {
+        if (!this.dispatchTimestamp) return null;
+        const t = new Date(this.dispatchTimestamp).getTime();
+        if (isNaN(t)) return null;
+        return Math.floor((Date.now() - t) / (24 * 3600 * 1000));
+    }
+
+    /** Reads `[CODE]` tag prefix that F3 writes into `rejectReason[0]`. Null when not tagged. */
+    get rejectReasonBadge(): string | null {
+        const ra = this.bpDataService.receiptAdvice;
+        const reason = ra && ra.receiptLine && ra.receiptLine[0]
+            && ra.receiptLine[0].rejectReason && ra.receiptLine[0].rejectReason[0];
+        if (!reason) return null;
+        const m = reason.match(/^\[([A-Z_]+)\]/);
+        return m ? m[1] : null;
+    }
+
+    /** Reads handlingInstructions free-text carrier name seeded by TEP → initDispatchAdvice. */
+    get carrierLabel(): string | null {
+        const da = this.bpDataService.despatchAdvice;
+        const shipment = da && da.despatchLine && da.despatchLine[0] && da.despatchLine[0].shipment && da.despatchLine[0].shipment[0];
+        if (!shipment) return null;
+        // TEP-seeded carrier is stored in handlingInstructions or shipmentStage metadata; degrade gracefully.
+        const hi = shipment.handlingInstructions && shipment.handlingInstructions[0];
+        if (hi && hi.value) return hi.value;
+        return null;
     }
 
     showReceiptAdvice(): boolean {
