@@ -197,6 +197,7 @@ export class DashboardThreadedComponent implements OnInit, OnDestroy {
                 upped == TABS.PERFORMANCE ||
                 upped == TABS.FRAME_CONTRACTS ||
                 upped == TABS.UNSHIPPED_ORDERS ||
+                upped == TABS.PENDING_RECEIPTS ||
                 upped == TABS.COLLABORATION ||
                 upped == TABS.MONITOR) {
                 return upped;

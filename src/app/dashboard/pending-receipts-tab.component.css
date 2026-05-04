@@ -1,0 +1,16 @@
+/*
+ * HCDP-05-02 F3 — Pending Receipts inbox styles
+ */
+
+.pending-receipts-tab .table-warning {
+    background-color: #fff8e1 !important;
+}
+
+.pending-receipts-tab .badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.6em;
+}
+
+.pending-receipts-tab .fst-italic {
+    font-style: italic;
+}

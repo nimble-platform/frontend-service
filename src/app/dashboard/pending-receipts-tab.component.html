@@ -1,0 +1,63 @@
+<!--
+ * Copyright 2020
+ * SRDC - Software Research & Development Consultancy; Ankara; Turkey
+   Licensed under the Apache License, Version 2.0 (the "License");
+-->
+
+<div class="pending-receipts-tab p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">{{'Pending Receipts' | translate}}</h4>
+        <button class="btn btn-sm btn-outline-secondary" (click)="refresh()" [disabled]="isLoading()">
+            <i class="fa fa-refresh mr-1"></i>{{'Refresh' | translate}}
+        </button>
+    </div>
+
+    <call-status [callStatus]="callStatus"></call-status>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading() && rows.length === 0" class="alert alert-success">
+        <i class="fa fa-check-circle mr-2"></i>
+        {{'No pending receptions — all dispatched goods confirmed.' | translate}}
+    </div>
+
+    <!-- Rows -->
+    <table *ngIf="rows.length > 0" class="table table-hover">
+        <thead>
+            <tr>
+                <th>{{'Supplier' | translate}}</th>
+                <th>{{'Product' | translate}}</th>
+                <th>{{'Dispatched' | translate}}</th>
+                <th>{{'Days In Transit' | translate}}</th>
+                <th>{{'Status' | translate}}</th>
+                <th class="text-right">{{'Action' | translate}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of rows" [class.table-warning]="row.overdue">
+                <td>{{row.partner}}</td>
+                <td>{{row.productLabel}}</td>
+                <td>
+                    <span *ngIf="row.dispatchedDate">{{row.dispatchedDate | date:'dd MMM yyyy'}}</span>
+                    <span *ngIf="!row.dispatchedDate" class="text-muted fst-italic">{{'Unknown' | translate}}</span>
+                </td>
+                <td>
+                    <span *ngIf="row.daysSince !== null">{{row.daysSince}} {{'days' | translate}}</span>
+                    <span *ngIf="row.daysSince === null" class="text-muted">—</span>
+                </td>
+                <td>
+                    <span *ngIf="row.overdue" class="badge badge-danger">
+                        <i class="fa fa-exclamation-triangle mr-1"></i>{{'DELIVERY_DELAY' | translate}}
+                    </span>
+                    <span *ngIf="!row.overdue" class="badge badge-info">
+                        <i class="fa fa-truck mr-1"></i>{{'In Transit' | translate}}
+                    </span>
+                </td>
+                <td class="text-right">
+                    <button class="btn btn-sm btn-primary" (click)="onConfirmReception(row)">
+                        {{'Confirm Reception' | translate}}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

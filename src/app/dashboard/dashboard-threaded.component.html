@@ -69,6 +69,10 @@
                 <li class="nav-item">
                     <a href id="UNSHIPPED_ORDERS" *ngIf="config.unshippedOrdersTabEnabled && this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.UNSHIPPED_ORDERS}" (click)="onChangeTab($event,'UNSHIPPED_ORDERS')"><span [innerHTML]="'Expected Orders' | translate"></span></a>
                 </li>
+                <!-- HCDP-05-02 F3 — Pending Receipts (buyer counterpart to Expected Orders) -->
+                <li class="nav-item">
+                    <a href id="PENDING_RECEIPTS" *ngIf="this.appComponent.checkRoles('bp')" [ngClass]="{'nav-link': true, active: selectedTab === TABS.PENDING_RECEIPTS}" (click)="onChangeTab($event,'PENDING_RECEIPTS')"><span [innerHTML]="'Pending Receipts' | translate"></span></a>
+                </li>
                 <li class="nav-item">
                     <a href id="CATALOGUE" [ngClass]="{'nav-link': true, active: selectedTab === TABS.CATALOGUE}" (click)="onChangeTab($event,'CATALOGUE')"><span [innerHTML]="'Catalogue' | translate"></span></a>
                 </li>
@@ -189,6 +193,10 @@
 
     <unshipped-orders-tab *ngIf="selectedTab === TABS.UNSHIPPED_ORDERS">
     </unshipped-orders-tab>
+
+    <!-- HCDP-05-02 F3 — Pending Receipts inbox (buyer side) -->
+    <pending-receipts-tab *ngIf="selectedTab === TABS.PENDING_RECEIPTS">
+    </pending-receipts-tab>
 
     <!-- Performance tab -->
     <div *ngIf="selectedTab === TABS.PERFORMANCE" class="row">

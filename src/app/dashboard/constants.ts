@@ -27,7 +27,13 @@ export const TABS = {
     DEMANDS: 'DEMANDS',
     FRAME_CONTRACTS: "FRAME_CONTRACTS",
     UNSHIPPED_ORDERS: "UNSHIPPED_ORDERS",
+    PENDING_RECEIPTS: "PENDING_RECEIPTS",
     MONITOR: "MONITOR"
 };
 
 export const PAGE_SIZE = 5;
+
+// HCDP-05-01 F1 / HCDP-05-02 F3 — shared threshold: a fulfilment with a despatch older
+// than this and no receipt is rendered as "Overdue" on the timeline AND in the
+// Pending Receipts inbox. Single source of truth for both surfaces.
+export const OVERDUE_DAYS_THRESHOLD = 5;

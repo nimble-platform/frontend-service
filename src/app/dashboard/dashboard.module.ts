@@ -28,6 +28,7 @@ import { BPEModule } from "../bpe/bpe.module";
 import { AnalyticsModule } from "../analytics/analytics.module";
 import { FrameContractTabComponent } from "./frame-contract-tab.component";
 import { UnshippedOrdersTabComponent } from './unshipped-orders-tab.component';
+import { PendingReceiptsTabComponent } from './pending-receipts-tab.component';
 import { CollaborationModule } from '../catalogue/collaboration/collaboration.module';
 import { CollaborationGroupsTabComponent } from './groups/collaboration-groups-tab.component';
 import { ProjectTimeline } from './groups/project-timeline.component';
@@ -61,6 +62,7 @@ import {RouterModule} from '@angular/router';
         FacetComponent,
         FrameContractTabComponent,
         UnshippedOrdersTabComponent,
+        PendingReceiptsTabComponent,
         MonitorComponent
     ],
     exports: [

@@ -129,6 +129,14 @@
             <p class="card-text" style="font-size:32px"><i class="fa fa-truck"></i></p>
         </div>
     </div>
+    <!-- HCDP-05-02 F5 — Nonconformities card (only when > 0 to keep clean default layout) -->
+    <div class="card col-3 borderless" *ngIf="totalNonconformities[_selectedOrderLineIndex] > 0">
+        <div class="card-body text-center">
+            <h4 class="card-title text-warning"><b>{{totalNonconformities[_selectedOrderLineIndex]}}</b></h4>
+            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Nonconformities' | translate"></span></h6>
+            <p class="card-text" style="font-size:32px"><i class="fa fa-exclamation-triangle text-warning"></i></p>
+        </div>
+    </div>
 </div>
 <hr class="mb-3">
 <ng-container *ngIf="line && !isLoading()">

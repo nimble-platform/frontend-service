@@ -46,6 +46,8 @@ export class FulfilmentComponent implements OnInit {
     totalToBeShipped: number[] = [];
     totalWaitingResponse: number[] = [];
     totalRejected: number[] = [];
+    // HCDP-05-02 F5 — per-line nonconformity flag (1 if rejectedQuantity > 0, else 0)
+    totalNonconformities: number[] = [];
 
     fulfilmentStatisticsCallStatus: CallStatus = new CallStatus();
 
@@ -95,14 +97,22 @@ export class FulfilmentComponent implements OnInit {
         return Math.floor((Date.now() - t) / (24 * 3600 * 1000));
     }
 
-    /** Reads `[CODE]` tag prefix that F3 writes into `rejectReason[0]`. Null when not tagged. */
+    /**
+     * Reads `[CODE]` tag prefix that HCDP-05-01 F3 writes into `rejectReason[0]`. Null when not tagged.
+     * HCDP-05-02 F1 companion — scans ALL receipt lines (not just line 0) so multi-line
+     * nonconformities still surface on the timeline badge. Returns the first matching code
+     * found; degenerate single-line case still returns the same value as before.
+     */
     get rejectReasonBadge(): string | null {
         const ra = this.bpDataService.receiptAdvice;
-        const reason = ra && ra.receiptLine && ra.receiptLine[0]
-            && ra.receiptLine[0].rejectReason && ra.receiptLine[0].rejectReason[0];
-        if (!reason) return null;
-        const m = reason.match(/^\[([A-Z_]+)\]/);
-        return m ? m[1] : null;
+        if (!ra || !ra.receiptLine) return null;
+        for (const line of ra.receiptLine) {
+            const reason = line.rejectReason && line.rejectReason[0];
+            if (!reason) continue;
+            const m = reason.match(/^\[([A-Z_]+)\]/);
+            if (m) return m[1];
+        }
+        return null;
     }
 
     /** Reads handlingInstructions free-text carrier name seeded by TEP → initDispatchAdvice. */
@@ -155,6 +165,9 @@ export class FulfilmentComponent implements OnInit {
                 this.totalRejected.push(totalRejected);
                 this.totalToBeShipped.push(toBeShipped > 0 ? toBeShipped : 0);
                 this.totalWaitingResponse.push(waitingResponse);
+                // HCDP-05-02 F5 — per-line nonconformity flag (1 if anything rejected on this line, else 0).
+                // TODO: replace with statistics.nonconformityCount when BPE exposes it natively.
+                this.totalNonconformities.push(totalRejected > 0 ? 1 : 0);
             }
 
             this._selectedOrderLineIndex = this.getOrderLineIndex(0);

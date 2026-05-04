@@ -26,6 +26,7 @@ import { DespatchAdvice } from "../../../catalogue/model/publish/despatch-advice
 import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import { quantityToString } from '../../../common/utils';
+import { Quantity } from '../../../catalogue/model/publish/quantity';
 
 @Component({
     selector: "receipt-advice",
@@ -45,9 +46,16 @@ export class ReceiptAdviceComponent implements OnInit {
 
     quantityToString = quantityToString;
 
-    // HCDP-05-01 F3 — Structured reject reason (tag-prefixed into existing rejectReason[0] string)
+    // HCDP-05-01 F3 / HCDP-05-02 F1 — Structured reject reason (tag-prefixed into rejectReason[0] string).
+    // Selection is per-line so multi-line POs can carry independent issue categories.
     readonly reasonCodes = ['DAMAGED', 'QUANTITY_MISMATCH', 'LATE', 'QUALITY_ISSUE', 'OTHER'];
-    selectedReasonCode = '';
+    selectedReasonCodes: string[] = [];
+
+    // HCDP-05-02 F2 — UI helper mirroring rejectedQuantity. Canonical UBL field stays
+    // receiptLine[i].rejectedQuantity; acceptedQuantities is never serialized.
+    // Invariant: acceptedQuantities[i].value + receiptLine[i].rejectedQuantity.value
+    //          = dispatchAdvice.despatchLine[i].deliveredQuantity.value
+    acceptedQuantities: Quantity[] = [];
 
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
@@ -64,29 +72,99 @@ export class ReceiptAdviceComponent implements OnInit {
         this.dispatchAdvice = this.bpDataService.despatchAdvice;
         this.userRole = this.bpDataService.bpActivityEvent.userRole;
 
-        // HCDP-05-01 F3 — hydrate dropdown from existing [CODE] tag when viewing a saved receipt
-        const existing = this.receiptAdvice && this.receiptAdvice.receiptLine
-            && this.receiptAdvice.receiptLine[0] && this.receiptAdvice.receiptLine[0].rejectReason
-            && this.receiptAdvice.receiptLine[0].rejectReason[0];
-        if (existing) {
-            const m = existing.match(/^\[([A-Z_]+)\]/);
-            if (m && this.reasonCodes.indexOf(m[1]) >= 0) {
-                this.selectedReasonCode = m[1];
-            }
+        // HCDP-05-02 F1 — hydrate per-line dropdown state from saved [CODE] tags
+        // HCDP-05-02 F2 — hydrate accepted-qty UI helper as `delivered − rejected` (clamped >= 0)
+        if (this.receiptAdvice && this.receiptAdvice.receiptLine) {
+            this.receiptAdvice.receiptLine.forEach((line, i) => {
+                // F1 hydration
+                const existing = line.rejectReason && line.rejectReason[0];
+                let code = '';
+                if (existing) {
+                    const m = existing.match(/^\[([A-Z_]+)\]/);
+                    if (m && this.reasonCodes.indexOf(m[1]) >= 0) {
+                        code = m[1];
+                    }
+                }
+                this.selectedReasonCodes[i] = code;
+
+                // F2 hydration
+                const delivered = this.getDeliveredValue(i);
+                const rejected = (line.rejectedQuantity && line.rejectedQuantity.value) || 0;
+                const accepted = Math.max(0, delivered - rejected);
+                const unit = (line.rejectedQuantity && line.rejectedQuantity.unitCode) || null;
+                this.acceptedQuantities[i] = new Quantity(accepted, unit);
+            });
         }
     }
 
-    /** HCDP-05-01 F3 — re-applies the selected [CODE] tag to rejectReason[0], stripping any prior tag. */
-    onReasonCodeChange(): void {
-        if (!this.receiptAdvice || !this.receiptAdvice.receiptLine || !this.receiptAdvice.receiptLine[0]) return;
-        const line = this.receiptAdvice.receiptLine[0];
+    /**
+     * HCDP-05-02 F1 — re-applies the selected [CODE] tag to receiptLine[i].rejectReason[0],
+     * stripping any prior tag.
+     */
+    onReasonCodeChange(i: number): void {
+        if (!this.receiptAdvice || !this.receiptAdvice.receiptLine || !this.receiptAdvice.receiptLine[i]) return;
+        const line = this.receiptAdvice.receiptLine[i];
         if (!line.rejectReason || line.rejectReason.length === 0) {
             line.rejectReason = [''];
         }
         const stripped = (line.rejectReason[0] || '').replace(/^\[[A-Z_]+\]\s*/, '');
-        line.rejectReason[0] = this.selectedReasonCode
-            ? `[${this.selectedReasonCode}] ${stripped}`
-            : stripped;
+        const code = this.selectedReasonCodes[i] || '';
+        line.rejectReason[0] = code ? `[${code}] ${stripped}` : stripped;
+    }
+
+    /**
+     * HCDP-05-02 F2 — when user edits accepted: rejected = delivered − accepted (clamp 0..delivered).
+     * UI input only — UBL document carries rejectedQuantity exclusively.
+     */
+    onAcceptedChange(i: number): void {
+        const delivered = this.getDeliveredValue(i);
+        const accepted = this.clamp((this.acceptedQuantities[i] && this.acceptedQuantities[i].value) || 0, 0, delivered);
+        this.acceptedQuantities[i].value = accepted;
+        if (this.receiptAdvice.receiptLine[i].rejectedQuantity) {
+            this.receiptAdvice.receiptLine[i].rejectedQuantity.value = delivered - accepted;
+        }
+    }
+
+    /**
+     * HCDP-05-02 F2 — when user edits rejected: accepted = delivered − rejected (clamp 0..delivered).
+     */
+    onRejectedChange(i: number): void {
+        const delivered = this.getDeliveredValue(i);
+        const rq = this.receiptAdvice.receiptLine[i].rejectedQuantity;
+        if (!rq) return;
+        rq.value = this.clamp(rq.value || 0, 0, delivered);
+        if (!this.acceptedQuantities[i]) {
+            this.acceptedQuantities[i] = new Quantity(0, rq.unitCode || null);
+        }
+        this.acceptedQuantities[i].value = delivered - rq.value;
+    }
+
+    private getDeliveredValue(i: number): number {
+        const line = this.dispatchAdvice && this.dispatchAdvice.despatchLine && this.dispatchAdvice.despatchLine[i];
+        return (line && line.deliveredQuantity && line.deliveredQuantity.value) || 0;
+    }
+
+    /**
+     * Guards rendering of `<shipment-input>` — its template crashes when
+     * carrierParty/partyName is null (existing bug; we simply hide the panel
+     * when the data isn't safe). Used in receipt-advice.component.html.
+     */
+    hasShipmentToShow(): boolean {
+        const da = this.dispatchAdvice;
+        if (!da || !da.despatchLine || !da.despatchLine[0]) return false;
+        const ship = da.despatchLine[0].shipment;
+        if (!ship || !ship[0]) return false;
+        const stage = ship[0].shipmentStage;
+        if (!stage || !stage[0]) return false;
+        const cp = stage[0].carrierParty;
+        if (!cp || !cp.partyName || !cp.partyName[0]) return false;
+        return true;
+    }
+
+    private clamp(value: number, min: number, max: number): number {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
     }
 
     /*

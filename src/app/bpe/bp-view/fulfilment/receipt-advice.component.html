@@ -27,59 +27,93 @@
 
     <div class="content-row bg-light">
         <div class="row">
-            <div class="col-6">
-                <h5><span>Dispatched Quantities</span></h5>
+            <div class="col-12">
+                <h5><span>Dispatched &amp; Received Quantities</span></h5>
             </div>
         </div>
-        <div *ngFor="let dispatchAdviceLine of dispatchAdvice.despatchLine;let i=index" class="row">
-            <div class="col-2">
-                {{dispatchAdviceLine.item.name[0].value}}
+        <!-- HCDP-05-02 F1+F2 — per-line layout: Item | Delivered | Accepted | Rejected | Issue Category + Reject Reason -->
+        <div *ngFor="let dispatchAdviceLine of dispatchAdvice.despatchLine; let i=index" class="receipt-line border-bottom pb-2 mb-2">
+            <div class="row">
+                <div class="col-3">
+                    <strong>{{dispatchAdviceLine.item.name[0].value}}</strong>
+                </div>
+                <div class="col-3">
+                    <small class="text-muted">{{'Delivered' | translate}}:</small>
+                    {{quantityToString(dispatchAdviceLine.deliveredQuantity)}}
+                </div>
+                <div class="col-3">
+                    <!-- HCDP-05-02 F2 — Accepted Quantity (UI helper; rejected derived) -->
+                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+                        label="Accepted" [quantity]="acceptedQuantities[i]"
+                        (onQuantityValueChange)="onAcceptedChange(i)">
+                    </quantity-input>
+                </div>
+                <div class="col-3">
+                    <!-- Rejected Quantity (canonical UBL field) -->
+                    <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
+                        label="Rejected" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity"
+                        (onQuantityValueChange)="onRejectedChange(i)">
+                    </quantity-input>
+                </div>
             </div>
-            <div class="col-4">
-                {{quantityToString(dispatchAdviceLine.deliveredQuantity)}}
-            </div>
-
-            <div class="col-6">
-                <!-- Rejected Quantity -->
-                <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true" label="Rejected Quantity" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity">
-                </quantity-input>
+            <!-- HCDP-05-02 F1 — per-line Issue Category + Reject Reason (rendered only when something rejected, to keep clean rows) -->
+            <div class="row mt-1" *ngIf="(receiptAdvice.receiptLine[i].rejectedQuantity?.value || 0) > 0 || selectedReasonCodes[i]">
+                <div class="col-4">
+                    <label class="form-label mb-1"><small class="text-muted">{{'Issue Category' | translate}}</small></label>
+                    <select class="form-control form-control-sm"
+                        [(ngModel)]="selectedReasonCodes[i]"
+                        (change)="onReasonCodeChange(i)"
+                        [disabled]="isLoading() || isReadOnly()">
+                        <option value="">{{'Select issue category...' | translate}}</option>
+                        <option value="DAMAGED">{{'Damaged on arrival' | translate}}</option>
+                        <option value="QUANTITY_MISMATCH">{{'Quantity mismatch' | translate}}</option>
+                        <option value="LATE">{{'Late delivery' | translate}}</option>
+                        <option value="QUALITY_ISSUE">{{'Quality issue' | translate}}</option>
+                        <option value="OTHER">{{'Other' | translate}}</option>
+                    </select>
+                </div>
+                <div class="col-8">
+                    <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()"
+                        [(text)]="receiptAdvice.receiptLine[i].rejectReason[0]" rows="2">
+                    </text-input>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row content-row">
-        <div class="col-6">
-            <!-- Shipment -->
+    <div class="row content-row" *ngIf="hasShipmentToShow()">
+        <div class="col-12">
+            <!-- Shipment (guarded — original component crashes on null carrierParty/partyName) -->
             <shipment-input [shipment]="dispatchAdvice.despatchLine[0].shipment[0]" presentationMode="view">
             </shipment-input>
         </div>
-        <div class="col-6">
-            <!-- HCDP-05-01 F3 — Issue Category dropdown (tag-prefixes the existing rejectReason[0] string) -->
-            <div class="mb-2">
-                <label class="form-label mb-1"><span [innerHTML]="'Issue Category' | translate"></span></label>
-                <select class="form-control form-control-sm" [(ngModel)]="selectedReasonCode" (change)="onReasonCodeChange()" [disabled]="isLoading() || isReadOnly()">
-                    <option value="">{{'Select issue category...' | translate}}</option>
-                    <option value="DAMAGED">{{'Damaged on arrival' | translate}}</option>
-                    <option value="QUANTITY_MISMATCH">{{'Quantity mismatch' | translate}}</option>
-                    <option value="LATE">{{'Late delivery' | translate}}</option>
-                    <option value="QUALITY_ISSUE">{{'Quality issue' | translate}}</option>
-                    <option value="OTHER">{{'Other' | translate}}</option>
-                </select>
-            </div>
-            <!-- Reject Reason -->
-            <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()" [(text)]="receiptAdvice.receiptLine[0].rejectReason[0]" rows="6">
-            </text-input>
-        </div>
     </div>
 
-    <!-- Notes -->
+    <!-- HCDP-05-02 F4 — Categorized supporting documents (Invoice / Delivery Note / Quality Cert / General) -->
     <h5><span [innerHTML]="'Notes and Additional Files' | translate"></span></h5>
     <div class="row content-row bg-light">
         <div class="col-6">
-            <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier Note'|translate"></note-file-view>
+            <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier Note'|translate"></note-file-view>
         </div>
         <div class="col-6">
-            <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference" [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()" [label]="'Customer note'|translate"></note-file-view>
+            <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()"
+                [label]="'Customer note'|translate"></note-file-view>
+            <hr class="my-2">
+            <!-- F4: 3 typed buckets + 1 General fallback for legacy untyped uploads -->
+            <note-file-view [notes]="[]" [documents]="receiptAdvice.additionalDocumentReference"
+                [documentType]="'INVOICE'"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()"
+                [label]="'Invoice'|translate"></note-file-view>
+            <note-file-view [notes]="[]" [documents]="receiptAdvice.additionalDocumentReference"
+                [documentType]="'DELIVERY_NOTE'"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()"
+                [label]="'Delivery Note'|translate"></note-file-view>
+            <note-file-view [notes]="[]" [documents]="receiptAdvice.additionalDocumentReference"
+                [documentType]="'QUALITY_CERT'"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="isLoading() || isReadOnly()"
+                [label]="'Quality Certificate'|translate"></note-file-view>
         </div>
     </div>
 

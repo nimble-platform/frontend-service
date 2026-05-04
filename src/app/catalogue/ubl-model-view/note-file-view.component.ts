@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Attachment } from '../model/publish/attachment';
 import { DocumentReference } from '../model/publish/document-reference';
 import { BinaryObject } from '../model/publish/binary-object';
@@ -26,7 +26,7 @@ import {COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE} from '../../common/constants
     selector: 'note-file-view',
     templateUrl: './note-file-view.component.html'
 })
-export class NoteFileViewComponent implements OnInit {
+export class NoteFileViewComponent implements OnInit, OnChanges {
 
     @Input() notes: string[];
     @Input() requestNotes: string[]; // special case for negotiation response
@@ -42,21 +42,49 @@ export class NoteFileViewComponent implements OnInit {
     @Input() documents: DocumentReference[];
     @Input() requestDocuments: DocumentReference[]; // special case for negotiation response
 
-    files: BinaryObject[];
-    requestFiles: BinaryObject[];
+    // HCDP-05-02 F4 — when set, this view filters its files to docs matching `documentType`
+    // and tags newly-uploaded docs with this `documentType`.
+    // Special value 'GENERAL' filters to docs with no `documentType` (backward-compat bucket)
+    // and does NOT tag new uploads.
+    // When unset (null/undefined), the view behaves exactly as before.
+    @Input() documentType: string = null;
+
+    // Cached computed arrays — recomputed only when inputs change (ngOnChanges) or on add/remove.
+    // Returning a new array on every getter call would re-trigger Angular CD on bindings like
+    // `[binaryObjects]="files"`, leading to ExpressionChangedAfterItHasBeenChecked errors and
+    // throttling templates that depend on note-file-view siblings (HCDP-05-02 regression fix).
+    files: BinaryObject[] = [];
+    requestFiles: BinaryObject[] = [];
 
     constructor(
     ) {
     }
+
     ngOnInit() {
-        if (this.documents) {
-            // discard files which do not have any attachments and the ones which are company terms and conditions
-            this.files = this.documents.filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        this.recomputeFiles();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['documents'] || changes['requestDocuments'] || changes['documentType']) {
+            this.recomputeFiles();
         }
-        if (this.requestDocuments) {
-            // discard files which do not have any attachments and the ones which are company terms and conditions
-            this.requestFiles = this.requestDocuments.filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE).map(doc => doc.attachment.embeddedDocumentBinaryObject);
-        }
+    }
+
+    private matchesDocumentType(doc: DocumentReference): boolean {
+        if (!this.documentType) return true;
+        if (this.documentType === 'GENERAL') return !doc.documentType;
+        return doc.documentType === this.documentType;
+    }
+
+    private recomputeFiles(): void {
+        this.files = (this.documents || [])
+            .filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE)
+            .filter(doc => this.matchesDocumentType(doc))
+            .map(doc => doc.attachment.embeddedDocumentBinaryObject);
+        this.requestFiles = (this.requestDocuments || [])
+            .filter(doc => doc.attachment != null && doc.documentType != COMPANY_TERMS_AND_CONDITIONS_DOCUMENT_TYPE)
+            .filter(doc => this.matchesDocumentType(doc))
+            .map(doc => doc.attachment.embeddedDocumentBinaryObject);
     }
 
     onRemoveNote(index) {
@@ -72,7 +100,12 @@ export class NoteFileViewComponent implements OnInit {
         const attachment: Attachment = new Attachment();
         attachment.embeddedDocumentBinaryObject = binaryObject;
         document.attachment = attachment;
+        // HCDP-05-02 F4 — tag new docs with the bucket's documentType (skip the 'GENERAL' sentinel).
+        if (this.documentType && this.documentType !== 'GENERAL') {
+            document.documentType = this.documentType;
+        }
         this.documents.push(document);
+        this.recomputeFiles();
     }
 
     onUnSelectFile(binaryObject: BinaryObject) {
@@ -80,6 +113,7 @@ export class NoteFileViewComponent implements OnInit {
         if (index >= 0) {
             this.documents.splice(index, 1);
         }
+        this.recomputeFiles();
     }
 
     customTrackBy(index: number, obj: any): any{
