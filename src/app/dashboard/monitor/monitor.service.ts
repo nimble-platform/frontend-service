@@ -59,6 +59,7 @@ export interface ProcessSummary {
     submissionDate?: string;
     hasReceiptAdvice?: boolean; // HCDP-05-01 F2 — true when a ReceiptAdvice exists for a fulfilment process
     eta?: string | null;        // HCDP-05-01 F2 — ISO string or null; null triggers fallback threshold
+    deadline?: string | null;   // HCDP-05-03 F1 — earliest requestedDeliveryPeriod.endDate from upstream ORDER doc; null when unset
 }
 
 @Injectable()
@@ -452,7 +453,8 @@ export class MonitorService {
                 partner: s['partner'],
                 submissionDate: s['submissionDate'],
                 hasReceiptAdvice: s['hasReceiptAdvice'] === true,
-                eta: s['eta'] != null ? s['eta'] : null
+                eta: s['eta'] != null ? s['eta'] : null,
+                deadline: s['deadline'] != null ? s['deadline'] : null
             }) : null)
             .catch(() => null);
     }

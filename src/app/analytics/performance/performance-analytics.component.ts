@@ -15,6 +15,7 @@
  */
 
 import { Component, OnInit } from "@angular/core";
+import { Router } from '@angular/router';
 import { AnalyticsService } from "../analytics.service";
 import { CallStatus } from "../../common/call-status";
 import { SimpleSearchService } from '../../simple-search/simple-search.service';
@@ -25,6 +26,31 @@ import { CookieService } from "ng2-cookies";
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from "@angular/platform-browser";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { BPEService } from '../../bpe/bpe.service';
+import { BPDataService } from '../../bpe/bp-view/bp-data-service';
+import { MonitorService, ProcessSummary } from '../../dashboard/monitor/monitor.service';
+import { OVERDUE_DAYS_THRESHOLD } from '../../dashboard/constants';
+import { FEDERATIONID } from '../../catalogue/model/constants';
+
+/**
+ * HCDP-05-03 F2 — single row in the Delivery Schedule subsection.
+ * Composed from BPE /monitor/process-summary/{pid} responses across all PIDs in
+ * each collaboration group, classified into 4 mutually-exclusive statuses.
+ */
+interface DeliveryScheduleRow {
+    pid: string;
+    federationId: string;
+    side: 'BUYER' | 'SELLER';
+    status: 'PLANNED' | 'IN_TRANSIT' | 'OVERDUE' | 'DELIVERED';
+    productLabel: string;
+    partner: string;
+    submissionDate: string | null;
+    deadline: string | null;
+    daysToDeadline: number | null;
+}
+
+type DeliveryTimeRange = 'NEXT_7' | 'NEXT_30' | 'NEXT_90' | 'ALL';
+type DeliveryStatusFilter = 'ALL' | 'PLANNED' | 'IN_TRANSIT' | 'OVERDUE' | 'DELIVERED';
 
 @Component({
     selector: "performance-analytics",
@@ -186,6 +212,15 @@ export class PerformanceAnalyticsComponent implements OnInit {
     nonOrderedCount = 0;
     nonOrderedProductNames: string[] = [];
 
+    // ---- Section 2.5: HCDP-05-03 Delivery Schedule subsection ----
+    callStatusDeliverySchedule: CallStatus = new CallStatus();
+    deliverySchedule: DeliveryScheduleRow[] = [];   // raw rows (cross-side, all statuses)
+    effectiveRows: DeliveryScheduleRow[] = [];      // filter-applied subset (drives table + counts)
+    deliveryCounts = { planned: 0, inTransit: 0, overdue: 0, delivered: 0 };
+    selectedTimeRange: DeliveryTimeRange = 'NEXT_30';
+    selectedStatus: DeliveryStatusFilter = 'ALL';
+    deliveryScheduleLoaded = false;
+
     product_cat_mix = myGlobals.product_cat_mix;
     getMultilingualLabel = selectNameFromLabelObject;
     config = myGlobals.config;
@@ -200,7 +235,11 @@ export class PerformanceAnalyticsComponent implements OnInit {
         private categoryService: CategoryService,
         private modalService: NgbModal,
         private translate: TranslateService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private bpeService: BPEService,
+        private monitorService: MonitorService,
+        private bpDataService: BPDataService,
+        private router: Router
     ) {
     }
 
@@ -566,11 +605,290 @@ export class PerformanceAnalyticsComponent implements OnInit {
             if (this.processTypeTotalCount === 0 && this.nonOrderedProducts === null) {
                 this.getProcessingStats();
             }
+            // HCDP-05-03 — Delivery Schedule subsection loads independently
+            // (different data source: collaboration-groups + per-PID process-summary).
+            if (!this.deliveryScheduleLoaded) {
+                this.loadDeliverySchedule();
+            }
         }
     }
 
     showToolTip(content,key) {
         this.tooltipHTML = this.translate.instant(key);
         this.modalService.open(content);
+    }
+
+    // ======================================================================
+    // HCDP-05-03 — Delivery Schedule subsection
+    // ======================================================================
+
+    isDeliveryScheduleLoading(): boolean {
+        return this.callStatusDeliverySchedule.fb_submitted;
+    }
+
+    /**
+     * Loads cross-side (Sales + Purchases) collaboration groups for the current
+     * company, classifies the latest PID of each PIG into one of 4 mutually
+     * exclusive statuses (Planned / In Transit / Overdue / Delivered) and seeds
+     * the schedule grid. Idempotent — `deliveryScheduleLoaded` flag suppresses
+     * redundant fetches when the user re-enters the Processing tab.
+     */
+    loadDeliverySchedule(): void {
+        this.callStatusDeliverySchedule.submit();
+        const partyId = this.comp_id;
+        const fedId = FEDERATIONID();
+
+        // CollaborationRole is a strict "BUYER" | "SELLER" union — fire two parallel
+        // calls and merge. Page size 100 covers typical company in-flight footprints
+        // for the demo platform.
+        const buyerPromise = this.bpeService.getCollaborationGroups(
+            partyId, fedId, 'BUYER', 0, 100, false, [], [], [], ['STARTED', 'COMPLETED']);
+        const sellerPromise = this.bpeService.getCollaborationGroups(
+            partyId, fedId, 'SELLER', 0, 100, false, [], [], [], ['STARTED', 'COMPLETED']);
+
+        Promise.all([buyerPromise, sellerPromise])
+            .then(([buyerResp, sellerResp]) => {
+                const candidates: { pid: string; federationId: string; side: 'BUYER' | 'SELLER'; partyName: string }[] = [];
+                this.collectScheduleCandidates(buyerResp, 'BUYER', fedId, candidates);
+                this.collectScheduleCandidates(sellerResp, 'SELLER', fedId, candidates);
+
+                // Fetch summaries in parallel, tolerate per-row failures.
+                return Promise.all(
+                    candidates.map(c => this.monitorService.getProcessSummary(c.pid)
+                        .then(summary => ({ candidate: c, summary }))
+                        .catch(() => ({ candidate: c, summary: null as ProcessSummary | null })))
+                );
+            })
+            .then(results => {
+                const rows: DeliveryScheduleRow[] = [];
+                results.forEach(r => {
+                    const row = this.classifyDeliveryRow(r.candidate, r.summary);
+                    if (row) rows.push(row);
+                });
+                this.deliverySchedule = rows;
+                this.deliveryScheduleLoaded = true;
+                this.applyDeliveryFilters();
+                this.callStatusDeliverySchedule.callback('Loaded', true);
+            })
+            .catch(err => {
+                this.callStatusDeliverySchedule.error('Failed to load delivery schedule', err);
+            });
+    }
+
+    private collectScheduleCandidates(resp: any, side: 'BUYER' | 'SELLER', fedId: string,
+                                      out: { pid: string; federationId: string; side: 'BUYER' | 'SELLER'; partyName: string }[]): void {
+        const groups = (resp && (resp.collaborationGroups || resp)) || [];
+        for (const cg of groups) {
+            const pigs = (cg && cg.associatedProcessInstanceGroups) || [];
+            for (const pig of pigs) {
+                if (!pig.processInstanceIDs || pig.processInstanceIDs.length === 0) continue;
+                // Latest PID's type tells us the current stage; the deadline lookup
+                // (HCDP-05-03 F1) walks the whole PIG to find the upstream ORDER doc,
+                // so a single process-summary call returns both stage + deadline.
+                const pid = pig.processInstanceIDs[pig.processInstanceIDs.length - 1];
+                out.push({
+                    pid,
+                    federationId: pig.federationID || fedId,
+                    side,
+                    partyName: pig.name || cg.name || ''
+                });
+            }
+        }
+    }
+
+    /** Classify a process summary into one of 4 delivery statuses. Returns null when
+     *  the PIG hasn't progressed to an order yet (RFQ-only / Quotation-only). */
+    private classifyDeliveryRow(
+        candidate: { pid: string; federationId: string; side: 'BUYER' | 'SELLER'; partyName: string },
+        summary: ProcessSummary | null): DeliveryScheduleRow | null {
+
+        if (!summary || !summary.type) return null;
+        const type = summary.type.toUpperCase();
+        const productLabel = (summary.products && summary.products[0]) || candidate.partyName || candidate.pid;
+        const partner = summary.partner || '—';
+        const submissionDate = summary.submissionDate || null;
+        const deadline = summary.deadline || null;
+        const daysToDeadline = this.computeDaysToDeadline(deadline);
+        const daysSinceDispatch = this.computeDaysSince(submissionDate);
+
+        let status: 'PLANNED' | 'IN_TRANSIT' | 'OVERDUE' | 'DELIVERED' | null = null;
+        if (type === 'DESPATCHADVICE') {
+            if (summary.hasReceiptAdvice) {
+                status = 'DELIVERED';
+            } else {
+                // Prefer the explicit deadline when known: OVERDUE iff past deadline.
+                // Fall back to the days-since-dispatch threshold ONLY when no deadline
+                // is known — a dispatch shipped 6 days ago whose deadline is still
+                // 5 days in the future is NOT overdue.
+                const isOverdue = daysToDeadline !== null
+                    ? daysToDeadline < 0
+                    : (daysSinceDispatch !== null && daysSinceDispatch > OVERDUE_DAYS_THRESHOLD);
+                status = isOverdue ? 'OVERDUE' : 'IN_TRANSIT';
+            }
+        } else if (type === 'ORDER' || type === 'ORDERRESPONSESIMPLE') {
+            status = 'PLANNED';
+        } else if (type === 'RECEIPTADVICE') {
+            status = 'DELIVERED';
+        } else {
+            // RFQ / QUOTATION / TEP / ITEM_INFORMATION_REQUEST — pre-order, not a delivery.
+            return null;
+        }
+
+        return {
+            pid: candidate.pid,
+            federationId: candidate.federationId,
+            side: candidate.side,
+            status,
+            productLabel,
+            partner,
+            submissionDate,
+            deadline,
+            daysToDeadline
+        };
+    }
+
+    private computeDaysSince(iso: string | null): number | null {
+        if (!iso) return null;
+        const t = new Date(iso).getTime();
+        if (isNaN(t)) return null;
+        return Math.floor((Date.now() - t) / (24 * 3600 * 1000));
+    }
+
+    private computeDaysToDeadline(iso: string | null): number | null {
+        if (!iso) return null;
+        const t = new Date(iso).getTime();
+        if (isNaN(t)) return null;
+        // Compare at day granularity to avoid hour-of-day off-by-one.
+        const deadlineDay = new Date(t); deadlineDay.setHours(0, 0, 0, 0);
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        return Math.round((deadlineDay.getTime() - today.getTime()) / (24 * 3600 * 1000));
+    }
+
+    /**
+     * Re-derive `effectiveRows` and `deliveryCounts` from the cached
+     * `deliverySchedule` by applying the active filters. Called on every filter
+     * change and once after `loadDeliverySchedule` populates the raw list.
+     */
+    applyDeliveryFilters(): void {
+        const effective = this.deliverySchedule.filter(row =>
+            this.matchesTimeRange(row) && this.matchesStatus(row));
+        this.effectiveRows = effective;
+
+        // Counts always reflect the filtered set so the tiles stay consistent
+        // with what the table shows. Overdue rows are kept regardless of the
+        // time-range filter (see matchesTimeRange) so MD never loses sight of
+        // them when narrowing the window.
+        this.deliveryCounts = {
+            planned:   effective.filter(r => r.status === 'PLANNED').length,
+            inTransit: effective.filter(r => r.status === 'IN_TRANSIT').length,
+            overdue:   effective.filter(r => r.status === 'OVERDUE').length,
+            delivered: effective.filter(r => r.status === 'DELIVERED').length
+        };
+    }
+
+    private matchesStatus(row: DeliveryScheduleRow): boolean {
+        if (this.selectedStatus === 'ALL') return true;
+        return row.status === this.selectedStatus;
+    }
+
+    private matchesTimeRange(row: DeliveryScheduleRow): boolean {
+        if (this.selectedTimeRange === 'ALL') return true;
+        // Overdue rows always shown — MD must never lose sight of them when
+        // narrowing to a future window.
+        if (row.status === 'OVERDUE') return true;
+        // When user explicitly filters by a single status, time-range no longer
+        // gates that status — they want to see all rows of that status. Without
+        // this, e.g. selecting "DELIVERED" with "NEXT_30" filter would always
+        // return zero (delivered rows have past deadlines).
+        if (this.selectedStatus !== 'ALL' && this.selectedStatus === row.status) return true;
+        // PLANNED / IN_TRANSIT in default filter mode: gate by deadline window.
+        if (row.daysToDeadline === null) return false;
+        if (row.daysToDeadline < 0) return false;
+        const limit = this.selectedTimeRange === 'NEXT_7' ? 7
+            : this.selectedTimeRange === 'NEXT_30' ? 30
+            : 90;
+        return row.daysToDeadline <= limit;
+    }
+
+    onTimeRangeChange(r: DeliveryTimeRange): void {
+        this.selectedTimeRange = r;
+        this.applyDeliveryFilters();
+    }
+
+    onStatusChange(s: DeliveryStatusFilter): void {
+        this.selectedStatus = s;
+        this.applyDeliveryFilters();
+    }
+
+    /** Top 10 rows of `effectiveRows` sorted by deadline ASC (soonest first).
+     *  Rows without a deadline sink to the bottom but are still listed. */
+    topNRows(): DeliveryScheduleRow[] {
+        const sorted = this.effectiveRows.slice().sort((a, b) => {
+            if (a.deadline === null && b.deadline === null) return 0;
+            if (a.deadline === null) return 1;
+            if (b.deadline === null) return -1;
+            return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+        });
+        return sorted.slice(0, 10);
+    }
+
+    countdownBadgeClass(days: number | null): string {
+        if (days === null) return 'badge-light';
+        if (days < 0) return 'badge-danger';
+        if (days <= 3) return 'badge-warning';
+        return 'badge-light';
+    }
+
+    countdownLabel(days: number | null): string {
+        if (days === null) return '';
+        if (days < 0) return Math.abs(days) + ' days overdue';
+        if (days === 0) return 'Today';
+        if (days === 1) return 'Tomorrow';
+        return 'in ' + days + ' days';
+    }
+
+    statusBadgeClass(status: string): string {
+        if (status === 'PLANNED') return 'badge-info';
+        if (status === 'IN_TRANSIT') return 'badge-warning';
+        if (status === 'OVERDUE') return 'badge-danger';
+        if (status === 'DELIVERED') return 'badge-success';
+        return 'badge-secondary';
+    }
+
+    timeRangeLabel(r: DeliveryTimeRange): string {
+        if (r === 'NEXT_7') return 'Next 7 days';
+        if (r === 'NEXT_30') return 'Next 30 days';
+        if (r === 'NEXT_90') return 'Next 90 days';
+        return 'All';
+    }
+
+    statusLabel(s: DeliveryStatusFilter): string {
+        if (s === 'ALL') return 'All';
+        if (s === 'PLANNED') return 'Planned';
+        if (s === 'IN_TRANSIT') return 'In Transit';
+        if (s === 'OVERDUE') return 'Overdue';
+        return 'Delivered';
+    }
+
+    /**
+     * HCDP-05-03 F5 — KPI tile click. Routes to the existing operational surface
+     * that's most relevant to the tile's status. UX hint per the UC business rule
+     * "only aggregated views unless further authorisation is granted" — clicking
+     * counts as the "further authorisation" gesture.
+     */
+    drillDown(status: 'PLANNED' | 'IN_TRANSIT' | 'OVERDUE' | 'DELIVERED'): void {
+        const tabMap: { [k: string]: string } = {
+            PLANNED: 'UNSHIPPED_ORDERS',
+            IN_TRANSIT: 'PENDING_RECEIPTS',
+            OVERDUE: 'MONITOR',
+            DELIVERED: 'PURCHASES'
+        };
+        this.router.navigate(['/dashboard'], { queryParams: { tab: tabMap[status] } });
+    }
+
+    /** Mini-table row click — drill into the per-order Fulfilment view via the
+     *  same code path that powers Pending Receipts' "Confirm Reception" button. */
+    viewDeliveryDetails(row: DeliveryScheduleRow): void {
+        this.bpDataService.viewProcessDetails(row.pid, row.federationId);
     }
 }

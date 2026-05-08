@@ -451,6 +451,174 @@
         </div>
         <hr />
 
+        <!-- Section 2.5: HCDP-05-03 Delivery Schedule -->
+        <h6>
+            <i class="fa fa-calendar-alt mr-2"></i>
+            <span [innerHTML]="'Delivery Schedule' | translate"></span>
+            <small class="text-muted ml-2" style="font-weight: normal;">
+                <span [innerHTML]="'Aggregated overview — click a tile or row to drill down' | translate"></span>
+            </small>
+        </h6>
+
+        <call-status [callStatus]="callStatusDeliverySchedule" [large]="false"></call-status>
+
+        <div [hidden]="isDeliveryScheduleLoading()">
+            <!-- F3 filter chips: time range -->
+            <div class="space-before">
+                <span class="text-muted small mr-2"><span [innerHTML]="'Time range:' | translate"></span></span>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedTimeRange === 'NEXT_7' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onTimeRangeChange('NEXT_7')">
+                    <span [innerHTML]="timeRangeLabel('NEXT_7') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedTimeRange === 'NEXT_30' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onTimeRangeChange('NEXT_30')">
+                    <span [innerHTML]="timeRangeLabel('NEXT_30') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedTimeRange === 'NEXT_90' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onTimeRangeChange('NEXT_90')">
+                    <span [innerHTML]="timeRangeLabel('NEXT_90') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedTimeRange === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onTimeRangeChange('ALL')">
+                    <span [innerHTML]="timeRangeLabel('ALL') | translate"></span>
+                </button>
+            </div>
+            <!-- F3 filter chips: status -->
+            <div class="space-before">
+                <span class="text-muted small mr-2"><span [innerHTML]="'Status:' | translate"></span></span>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedStatus === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onStatusChange('ALL')">
+                    <span [innerHTML]="statusLabel('ALL') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedStatus === 'PLANNED' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onStatusChange('PLANNED')">
+                    <span [innerHTML]="statusLabel('PLANNED') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedStatus === 'IN_TRANSIT' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onStatusChange('IN_TRANSIT')">
+                    <span [innerHTML]="statusLabel('IN_TRANSIT') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedStatus === 'OVERDUE' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onStatusChange('OVERDUE')">
+                    <span [innerHTML]="statusLabel('OVERDUE') | translate"></span>
+                </button>
+                <button type="button" class="btn btn-sm mr-1"
+                        [ngClass]="selectedStatus === 'DELIVERED' ? 'btn-primary' : 'btn-outline-secondary'"
+                        (click)="onStatusChange('DELIVERED')">
+                    <span [innerHTML]="statusLabel('DELIVERED') | translate"></span>
+                </button>
+            </div>
+
+            <!-- F2 KPI tiles row -->
+            <div class="row justify-content-center space-before">
+                <div class="col-3">
+                    <div class="card text-center" style="cursor: pointer;" role="button" tabindex="0"
+                         (click)="drillDown('PLANNED')" (keyup.enter)="drillDown('PLANNED')">
+                        <div class="card-body">
+                            <h4 class="card-title text-info"><b>{{deliveryCounts.planned}}</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Planned' | translate"></span></h6>
+                            <p class="card-text" style="font-size:24px"><i class="fa fa-clipboard-list text-info"></i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card text-center" style="cursor: pointer;" role="button" tabindex="0"
+                         (click)="drillDown('IN_TRANSIT')" (keyup.enter)="drillDown('IN_TRANSIT')">
+                        <div class="card-body">
+                            <h4 class="card-title text-warning"><b>{{deliveryCounts.inTransit}}</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'In Transit' | translate"></span></h6>
+                            <p class="card-text" style="font-size:24px"><i class="fa fa-truck text-warning"></i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card text-center" style="cursor: pointer;" role="button" tabindex="0"
+                         (click)="drillDown('OVERDUE')" (keyup.enter)="drillDown('OVERDUE')">
+                        <div class="card-body">
+                            <h4 class="card-title text-danger"><b>{{deliveryCounts.overdue}}</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Overdue' | translate"></span></h6>
+                            <p class="card-text" style="font-size:24px"><i class="fa fa-exclamation-triangle text-danger"></i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="card text-center" style="cursor: pointer;" role="button" tabindex="0"
+                         (click)="drillDown('DELIVERED')" (keyup.enter)="drillDown('DELIVERED')">
+                        <div class="card-body">
+                            <h4 class="card-title text-success"><b>{{deliveryCounts.delivered}}</b></h4>
+                            <h6 class="card-subtitle mb-2 text-muted"><span [innerHTML]="'Delivered' | translate"></span></h6>
+                            <p class="card-text" style="font-size:24px"><i class="fa fa-check-circle text-success"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F4 Upcoming Deadlines mini-table -->
+            <h6 class="space-before">
+                <i class="fa fa-calendar-check mr-2"></i>
+                <span [innerHTML]="'Upcoming Deadlines' | translate"></span>
+                <small class="text-muted ml-2" style="font-weight: normal;">
+                    ({{effectiveRows.length}} <span [innerHTML]="'deliveries' | translate"></span>)
+                </small>
+            </h6>
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <table class="table table-sm table-hover" *ngIf="effectiveRows.length > 0">
+                        <thead>
+                            <tr>
+                                <th><span [innerHTML]="'Product' | translate"></span></th>
+                                <th><span [innerHTML]="'Partner' | translate"></span></th>
+                                <th><span [innerHTML]="'Side' | translate"></span></th>
+                                <th><span [innerHTML]="'Deadline' | translate"></span></th>
+                                <th><span [innerHTML]="'Status' | translate"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of topNRows()"
+                                [ngClass]="{'table-danger': row.status === 'OVERDUE'}"
+                                style="cursor: pointer;"
+                                (click)="viewDeliveryDetails(row)">
+                                <td>{{row.productLabel}}</td>
+                                <td>{{row.partner}}</td>
+                                <td>
+                                    <span class="badge"
+                                          [ngClass]="row.side === 'BUYER' ? 'badge-info' : 'badge-secondary'">
+                                        {{row.side}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="row.deadline">{{row.deadline | date:'mediumDate'}}</span>
+                                    <span *ngIf="!row.deadline" class="text-muted">&mdash;</span>
+                                    <span *ngIf="row.daysToDeadline !== null" class="badge ml-1"
+                                          [ngClass]="countdownBadgeClass(row.daysToDeadline)">
+                                        {{countdownLabel(row.daysToDeadline) | translate}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="statusBadgeClass(row.status)">
+                                        {{statusLabel(row.status) | translate}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div *ngIf="effectiveRows.length === 0" class="text-muted text-center space-before">
+                        <i class="fa fa-inbox fa-2x mb-2" style="color:#d0d0d0"></i>
+                        <p><span [innerHTML]="'No deliveries match the current filters' | translate"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+
         <!-- Section 3: Non-Ordered Products -->
         <h6><i class="fa fa-box-open mr-2"></i><span [innerHTML]="'Non-Ordered Products' | translate"></span></h6>
         <div class="row justify-content-center space-before">

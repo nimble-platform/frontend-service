@@ -30,6 +30,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PlatformMembersComponent } from './platform-members.component';
 import {BusinessProcessCountModalComponent} from './modal/business-process-count-modal.component';
+import { MonitorService } from '../dashboard/monitor/monitor.service';
 
 @NgModule({
     imports: [
@@ -65,7 +66,13 @@ import {BusinessProcessCountModalComponent} from './modal/business-process-count
         ChatComponent,
         PerformanceAnalyticsComponent
     ],
-    providers: []
+    providers: [
+        // HCDP-05-03 — PerformanceAnalyticsComponent's Delivery Schedule subsection calls
+        // MonitorService.getProcessSummary; DashboardModule already provides its own
+        // instance for the dashboard-side tabs. Stateless HTTP service, parallel
+        // singletons are safe.
+        MonitorService
+    ]
 })
 
 export class AnalyticsModule {
