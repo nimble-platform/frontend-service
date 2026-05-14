@@ -99,6 +99,22 @@
     </div>
 </div>
 
+<!-- HCDP-05-04 F5 — Carrier Replacement banner (full-width, below timeline) -->
+<div *ngIf="!isLoading() && latestCarrierChange && (hasDespatch || hasReceipt)"
+     class="alert alert-warning d-flex align-items-center py-2 px-3 mb-3"
+     [title]="latestCarrierChange.reason || ''">
+    <i class="fa fa-exchange-alt fa-lg mr-3 text-warning"></i>
+    <div class="flex-grow-1">
+        <strong>{{'Carrier replaced' | translate}}:</strong>
+        <span class="mx-1">{{latestCarrierChange.oldProvider}}</span>
+        <i class="fa fa-arrow-right mx-1 small text-muted"></i>
+        <b class="text-dark">{{latestCarrierChange.newProvider}}</b>
+    </div>
+    <small class="text-muted text-nowrap">
+        <i class="fa fa-clock-o mr-1"></i>{{latestCarrierChange.timestamp | date:'dd MMM yyyy HH:mm'}}
+    </small>
+</div>
+
 <!--Show fulfilment statistics-->
 <div *ngIf="!isLoading()" class="row justify-content-center">
     <div class="card col-3 borderless">

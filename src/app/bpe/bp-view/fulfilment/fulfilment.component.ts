@@ -20,6 +20,7 @@ import { CatalogueLine } from "../../../catalogue/model/publish/catalogue-line";
 import { CallStatus } from '../../../common/call-status';
 import { BPEService } from '../../bpe.service';
 import { DespatchLine } from '../../../catalogue/model/publish/despatch-line';
+import { CARRIER_CHANGE_DOC_TYPE, CarrierChangeRecord } from './logistics-providers';
 
 @Component({
     selector: "fulfilment",
@@ -115,14 +116,64 @@ export class FulfilmentComponent implements OnInit {
         return null;
     }
 
-    /** Reads handlingInstructions free-text carrier name seeded by TEP → initDispatchAdvice. */
+    /**
+     * Authoritative carrier name. Prefers the shipmentStage carrierParty (which
+     * HCDP-05-04 F4 mutates on replacement) over handlingInstructions (HCDP-05-01
+     * legacy TEP-seeded label which we don't sync on replacement). Falls back to
+     * handlingInstructions for pre-05-04 dispatches that never had the carrierParty
+     * field populated.
+     */
     get carrierLabel(): string | null {
         const da = this.bpDataService.despatchAdvice;
         const shipment = da && da.despatchLine && da.despatchLine[0] && da.despatchLine[0].shipment && da.despatchLine[0].shipment[0];
         if (!shipment) return null;
-        // TEP-seeded carrier is stored in handlingInstructions or shipmentStage metadata; degrade gracefully.
+        // Authoritative source: shipmentStage carrierParty (post-05-04 truth).
+        const stage = shipment.shipmentStage && shipment.shipmentStage[0];
+        const cp = stage && stage.carrierParty;
+        const cpName = cp && cp.partyName && cp.partyName[0] && cp.partyName[0].name && cp.partyName[0].name.value;
+        if (cpName) return cpName;
+        // Legacy fallback for dispatches without carrierParty.
         const hi = shipment.handlingInstructions && shipment.handlingInstructions[0];
         if (hi && hi.value) return hi.value;
+        return null;
+    }
+
+    /**
+     * HCDP-05-04 F5 — Returns the latest carrier replacement event from the
+     * fileName of the most-recent CARRIER_CHANGE documentReference. We parse
+     * fileName instead of BinaryObject.value because BPE moves binary content
+     * to external storage on PATCH (value becomes null after round-trip),
+     * but fileName is preserved verbatim. Format produced by executeReplacement:
+     * `carrier-change-{millis}-FROM-{encOld}-TO-{encNew}.json`.
+     * Reason is intentionally not surfaced on the timeline (full JSON is in
+     * the downloadable history bucket); pass null and let the template hide
+     * the reason line.
+     */
+    get latestCarrierChange(): CarrierChangeRecord | null {
+        const da = this.bpDataService.despatchAdvice;
+        const refs = da && da.additionalDocumentReference;
+        if (!refs || !refs.length) return null;
+        const carrierRefs = refs.filter(r => r && r.documentType === CARRIER_CHANGE_DOC_TYPE);
+        if (!carrierRefs.length) return null;
+        // Latest = last appended (insertion order).
+        for (let i = carrierRefs.length - 1; i >= 0; i--) {
+            const r = carrierRefs[i];
+            const fn = r.attachment && r.attachment.embeddedDocumentBinaryObject && r.attachment.embeddedDocumentBinaryObject.fileName;
+            if (!fn) continue;
+            const m = fn.match(/^carrier-change-(\d+)-FROM-(.+?)-TO-(.+?)\.json$/);
+            if (!m) continue;
+            try {
+                return {
+                    timestamp: new Date(parseInt(m[1], 10)).toISOString(),
+                    oldProvider: decodeURIComponent(m[2]),
+                    newProvider: decodeURIComponent(m[3]),
+                    reason: null,
+                    actor: '',
+                } as CarrierChangeRecord;
+            } catch {
+                // skip malformed entry
+            }
+        }
         return null;
     }
 

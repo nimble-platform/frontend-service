@@ -1,0 +1,18 @@
+/* HCDP-05-04 F2 — Replace Provider modal
+ * Reuses the .modal-backdrop-inline pattern from HCDP-04-02 monitor; styling
+ * here is intentionally minimal — defer to Bootstrap utilities for layout. */
+
+.modal-backdrop-inline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+}
+
+.modal-backdrop-inline .modal {
+    display: block;
+    overflow-y: auto;
+}

@@ -31,7 +31,7 @@ export interface MonitorNotification {
     hjid?: number;
     userId: string;
     watchlistEntryHjid?: number;
-    notificationType: 'STATUS_CHANGE' | 'NEW_PROCESS' | 'ANOMALY_DELAY' | 'DELIVERY_DELAY';
+    notificationType: 'STATUS_CHANGE' | 'NEW_PROCESS' | 'ANOMALY_DELAY' | 'DELIVERY_DELAY' | 'CARRIER_CHANGED';
     severity: 'INFO' | 'WARNING' | 'CRITICAL';
     title: string;
     message?: string;

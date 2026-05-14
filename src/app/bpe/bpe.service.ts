@@ -188,6 +188,29 @@ export class BPEService {
             .catch(this.handleError);
     }
 
+    /**
+     * HCDP-05-04 F4 — PATCH a previously-submitted UBL document by id, swapping
+     * its content in place. Calls BPE `DocumentController.updateDocument` (PATCH
+     * /document/{documentID}?documentType=...). Used for buyer-initiated carrier
+     * replacement on a sealed DespatchAdvice.
+     *
+     * Note (Approach A, see HCDP-05-04 spec §2.3): the BPE endpoint enforces
+     * role-based access only — no party-ownership check. Caller is responsible
+     * for gating the action in the UI (collaborationRole + cancellation window).
+     * Platform-wide hardening filed as Open Item BPE-SEC-01.
+     */
+    updateDocument(documentId: string, document: any, documentType: string): Promise<any> {
+        const url = `${this.url}/document/${documentId}?documentType=${documentType}`;
+        // Explicit Content-Type — getAuthorizedHeaders() doesn't propagate this.headers
+        // (HttpHeaders is immutable, the existing forEach/append result is discarded).
+        // Backend's DocumentController.updateDocument consumes APPLICATION_JSON_VALUE → 415 without it.
+        const headers = this.getAuthorizedHeaders().set('Content-Type', 'application/json');
+        return this.http
+            .patch(url, JSON.stringify(document), { headers })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
     getProcessInstanceGroup(groupId: string) {
         let url: string = `${this.url}/process-instance-groups/${groupId}`;
         return this.http

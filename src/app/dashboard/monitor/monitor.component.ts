@@ -113,6 +113,7 @@ export class MonitorComponent implements OnInit, OnDestroy {
         if (n.notificationType === 'DELIVERY_DELAY') return 'fa-truck text-danger';
         if (n.notificationType === 'ANOMALY_DELAY') return 'fa-exclamation-triangle text-danger';
         if (n.notificationType === 'STATUS_CHANGE') return 'fa-exchange-alt text-primary';
+        if (n.notificationType === 'CARRIER_CHANGED') return 'fa-exchange-alt text-warning';
         return 'fa-plus-circle text-success';
     }
 

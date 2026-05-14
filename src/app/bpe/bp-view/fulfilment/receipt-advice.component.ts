@@ -27,6 +27,19 @@ import { CookieService } from 'ng2-cookies';
 import { ThreadEventMetadata } from '../../../catalogue/model/publish/thread-event-metadata';
 import { quantityToString } from '../../../common/utils';
 import { Quantity } from '../../../catalogue/model/publish/quantity';
+// HCDP-05-04 — Replace Logistics Provider feature
+import {
+    LogisticsProvider,
+    CANCELLATION_WINDOW_DAYS,
+    CARRIER_CHANGE_DOC_TYPE,
+    CarrierChangeRecord,
+} from './logistics-providers';
+import { DocumentReference } from '../../../catalogue/model/publish/document-reference';
+import { Attachment } from '../../../catalogue/model/publish/attachment';
+import { BinaryObject } from '../../../catalogue/model/publish/binary-object';
+import { UBLModelUtils } from '../../../catalogue/model/ubl-model-utils';
+import { MonitorService } from '../../../dashboard/monitor/monitor.service';
+import { ReplaceProviderResult } from './replace-provider-modal.component';
 
 @Component({
     selector: "receipt-advice",
@@ -57,11 +70,17 @@ export class ReceiptAdviceComponent implements OnInit {
     //          = dispatchAdvice.despatchLine[i].deliveredQuantity.value
     acceptedQuantities: Quantity[] = [];
 
+    // HCDP-05-04 F1 / F2 — Replace Provider modal state
+    showReplaceProviderModal = false;
+    replacementSubmitting = false;
+    readonly cancellationWindowDays = CANCELLATION_WINDOW_DAYS;
+
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
         private location: Location,
         private cookieService: CookieService,
-        private router: Router) {
+        private router: Router,
+        private monitorService: MonitorService) {
     }
 
     ngOnInit() {
@@ -165,6 +184,153 @@ export class ReceiptAdviceComponent implements OnInit {
         if (value < min) return min;
         if (value > max) return max;
         return value;
+    }
+
+    // ---- HCDP-05-04 — Replace Logistics Provider helpers ------------------
+
+    /** Reads the currently-set carrier name from the dispatch advice. Defensive
+     *  null-guards mirror hasShipmentToShow() so this never crashes. */
+    currentCarrierName(): string | null {
+        const da = this.dispatchAdvice;
+        if (!da || !da.despatchLine || !da.despatchLine[0]) return null;
+        const ship = da.despatchLine[0].shipment;
+        if (!ship || !ship[0]) return null;
+        const stage = ship[0].shipmentStage;
+        if (!stage || !stage[0]) return null;
+        const cp = stage[0].carrierParty;
+        if (!cp || !cp.partyName || !cp.partyName[0]) return null;
+        const n = cp.partyName[0].name;
+        return (n && n.value) || null;
+    }
+
+    /** F1 visibility — buyer side, fulfilment in flight, dispatchAdvice exists. */
+    canReplaceProvider(): boolean {
+        if (this.userRole !== 'buyer') return false;
+        if (!this.hasShipmentToShow()) return false;
+        if (!this.processMetadata) return false;
+        if (this.processMetadata.processStatus === 'Completed') return false;
+        if (this.processMetadata.collaborationStatus === 'CANCELLED') return false;
+        if (!this.dispatchAdvice || !this.dispatchAdvice.id) return false;
+        return true;
+    }
+
+    /** F1 enable rule — within CANCELLATION_WINDOW_DAYS of dispatch. */
+    isWithinCancellationWindow(): boolean {
+        const dispatchedAtIso = this.processMetadata && (this.processMetadata as any).startTime;
+        if (!dispatchedAtIso) return false;
+        const t = new Date(dispatchedAtIso).getTime();
+        if (isNaN(t)) return false;
+        const days = (Date.now() - t) / (24 * 3600 * 1000);
+        return days <= CANCELLATION_WINDOW_DAYS;
+    }
+
+    openReplaceProviderModal(): void {
+        if (!this.canReplaceProvider() || !this.isWithinCancellationWindow()) return;
+        this.showReplaceProviderModal = true;
+    }
+
+    onReplaceProviderCancel(): void {
+        if (this.replacementSubmitting) return;
+        this.showReplaceProviderModal = false;
+    }
+
+    onReplaceProviderConfirm(result: ReplaceProviderResult): void {
+        if (!result || !result.newProvider) return;
+        this.replacementSubmitting = true;
+        this.callStatus.submit();
+        this.executeReplacement(result.newProvider, result.reason)
+            .then(() => {
+                this.replacementSubmitting = false;
+                this.showReplaceProviderModal = false;
+                this.callStatus.callback("Carrier replaced", true);
+            })
+            .catch(err => {
+                this.replacementSubmitting = false;
+                this.callStatus.error("Failed to replace carrier", err);
+            });
+    }
+
+    /** F4 — atomic carrier replacement: mutate UBL carrier fields, append a
+     *  CARRIER_CHANGE audit reference, PATCH the DespatchAdvice via BPE, then
+     *  fire F6 audit-log notification (best-effort). */
+    private async executeReplacement(newProvider: LogisticsProvider, reason: string | null): Promise<void> {
+        const oldName = this.currentCarrierName() || '—';
+        const newName = newProvider.name;
+
+        // 1. Mutate shipmentStage carrierParty across ALL despatch lines
+        if (this.dispatchAdvice.despatchLine) {
+            for (const line of this.dispatchAdvice.despatchLine) {
+                if (!line.shipment) continue;
+                for (const ship of line.shipment) {
+                    if (!ship.shipmentStage) continue;
+                    for (const stage of ship.shipmentStage) {
+                        if (stage.carrierParty
+                            && stage.carrierParty.partyName
+                            && stage.carrierParty.partyName[0]
+                            && stage.carrierParty.partyName[0].name) {
+                            stage.carrierParty.partyName[0].name.value = newName;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Sync transportServiceProviderParty (top-level) when present
+        const tsp = (this.dispatchAdvice as any).transportServiceProviderParty;
+        if (tsp && tsp.partyName && tsp.partyName[0] && tsp.partyName[0].name) {
+            tsp.partyName[0].name.value = newName;
+        }
+
+        // 3. Append CARRIER_CHANGE audit reference (JSON blob in a BinaryObject)
+        const record: CarrierChangeRecord = {
+            oldProvider: oldName,
+            newProvider: newName,
+            timestamp: new Date().toISOString(),
+            reason: reason,
+            actor: this.cookieService.get('user_email') || 'unknown',
+        };
+        const json = JSON.stringify(record, null, 2);
+        // utf-8 safe base64 (handles non-ASCII reason text)
+        const base64 = btoa(unescape(encodeURIComponent(json)));
+        // fileName encodes old/new/timestamp so the timeline annotation can
+        // reconstruct after a backend round-trip — BPE moves BinaryObject.value
+        // to external content storage on PATCH (uri = "BusinessProcessBinaryContentUri:...")
+        // and returns value=null, but fileName is preserved verbatim.
+        const millis = new Date(record.timestamp).getTime();
+        const fileName = `carrier-change-${millis}-FROM-${encodeURIComponent(oldName)}-TO-${encodeURIComponent(newName)}.json`;
+        const binary = new BinaryObject(base64, 'application/json', fileName, null, null);
+        const attachment = new Attachment(binary);
+        const ref = new DocumentReference(UBLModelUtils.generateUUID(), CARRIER_CHANGE_DOC_TYPE, attachment);
+        if (!this.dispatchAdvice.additionalDocumentReference) {
+            this.dispatchAdvice.additionalDocumentReference = [];
+        }
+        this.dispatchAdvice.additionalDocumentReference.push(ref);
+
+        // 4. PATCH the updated DespatchAdvice (Approach A — see spec §2.3)
+        await this.bpeService.updateDocument(
+            this.dispatchAdvice.id,
+            this.dispatchAdvice,
+            'DESPATCHADVICE',
+        );
+
+        // 5. F6 — buyer-side audit-log entry (best-effort; never blocks)
+        this.fireCarrierChangedAuditLog(oldName, newName, reason).catch(err =>
+            console.warn('CARRIER_CHANGED audit-log notification failed:', err)
+        );
+    }
+
+    /** F6 — Records the replacement as an audit-log entry in the buyer's own
+     *  Activity Monitor inbox. Cross-party seller notification is deferred
+     *  (MonitorService is user-scoped — see spec §3.6). */
+    private fireCarrierChangedAuditLog(oldName: string, newName: string, reason: string | null): Promise<any> {
+        const pid = this.processMetadata && (this.processMetadata as any).processInstanceId;
+        return this.monitorService.createNotification({
+            notificationType: 'CARRIER_CHANGED' as any,
+            severity: 'INFO',
+            title: `Carrier replaced: ${oldName} → ${newName}`,
+            message: reason ? `Reason: ${reason}` : null,
+            relatedProcessId: pid || null,
+        });
     }
 
     /*

@@ -76,6 +76,10 @@ import {StripeComponent} from './payment/stripe.component';
 import {NgxStripeModule} from 'ngx-stripe';
 import {UserMgmtModule} from '../user-mgmt/user-mgmt.module';
 import {stripe_publishable_key} from '../globals';
+// HCDP-05-04 — Replace Logistics Provider feature
+import {ReplaceProviderModalComponent} from './bp-view/fulfilment/replace-provider-modal.component';
+import {LogisticsProvidersService} from './bp-view/fulfilment/logistics-providers.service';
+import {MonitorService} from '../dashboard/monitor/monitor.service';
 
 @NgModule({
     imports: [
@@ -135,7 +139,8 @@ import {stripe_publishable_key} from '../globals';
         ShoppingCartComponent,
         CommonCartTermsComponent,
         ShoppingCartSummaryModalComponent,
-        QuotationComparisonComponent
+        QuotationComparisonComponent,
+        ReplaceProviderModalComponent
     ],
     exports: [
         BPConfigureComponent,
@@ -154,7 +159,11 @@ import {stripe_publishable_key} from '../globals';
         QuotationComparisonComponent
     ],
     providers: [
-        NegotiationClauseService
+        NegotiationClauseService,
+        // HCDP-05-04 F6 — separate singleton from DashboardModule's; both stateless HTTP services
+        MonitorService,
+        // HCDP-05-04 F3 — catalog-service backed carrier directory (fetched in Replace Provider modal)
+        LogisticsProvidersService
     ]
 })
 export class BPEModule { }

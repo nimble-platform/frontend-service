@@ -95,6 +95,12 @@
         <div class="col-6">
             <note-file-view [notes]="dispatchAdvice.note" [documents]="dispatchAdvice.additionalDocumentReference"
                 [firstCol]="'col-4'" [lastCol]="'col-8'" [label]="'Supplier Note'|translate"></note-file-view>
+            <hr class="my-2">
+            <!-- HCDP-05-04 F5 — Carrier Replacement History (read-only; populated by Replace Provider) -->
+            <note-file-view [notes]="[]" [documents]="dispatchAdvice.additionalDocumentReference"
+                [documentType]="'CARRIER_CHANGE'"
+                [firstCol]="'col-4'" [lastCol]="'col-8'" [readonly]="true"
+                [label]="'Carrier Replacement History'|translate"></note-file-view>
         </div>
         <div class="col-6">
             <note-file-view [notes]="receiptAdvice.note" [documents]="receiptAdvice.additionalDocumentReference"
@@ -121,8 +127,18 @@
 
     <!-- Actions -->
     <div class="d-flex justify-content-end actions-row" *ngIf="userRole === 'buyer'">
-        <div class="col-8 call-status-col">
+        <div [ngClass]="canReplaceProvider() ? 'col-6 call-status-col' : 'col-8 call-status-col'">
             <call-status [callStatus]="callStatus"></call-status>
+        </div>
+        <!-- HCDP-05-04 F1 — Replace Provider button (buyer-side, fulfilment in flight) -->
+        <div class="col-2" *ngIf="canReplaceProvider()">
+            <button class="btn btn-warning action"
+                    [disabled]="!isWithinCancellationWindow() || isLoading() || replacementSubmitting"
+                    [title]="isWithinCancellationWindow() ? '' : ('Cancellation window expired' | translate)"
+                    (click)="openReplaceProviderModal()">
+                <i class="fa fa-exchange-alt mr-1"></i>
+                <span [innerHTML]="'Replace Provider' | translate"></span>
+            </button>
         </div>
         <div class="col-2">
             <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
@@ -147,4 +163,13 @@
             </button>
         </div>
     </div>
+
+    <!-- HCDP-05-04 F2 — Replace Provider modal mount -->
+    <replace-provider-modal
+        [open]="showReplaceProviderModal"
+        [currentProviderName]="currentCarrierName()"
+        [submitting]="replacementSubmitting"
+        (replaced)="onReplaceProviderConfirm($event)"
+        (cancelled)="onReplaceProviderCancel()">
+    </replace-provider-modal>
 </ng-container>
