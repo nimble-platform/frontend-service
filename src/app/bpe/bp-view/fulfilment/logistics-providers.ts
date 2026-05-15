@@ -1,10 +1,20 @@
 /*
- * HCDP-05-04 — Replace Logistics Providers
+ * HCDP-05-05 — Logistics Provider directory (catalogue-consolidated).
  *
- * Carrier directory configuration. The authoritative list is served by
- * catalog-service at GET /logistics-providers (see LogisticsProvidersController);
- * the array below is a hardcoded **fallback** used only when the backend is
- * unreachable. See specs/HCDP-05-04-replace-logistics-provider-spec.md §3.3.
+ * The list is served by catalog-service `GET /logistics-providers`, which
+ * proxies indexing-service party search filtered to
+ * `businessType="Logistics Provider"`. Each entry corresponds to a real
+ * Nimble Party seeded by STEP 7c — discoverable via Find Logistics search
+ * AND selectable in the Replace Provider modal, sharing one source of truth.
+ *
+ * Before HCDP-05-05 a parallel `logistics_provider_type` table backed this
+ * endpoint and the modal stored only a string name in UBL on replacement.
+ * Now every replacement also writes the real `partyId` (and
+ * `federationInstanceID` when populated) into UBL carrierParty.
+ *
+ * No frontend fallback array — when indexing-service is unreachable the
+ * modal surfaces an unavailable state and Replace is disabled. This keeps
+ * "single source of truth" honest.
  *
  * Cross-references:
  *  - HCDP-05-01 OVERDUE_DAYS_THRESHOLD = 5  (delivery-late SIGNAL)
@@ -14,25 +24,19 @@
  */
 
 export interface LogisticsProvider {
-    id: string;            // stable slug
-    name: string;          // display name (also written into UBL carrierParty.partyName)
-    country: string;       // ISO-2 country code
-    transitTimeHint: string; // human-readable estimate
+    /** Stable slug — vatNumber.toLowerCase(), e.g. "de-dhl-logi-001". */
+    slug: string;
+    /** Display name (legalName from indexing-service). */
+    name: string;
+    /** ISO-3166-1 alpha-2 country code derived from vatNumber prefix. */
+    country: string;
+    /** Real Nimble Party ID — written into UBL carrierParty.partyIdentification[0].id on replacement. */
+    partyId: string;
+    /** Federation instance identifier — null in federation-OFF deployments. */
+    federationInstanceID?: string | null;
 }
 
-/**
- * Fallback list — used only when the catalog-service /logistics-providers
- * endpoint is unreachable. The same EU-leaning carrier set the seed inserts.
- */
-export const LOGISTICS_PROVIDERS_FALLBACK: LogisticsProvider[] = [
-    { id: 'dhl-freight', name: 'DHL Freight', country: 'DE', transitTimeHint: '2-4 days' },
-    { id: 'dpd',         name: 'DPD',         country: 'DE', transitTimeHint: '1-3 days' },
-    { id: 'gls',         name: 'GLS',         country: 'NL', transitTimeHint: '2-4 days' },
-    { id: 'hermes',      name: 'Hermes',      country: 'DE', transitTimeHint: '3-5 days' },
-    { id: 'geodis',      name: 'Geodis',      country: 'FR', transitTimeHint: '3-5 days' },
-];
-
-/** Days a buyer can replace the carrier after dispatch. See spec §2.4. */
+/** Days a buyer can replace the carrier after dispatch. See HCDP-05-04 spec §2.4. */
 export const CANCELLATION_WINDOW_DAYS = 10;
 
 /** Document type tag stored in additionalDocumentReference[i].documentType

@@ -252,24 +252,30 @@ export class ReceiptAdviceComponent implements OnInit {
 
     /** F4 — atomic carrier replacement: mutate UBL carrier fields, append a
      *  CARRIER_CHANGE audit reference, PATCH the DespatchAdvice via BPE, then
-     *  fire F6 audit-log notification (best-effort). */
+     *  fire F6 audit-log notification (best-effort).
+     *
+     *  HCDP-05-05: also writes the real Nimble Party reference
+     *  (partyIdentification[0].id + federationInstanceID) into UBL carrierParty
+     *  so the dispatch now carries a verifiable party pointer, not just a
+     *  display string. The directory and Find Logistics search share the
+     *  same partyId, so the references stay consistent across surfaces. */
     private async executeReplacement(newProvider: LogisticsProvider, reason: string | null): Promise<void> {
         const oldName = this.currentCarrierName() || '—';
         const newName = newProvider.name;
+        const newPartyId = newProvider.partyId;
+        const newFedId = newProvider.federationInstanceID || null;
 
-        // 1. Mutate shipmentStage carrierParty across ALL despatch lines
+        // 1. Mutate shipmentStage carrierParty across ALL despatch lines —
+        //    both display name AND party reference, so the UBL is internally
+        //    consistent post-replacement (no orphan "string only" carriers).
         if (this.dispatchAdvice.despatchLine) {
             for (const line of this.dispatchAdvice.despatchLine) {
                 if (!line.shipment) continue;
                 for (const ship of line.shipment) {
                     if (!ship.shipmentStage) continue;
                     for (const stage of ship.shipmentStage) {
-                        if (stage.carrierParty
-                            && stage.carrierParty.partyName
-                            && stage.carrierParty.partyName[0]
-                            && stage.carrierParty.partyName[0].name) {
-                            stage.carrierParty.partyName[0].name.value = newName;
-                        }
+                        if (!stage.carrierParty) continue;
+                        this.applyCarrierMutation(stage.carrierParty, newName, newPartyId, newFedId);
                     }
                 }
             }
@@ -277,8 +283,8 @@ export class ReceiptAdviceComponent implements OnInit {
 
         // 2. Sync transportServiceProviderParty (top-level) when present
         const tsp = (this.dispatchAdvice as any).transportServiceProviderParty;
-        if (tsp && tsp.partyName && tsp.partyName[0] && tsp.partyName[0].name) {
-            tsp.partyName[0].name.value = newName;
+        if (tsp) {
+            this.applyCarrierMutation(tsp, newName, newPartyId, newFedId);
         }
 
         // 3. Append CARRIER_CHANGE audit reference (JSON blob in a BinaryObject)
@@ -317,6 +323,36 @@ export class ReceiptAdviceComponent implements OnInit {
         this.fireCarrierChangedAuditLog(oldName, newName, reason).catch(err =>
             console.warn('CARRIER_CHANGED audit-log notification failed:', err)
         );
+    }
+
+    /** HCDP-05-05 — Writes name + real party reference into a UBL party object
+     *  (carrierParty or transportServiceProviderParty). Creates partyName /
+     *  partyIdentification subtrees when missing so legacy dispatches without
+     *  these fields are upgraded on first replacement. */
+    private applyCarrierMutation(party: any,
+                                 newName: string,
+                                 newPartyId: string,
+                                 newFedId: string | null): void {
+        // partyName[0].name.value
+        if (!party.partyName || !party.partyName.length) {
+            party.partyName = [{ name: { value: newName, languageID: 'en' } }];
+        } else {
+            const pn = party.partyName[0];
+            if (!pn.name) {
+                pn.name = { value: newName, languageID: 'en' };
+            } else {
+                pn.name.value = newName;
+                if (!pn.name.languageID) pn.name.languageID = 'en';
+            }
+        }
+        // partyIdentification[0].id — real Nimble Party reference
+        if (!party.partyIdentification || !party.partyIdentification.length) {
+            party.partyIdentification = [{ id: newPartyId }];
+        } else {
+            party.partyIdentification[0].id = newPartyId;
+        }
+        // federationInstanceID (top-level field on PartyType in UBL JSON)
+        party.federationInstanceID = newFedId;
     }
 
     /** F6 — Records the replacement as an audit-log entry in the buyer's own

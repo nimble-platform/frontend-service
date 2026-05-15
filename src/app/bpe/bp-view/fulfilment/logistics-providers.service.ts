@@ -1,31 +1,38 @@
 /*
- * HCDP-05-04 — Logistics Providers HTTP service.
+ * HCDP-05-05 — Logistics Providers HTTP service.
  *
- * Thin wrapper over catalog-service `/logistics-providers`. Resolves to the
- * platform-seeded EU carrier list. Falls back to the hardcoded array in
- * logistics-providers.ts on network/auth failure so the Replace Provider
- * modal stays functional even if catalog-service is down.
+ * Thin wrapper over catalog-service `/logistics-providers`, which proxies
+ * indexing-service party search (businessType="Logistics Provider"). The
+ * directory is the same set of Nimble Parties Find Logistics search returns.
+ *
+ * No hardcoded fallback — on network/auth failure the service resolves to an
+ * empty list and exposes `lastError` so the modal can render an
+ * "unavailable" state. Treating indexing-service as a hard dependency keeps
+ * the single-source-of-truth contract honest: a failed fetch never silently
+ * lets the buyer pick a stale, party-less carrier.
  */
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ng2-cookies';
 import { catalogue_endpoint } from '../../../globals';
-import { LogisticsProvider, LOGISTICS_PROVIDERS_FALLBACK } from './logistics-providers';
+import { LogisticsProvider } from './logistics-providers';
 
 @Injectable()
 export class LogisticsProvidersService {
 
     private url = catalogue_endpoint;
 
+    /** Populated on the most recent fetch failure; null on success. */
+    lastError: string | null = null;
+
     constructor(private http: HttpClient,
                 private cookieService: CookieService) {}
 
     /**
-     * Returns the active carrier list. On any HTTP failure (network down,
-     * 401 token expiry, 5xx) resolves to LOGISTICS_PROVIDERS_FALLBACK so the
-     * UI never blocks. Callers can inspect `usedFallback` if they need to
-     * surface a warning, but the modal treats both paths identically.
+     * Returns the active carrier list from catalog-service. Resolves to an
+     * empty array on any HTTP failure and sets `lastError` so callers can
+     * render an "Logistics directory unavailable" message.
      */
     fetchActive(): Promise<LogisticsProvider[]> {
         const headers = new HttpHeaders({
@@ -35,20 +42,25 @@ export class LogisticsProvidersService {
         return this.http.get<any[]>(`${this.url}/logistics-providers`, { headers })
             .toPromise()
             .then(rows => {
+                this.lastError = null;
                 if (!rows || !rows.length) {
-                    console.warn('LogisticsProviders endpoint returned empty list; using hardcoded fallback');
-                    return LOGISTICS_PROVIDERS_FALLBACK.slice();
+                    return [];
                 }
                 return rows.map(r => ({
-                    id: r.slug,
+                    slug: r.slug,
                     name: r.name,
                     country: r.country || '',
-                    transitTimeHint: r.transitTimeHint || ''
+                    partyId: r.partyId,
+                    federationInstanceID: r.federationInstanceID || null,
                 } as LogisticsProvider));
             })
             .catch(err => {
-                console.warn('LogisticsProviders fetch failed; using hardcoded fallback', err);
-                return LOGISTICS_PROVIDERS_FALLBACK.slice();
+                const status = err && err.status;
+                this.lastError = status
+                    ? `Logistics directory unavailable (HTTP ${status})`
+                    : 'Logistics directory unavailable (network error)';
+                console.error('LogisticsProviders fetch failed:', this.lastError, err);
+                return [];
             });
     }
 }

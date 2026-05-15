@@ -30,13 +30,17 @@
                             <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-8">
-                            <select class="form-control" [(ngModel)]="selectedProviderId"
-                                    [disabled]="submitting">
+                            <select class="form-control" [(ngModel)]="selectedSlug"
+                                    [disabled]="submitting || hasLoadError()">
                                 <option [ngValue]="null">{{ 'Select a provider' | translate }}</option>
-                                <option *ngFor="let p of availableProviders()" [ngValue]="p.id">
-                                    {{ p.name }} <small>({{ p.country }} · {{ p.transitTimeHint }})</small>
+                                <option *ngFor="let p of availableProviders()" [ngValue]="p.slug">
+                                    {{ p.name }} <small *ngIf="p.country">({{ p.country }})</small>
                                 </option>
                             </select>
+                            <div *ngIf="hasLoadError()" class="alert alert-danger small mt-2 mb-0">
+                                <i class="fa fa-exclamation-triangle mr-1"></i>
+                                <span [innerHTML]="'Logistics directory unavailable. Please try again later.' | translate"></span>
+                            </div>
                         </div>
                     </div>
                     <!-- Reason (optional) -->
