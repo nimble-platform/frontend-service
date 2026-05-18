@@ -28,6 +28,13 @@ export class Facet {
     public localName: string = null; // local name of the quantity properties, used to group facet options with different units
     public dataType: string = null; // the data type
     public visible: boolean = true; // whether the facet is visible or not
+    // HCDP-02.2 range-filter extension: when true the facet renders as min/max numeric inputs
+    // instead of an enumerable checkbox list. Set by setFacetValues when dataType == 'double'.
+    public range: boolean = false;
+    public selectedMin: number = null; // user-typed lower bound
+    public selectedMax: number = null; // user-typed upper bound
+    public numericMin: number = null; // observed lower bound for the selected unit (shown as placeholder)
+    public numericMax: number = null; // observed upper bound for the selected unit (shown as placeholder)
 
     constructor(json?: any) {
         if (json) {
@@ -45,6 +52,11 @@ export class Facet {
             this.selectedUnit = json.selectedUnit;
             this.localName = json.localName;
             this.dataType = json.dataType;
+            this.range = !!json.range;
+            this.selectedMin = json.selectedMin != null ? json.selectedMin : null;
+            this.selectedMax = json.selectedMax != null ? json.selectedMax : null;
+            this.numericMin = json.numericMin != null ? json.numericMin : null;
+            this.numericMax = json.numericMax != null ? json.numericMax : null;
         }
     }
 }

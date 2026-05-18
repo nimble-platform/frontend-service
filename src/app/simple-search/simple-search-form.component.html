@@ -498,7 +498,8 @@
                                                     <select class="form-control custom-select"
                                                             [(ngModel)]="facet.selectedUnit"
                                                             [ngModelOptions]="{standalone: true}"
-                                                            (click)="$event.stopPropagation()">
+                                                            (click)="$event.stopPropagation()"
+                                                            (change)="onFacetUnitChanged(facet)">
                                                         <option *ngFor="let unit of facet.units">{{unit}}</option>
                                                     </select>
                                                 </div>
@@ -509,7 +510,8 @@
                                             {{ getName(facet.realName) }}
                                         </div>
                                         <!-- Facet values... Show them when the facet is expanded -->
-                                        <div class="card-body" *ngIf="facet.showContent">
+                                        <!-- HCDP-02.2: enumerable rendering for STRING / CODE / boolean facets -->
+                                        <div class="card-body" *ngIf="facet.showContent && !facet.range">
                                             <div *ngFor="let facetInner of facet.options; let i=index">
                                                 <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
@@ -540,6 +542,35 @@
                                                         *ngIf="facet.expanded"><span
                                                         [innerHTML]="'Show less' | translate"></span></span></span>
                                             </div>
+                                        </div>
+                                        <!-- HCDP-02.2: numeric range rendering for QUANTITY (dataType == 'double') facets -->
+                                        <div class="card-body" *ngIf="facet.showContent && facet.range">
+                                            <div class="row mb-2">
+                                                <div class="col-4">
+                                                    <input class="form-control form-control-sm"
+                                                           [(ngModel)]="facet.selectedMin"
+                                                           [ngModelOptions]="{standalone: true}" type="number"
+                                                           [placeholder]="facet.numericMin != null ? facet.numericMin : 'Min'">
+                                                </div>
+                                                <div class="col-1">
+                                                    -
+                                                </div>
+                                                <div class="col-4">
+                                                    <input class="form-control form-control-sm"
+                                                           [(ngModel)]="facet.selectedMax"
+                                                           [ngModelOptions]="{standalone: true}" type="number"
+                                                           [placeholder]="facet.numericMax != null ? facet.numericMax : 'Max'">
+                                                </div>
+                                                <div class="col-3 my-auto small text-muted">
+                                                    {{ facet.selectedUnit }}
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary btn-sm" (click)="setFacetRangeFilter(facet)"
+                                                    [disabled]="!checkFacetRangeFilter(facet)"><span
+                                                    [innerHTML]="'Apply' | translate"></span></button>
+                                            <button class="btn btn-secondary btn-sm ml-2" (click)="resetFacetRangeFilter(facet)"
+                                                    [hidden]="facet.selectedMin == null && facet.selectedMax == null"><span
+                                                    [innerHTML]="'Reset' | translate"></span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -732,7 +763,8 @@
                                                         <select class="form-control custom-select"
                                                                 [(ngModel)]="facet.selectedUnit"
                                                                 [ngModelOptions]="{standalone: true}"
-                                                                (click)="$event.stopPropagation()">
+                                                                (click)="$event.stopPropagation()"
+                                                                (change)="onFacetUnitChanged(facet)">
                                                             <option *ngFor="let unit of facet.units">{{unit}}</option>
                                                         </select>
                                                     </div>
@@ -742,7 +774,8 @@
                                                  class="card-header" (click)="onFacetClicked(facet)">
                                                 {{ facet.realName }}
                                             </div>
-                                            <div *ngIf="facet.showContent" class="card-body">
+                                            <!-- HCDP-02.2: enumerable rendering for STRING / CODE / boolean facets -->
+                                            <div *ngIf="facet.showContent && !facet.range" class="card-body">
                                                 <div *ngFor="let facetInner of getFacetOptions(facet.options,facet.selectedUnit); let i = index">
                                                     <div *ngIf="!facetInner.selected && (i < maxFacets || facet.expanded) && (facetInner.unit == undefined || facetInner.unit == facet.selectedUnit)">
                                                     <span *ngIf="facet.dataType != 'boolean'" class="clickable"
@@ -773,6 +806,35 @@
                                                             *ngIf="facet.expanded"><span
                                                             [innerHTML]="'Show less' | translate"></span></span></span>
                                                 </div>
+                                            </div>
+                                            <!-- HCDP-02.2: numeric range rendering for QUANTITY (dataType == 'double') facets -->
+                                            <div *ngIf="facet.showContent && facet.range" class="card-body">
+                                                <div class="row mb-2">
+                                                    <div class="col-4">
+                                                        <input class="form-control form-control-sm"
+                                                               [(ngModel)]="facet.selectedMin"
+                                                               [ngModelOptions]="{standalone: true}" type="number"
+                                                               [placeholder]="facet.numericMin != null ? facet.numericMin : 'Min'">
+                                                    </div>
+                                                    <div class="col-1">
+                                                        -
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input class="form-control form-control-sm"
+                                                               [(ngModel)]="facet.selectedMax"
+                                                               [ngModelOptions]="{standalone: true}" type="number"
+                                                               [placeholder]="facet.numericMax != null ? facet.numericMax : 'Max'">
+                                                    </div>
+                                                    <div class="col-3 my-auto small text-muted">
+                                                        {{ facet.selectedUnit }}
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" (click)="setFacetRangeFilter(facet)"
+                                                        [disabled]="!checkFacetRangeFilter(facet)"><span
+                                                        [innerHTML]="'Apply' | translate"></span></button>
+                                                <button class="btn btn-secondary btn-sm ml-2" (click)="resetFacetRangeFilter(facet)"
+                                                        [hidden]="facet.selectedMin == null && facet.selectedMax == null"><span
+                                                        [innerHTML]="'Reset' | translate"></span></button>
                                             </div>
                                         </div>
                                     </div>

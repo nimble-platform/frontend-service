@@ -1313,6 +1313,49 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
             }
         }
         this.sortFacetObj(facetObj);
+        // HCDP-02.2: detect numeric range facets. Quantity properties indexed as Solr pdouble
+        // (e.g. carbonContent_%_dvalues) get a min/max range UI instead of enumerable chips.
+        // Gating on dataType == 'double' AND presence of units keeps STRING/CODE facets unaffected.
+        const meta = facetMetadata && facetMetadata[facet];
+        const isDouble = meta && meta.dataType === 'double';
+        facetObj.range = !!(isDouble && facetObj.units && facetObj.units.length > 0);
+        if (facetObj.range) {
+            this.recomputeFacetRangeBounds(facetObj);
+        }
+    }
+
+    /**
+     * HCDP-02.2: Recomputes observed numeric bounds for the currently selected unit.
+     * Called after options change OR after the user switches the unit dropdown.
+     * option.name is the raw Solr-indexed numeric value (e.g. "68.0" or "380.0").
+     */
+    private recomputeFacetRangeBounds(facetObj: any): void {
+        const unit = facetObj.selectedUnit;
+        let min: number = null;
+        let max: number = null;
+        for (let opt of facetObj.options) {
+            if (opt.unit !== unit) {
+                continue;
+            }
+            const parsed = parseFloat(opt.name);
+            if (isNaN(parsed)) {
+                continue;
+            }
+            if (min === null || parsed < min) min = parsed;
+            if (max === null || parsed > max) max = parsed;
+        }
+        facetObj.numericMin = min;
+        facetObj.numericMax = max;
+    }
+
+    /**
+     * HCDP-02.2: Called from the unit <select> (change) handler in the template. Range bounds and
+     * any user-typed min/max are unit-scoped, so switching unit must reset both.
+     */
+    onFacetUnitChanged(facet: any): void {
+        facet.selectedMin = null;
+        facet.selectedMax = null;
+        this.recomputeFacetRangeBounds(facet);
     }
 
     /**
@@ -1572,6 +1615,76 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         this.get(this.objToSubmit);
     }
 
+    /**
+     * HCDP-02.2: Resolves the per-unit Solr index field (e.g. "carbonContentM3_dvalues") from
+     * the facet's options. Each unit has its own indexed field; we filter by the selected unit.
+     * Falls back to facet.name when the unit is empty (e.g. "Carbon content" indexed without a
+     * unit suffix as "carbonContent_dvalues") — in that case unitGenName is null but facet.name
+     * IS the Solr field.
+     */
+    private getRangeFieldForFacet(facet: any): string {
+        if (!facet || !facet.options) return null;
+        for (let opt of facet.options) {
+            if (opt.unit === facet.selectedUnit && opt.unitGenName) {
+                return opt.unitGenName;
+            }
+        }
+        // Unit-less quantity facets: facet.name is the Solr field name.
+        return facet.name;
+    }
+
+    /**
+     * HCDP-02.2: Applies the user-typed [min, max] as a Solr fq on the per-unit dynamic field.
+     * Mirrors the setPriceFilter pattern.
+     */
+    setFacetRangeFilter(facet: any): void {
+        const field = this.getRangeFieldForFacet(facet);
+        if (!field) {
+            return;
+        }
+        const min = (facet.selectedMin != null && facet.selectedMin !== '') ? facet.selectedMin : 0;
+        const max = (facet.selectedMax != null && facet.selectedMax !== '') ? facet.selectedMax : Number.MAX_SAFE_INTEGER;
+        this.clearFacet(field);
+        this.setRangeWithoutQuery(field, min, max);
+        this.get(this.objToSubmit);
+    }
+
+    /**
+     * HCDP-02.2: Clears the range filter for this facet (across all units, defensively).
+     */
+    resetFacetRangeFilter(facet: any): void {
+        facet.selectedMin = null;
+        facet.selectedMax = null;
+        if (facet.options) {
+            // Clear range fq across every unit-scoped Solr field this facet can target.
+            const cleared = new Set<string>();
+            for (let opt of facet.options) {
+                if (opt.unitGenName && !cleared.has(opt.unitGenName)) {
+                    this.clearFacet(opt.unitGenName);
+                    cleared.add(opt.unitGenName);
+                }
+            }
+            // Unit-less facets: clear by facet.name (which is the Solr field directly).
+            if (cleared.size === 0 && facet.name) {
+                this.clearFacet(facet.name);
+            }
+        }
+        this.get(this.objToSubmit);
+    }
+
+    /**
+     * HCDP-02.2: Apply-button disable guard. Mirrors checkPriceFilter at the existing line ~1503.
+     */
+    checkFacetRangeFilter(facet: any): boolean {
+        if (facet.selectedMin == null && facet.selectedMax == null) {
+            return false;
+        }
+        if (facet.selectedMin != null && facet.selectedMax != null && Number(facet.selectedMin) > Number(facet.selectedMax)) {
+            return false;
+        }
+        return true;
+    }
+
     setTrustFilter() {
         this.clearFacet(this.product_vendor_rating, this.product_vendor);
         this.clearFacet(this.product_vendor_rating_seller, this.product_vendor);
@@ -1829,6 +1942,11 @@ export class SimpleSearchFormComponent implements OnInit, OnDestroy {
         let facetNameValue = facet.split(':');
         let facetName = facetNameValue[0];
         let value = facetNameValue[1];
+        // HCDP-02.2: range fq looks like "field:[60 TO 70]" — return the literal range for the chip,
+        // so we don't try to match a non-existent enumerable option.
+        if (value && value.charAt(0) === '[' && value.indexOf(' TO ') !== -1) {
+            return value;
+        }
         // handle the facets with quantity type
         if(facetName.endsWith("_dvalues")){
             let facetDetails = this.facetList.find(f => facetName.startsWith(f.localName))
