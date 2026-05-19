@@ -74,6 +74,10 @@
             <div *ngIf="timelineState === 'IN_TRANSIT_ONTIME' && daysSinceDispatch !== null" class="node-sub text-muted">
                 {{daysSinceDispatch}} {{'days in transit' | translate}}
             </div>
+            <!-- HCDP-05-01 AC4 — ETA sourced from upstream ORDER's requestedDeliveryPeriod. -->
+            <div *ngIf="eta && !hasReceipt" class="node-sub text-muted">
+                {{'ETA' | translate}}: {{eta | date:'dd MMM yyyy'}}
+            </div>
         </div>
 
         <div class="timeline-connector"
@@ -91,6 +95,10 @@
             <div class="node-label">{{'Delivered' | translate}}</div>
             <div *ngIf="!hasReceipt" class="node-sub text-muted fst-italic">
                 {{'Awaiting confirmation' | translate}}
+            </div>
+            <!-- HCDP-05-01 AC6 — Receipt confirmation timestamp under the Delivered node. -->
+            <div *ngIf="hasReceipt && receiptTimestamp" class="node-sub text-muted">
+                {{receiptTimestamp | date:'dd MMM yyyy'}}
             </div>
             <div *ngIf="hasReceipt && rejectReasonBadge" class="node-sub">
                 <span class="badge badge-danger">{{rejectReasonBadge | translate}}</span>

@@ -21,6 +21,7 @@ import { CallStatus } from '../../../common/call-status';
 import { BPEService } from '../../bpe.service';
 import { DespatchLine } from '../../../catalogue/model/publish/despatch-line';
 import { CARRIER_CHANGE_DOC_TYPE, CarrierChangeRecord } from './logistics-providers';
+import { MonitorService } from '../../../dashboard/monitor/monitor.service';
 
 @Component({
     selector: "fulfilment",
@@ -38,7 +39,8 @@ export class FulfilmentComponent implements OnInit {
     @Input() catalogueLines: CatalogueLine[] = [];
 
     constructor(private bpDataService: BPDataService,
-        private bpeService: BPEService) {
+        private bpeService: BPEService,
+        private monitorService: MonitorService) {
 
     }
 
@@ -56,10 +58,28 @@ export class FulfilmentComponent implements OnInit {
     // than this and no receipt are rendered as "Overdue" on the In-Transit node.
     static readonly OVERDUE_DAYS_THRESHOLD = 5;
 
+    // HCDP-05-01 AC4 — ETA on the In-Transit node. Sourced from the upstream ORDER's
+    // requestedDeliveryPeriod via the BPE /monitor/process-summary `deadline` field
+    // (added by HCDP-05-03 F1). Fetched lazily in ngOnInit so the timeline renders
+    // immediately and the ETA label slots in when the response arrives.
+    eta: string | null = null;
+
     ngOnInit() {
         this.line = this.bpDataService.getCatalogueLine();
 
         this.initializeFulfilmentStatisticsSection();
+        this.loadEta();
+    }
+
+    private loadEta(): void {
+        const pm = this.bpDataService.bpActivityEvent && this.bpDataService.bpActivityEvent.processMetadata;
+        const pid = pm && pm.processInstanceId;
+        if (!pid) return;
+        this.monitorService.getProcessSummary(pid)
+            .then(summary => {
+                this.eta = (summary && summary.deadline) ? summary.deadline : null;
+            })
+            .catch(() => { /* non-fatal — timeline still renders, just without ETA label */ });
     }
 
     // ---- HCDP-05-01 F1 — Delivery Timeline state + helpers --------------------
@@ -96,6 +116,19 @@ export class FulfilmentComponent implements OnInit {
         const t = new Date(this.dispatchTimestamp).getTime();
         if (isNaN(t)) return null;
         return Math.floor((Date.now() - t) / (24 * 3600 * 1000));
+    }
+
+    /**
+     * HCDP-05-01 AC6 — Receipt confirmation timestamp shown under the Delivered node.
+     * Sourced from `processMetadata.responseDate` (the moment the ReceiptAdvice was
+     * submitted as the response to the despatch). Falls back to `completionDate`
+     * for legacy completed collaborations where responseDate wasn't persisted.
+     */
+    get receiptTimestamp(): string | null {
+        if (!this.hasReceipt) return null;
+        const pm = this.bpDataService.bpActivityEvent && this.bpDataService.bpActivityEvent.processMetadata;
+        if (!pm) return null;
+        return pm.responseDate || pm.completionDate || null;
     }
 
     /**
