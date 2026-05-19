@@ -230,25 +230,17 @@ export class DemandListItemComponent {
     onSubmitOffer(): void {
         if (!this.selectedProduct) { return; }
         this.offerCallStatus.submit();
-        const userId = this.cookieService.get('user_id');
-        this.userService.getSettingsForParty(this.userCompanyId).then(settings => {
-            let companyName: string = this.userCompanyId;
-            if (settings && settings.details && settings.details.legalName) {
-                const ln = settings.details.legalName;
-                companyName = typeof ln === 'string' ? ln : (Object.values(ln as object)[0] as string) || this.userCompanyId;
-            }
-            const payload = {
-                responderCompanyName: companyName,
-                catalogueLineHjid: this.selectedProduct.hjid,
-                catalogueUuid: this.selectedProduct.goodsItem && this.selectedProduct.goodsItem.item ?
-                    this.selectedProduct.goodsItem.item.catalogueDocumentReference ?
-                        this.selectedProduct.goodsItem.item.catalogueDocumentReference.id : '' : '',
-                lineId: this.selectedProduct.id || '',
-                productName: this.getProductDisplayName(this.selectedProduct),
-                message: this.offerMessage
-            };
-            return this.demandService.submitDemandResponse(this.demand.hjid, payload);
-        }).then(() => {
+        // backend enriches productName/lineId/catalogueUuid/responderCompanyName from DB —
+        // only catalogueLineHjid + message need to be sent
+        const payload = {
+            responderCompanyName: '',
+            catalogueLineHjid: this.selectedProduct.hjid,
+            catalogueUuid: '',
+            lineId: '',
+            productName: '',
+            message: this.offerMessage
+        };
+        this.demandService.submitDemandResponse(this.demand.hjid, payload).then(() => {
             this.offerCallStatus.callback(null, true);
             // Delay closing the modal so the 'Offer submitted!' flash is briefly visible (U20)
             setTimeout(() => { this.showProposeModal = false; }, 1500);
@@ -277,24 +269,19 @@ export class DemandListItemComponent {
         }
     }
 
-    onSendRfqClicked(response: any): void {
-        // Navigate to product search to find the specific product and initiate RFQ
-        if (response.lineId) {
-            this.router.navigate(['/simple-search'], {
-                queryParams: { q: response.productName || '*', p: 1, sTop: 'prod' }
-            });
-        }
-    }
-
     onDeleteResponseClicked(response: any): void {
         this.appComponent.confirmModalComponent.open(
             this.translateService.instant('Are you sure you want to remove this offer?')
         ).then(confirmed => {
             if (confirmed) {
+                this.deleteResponseCallStatus.submit();
                 this.demandService.deleteDemandResponse(this.demand.hjid, response.hjid).then(() => {
                     this.demandResponses = this.demandResponses.filter(r => r.hjid !== response.hjid);
                     this.responseCount = this.demandResponses.length;
-                }).catch(e => console.error('Failed to delete demand response', e));
+                    this.deleteResponseCallStatus.callback(null, true);
+                }).catch(e => {
+                    this.deleteResponseCallStatus.error(this.translateService.instant('Failed to remove offer'), e);
+                });
             }
         });
     }
