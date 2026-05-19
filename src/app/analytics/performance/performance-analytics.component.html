@@ -652,7 +652,7 @@
         <div class="row justify-content-center space-before">
             <div class="col-10 text-center">
                 <p class="text-muted"><span [innerHTML]="'Adjust active workflow types, payment terms and incoterms in company settings.' | translate"></span></p>
-                <a class="btn btn-outline-primary" [routerLink]="['/user-mgmt/company-settings']">
+                <a class="btn btn-outline-primary" [routerLink]="['/user-mgmt/company-settings']" [queryParams]="{tab: 'NEGOTIATION_SETTINGS'}">
                     <i class="fa fa-cog mr-2"></i><span [innerHTML]="'Configure Workflows' | translate"></span>
                 </a>
             </div>
