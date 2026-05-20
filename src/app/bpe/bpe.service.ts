@@ -40,6 +40,7 @@ import {DEFAULT_LANGUAGE, FEDERATION, FEDERATIONID} from '../catalogue/model/con
 import {FederatedCollaborationGroupMetadata} from './model/federated-collaboration-group-metadata';
 import {CollaborationGroupResponse} from './model/collaboration-group-response';
 import {PlatformCompanyProductCount} from './model/platform-company-product-count';
+import {DocumentService} from './bp-view/document-service';
 
 @Injectable()
 export class BPEService {
@@ -53,6 +54,7 @@ export class BPEService {
 
     constructor(private http: HttpClient,
         private bpDataService: BPDataService,
+        private documentService: DocumentService,
         private cookieService: CookieService) { }
 
     startProcessWithDocument(document: any, delegateId: string): Promise<ProcessInstance> {
@@ -208,6 +210,16 @@ export class BPEService {
         return this.http
             .patch(url, JSON.stringify(document), { headers })
             .toPromise()
+            .then(res => {
+                // Invalidate DocumentService's frontend cache so the next
+                // getCachedDocument(documentId) fetches fresh state. Without this,
+                // navigating away and returning to a Fulfilment view re-loads the
+                // pre-PATCH copy and the carrier-replacement (CARRIER_CHANGE refs
+                // + carrierParty mutation) appears to have vanished until a hard
+                // browser reload. See HCDP-05-04 spec §6.1.
+                this.documentService.updateCachedDocument(documentId, document);
+                return res;
+            })
             .catch(this.handleError);
     }
 
