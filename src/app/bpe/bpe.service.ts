@@ -196,17 +196,22 @@ export class BPEService {
      * /document/{documentID}?documentType=...). Used for buyer-initiated carrier
      * replacement on a sealed DespatchAdvice.
      *
-     * Note (Approach A, see HCDP-05-04 spec §2.3): the BPE endpoint enforces
-     * role-based access only — no party-ownership check. Caller is responsible
-     * for gating the action in the UI (collaborationRole + cancellation window).
-     * Platform-wide hardening filed as Open Item BPE-SEC-01.
+     * BPE-SEC-01 (2026-05-20, was HCDP-05-04 §2.3 / §8.2 Open Item): the
+     * endpoint now enforces a party-ownership check in addition to role
+     * validation. We must send `callerPartyId` and `callerFederationId`
+     * headers so BPE can verify the caller is the initiator or responder on
+     * the document's process metadata; missing or mismatched headers return
+     * 403 FORBIDDEN.notDocumentParticipant.
      */
     updateDocument(documentId: string, document: any, documentType: string): Promise<any> {
         const url = `${this.url}/document/${documentId}?documentType=${documentType}`;
         // Explicit Content-Type — getAuthorizedHeaders() doesn't propagate this.headers
         // (HttpHeaders is immutable, the existing forEach/append result is discarded).
         // Backend's DocumentController.updateDocument consumes APPLICATION_JSON_VALUE → 415 without it.
-        const headers = this.getAuthorizedHeaders().set('Content-Type', 'application/json');
+        const headers = this.getAuthorizedHeaders()
+            .set('Content-Type', 'application/json')
+            .set('callerPartyId', this.cookieService.get('company_id') || '')
+            .set('callerFederationId', FEDERATIONID());
         return this.http
             .patch(url, JSON.stringify(document), { headers })
             .toPromise()
