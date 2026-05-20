@@ -14,9 +14,10 @@
    limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, QueryList, ViewChildren } from "@angular/core";
 import { ReceiptAdvice } from "../../../catalogue/model/publish/receipt-advice";
 import { CallStatus } from "../../../common/call-status";
+import { QuantityInputComponent } from "../../../common/quantity-input.component";
 import { BPEService } from "../../bpe.service";
 import { BPDataService } from "../bp-data-service";
 import { Router } from "@angular/router";
@@ -74,6 +75,13 @@ export class ReceiptAdviceComponent implements OnInit {
     showReplaceProviderModal = false;
     replacementSubmitting = false;
     readonly cancellationWindowDays = CANCELLATION_WINDOW_DAYS;
+
+    // HCDP-05-02 F2 follow-up — handle to every <quantity-input> rendered in
+    // the per-line layout. After clamping accepted/rejected we sync each
+    // QuantityInput's underlying FormControl to its bound model so the DOM
+    // reflects the clamped value (quantity-input mixes [ngModel] + [formControl];
+    // [formControl] owns DOM rendering and stays stale on model-only mutation).
+    @ViewChildren(QuantityInputComponent) quantityInputs: QueryList<QuantityInputComponent>;
 
     constructor(private bpeService: BPEService,
         private bpDataService: BPDataService,
@@ -142,6 +150,7 @@ export class ReceiptAdviceComponent implements OnInit {
         if (this.receiptAdvice.receiptLine[i].rejectedQuantity) {
             this.receiptAdvice.receiptLine[i].rejectedQuantity.value = delivered - accepted;
         }
+        this.syncQuantityInputDom();
     }
 
     /**
@@ -156,6 +165,24 @@ export class ReceiptAdviceComponent implements OnInit {
             this.acceptedQuantities[i] = new Quantity(0, rq.unitCode || null);
         }
         this.acceptedQuantities[i].value = delivered - rq.value;
+        this.syncQuantityInputDom();
+    }
+
+    /**
+     * Push the bound `quantity.value` into each <quantity-input>'s underlying
+     * FormControl so the DOM input shows the clamped figure. Without this, a
+     * user typing 999 into Accepted on a delivery of 10 sees "999" stuck in
+     * the field while the model is correctly 10. `emitEvent: false` prevents
+     * a re-entrant onAcceptedChange/onRejectedChange.
+     */
+    private syncQuantityInputDom(): void {
+        if (!this.quantityInputs) return;
+        this.quantityInputs.forEach(input => {
+            if (!input || !input.quantity || !input.quantityValueFormControl) return;
+            if (input.quantityValueFormControl.value !== input.quantity.value) {
+                input.quantityValueFormControl.setValue(input.quantity.value, { emitEvent: false });
+            }
+        });
     }
 
     private getDeliveredValue(i: number): number {
