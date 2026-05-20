@@ -292,61 +292,89 @@ export class ReceiptAdviceComponent implements OnInit {
         const newPartyId = newProvider.partyId;
         const newFedId = newProvider.federationInstanceID || null;
 
-        // 1. Mutate shipmentStage carrierParty across ALL despatch lines —
-        //    both display name AND party reference, so the UBL is internally
-        //    consistent post-replacement (no orphan "string only" carriers).
-        if (this.dispatchAdvice.despatchLine) {
-            for (const line of this.dispatchAdvice.despatchLine) {
-                if (!line.shipment) continue;
-                for (const ship of line.shipment) {
-                    if (!ship.shipmentStage) continue;
-                    for (const stage of ship.shipmentStage) {
-                        if (!stage.carrierParty) continue;
-                        this.applyCarrierMutation(stage.carrierParty, newName, newPartyId, newFedId);
+        // D1 fix — snapshot dispatchAdvice via JSON deep-clone BEFORE any mutation.
+        // If the PATCH fails we restore properties in-place so the local view
+        // reflects DB-canonical state (previously, a failed PATCH left the
+        // proposed carrier in memory and the buyer saw a phantom replacement
+        // until a hard reload). The dispatchAdvice object reference is shared
+        // with bpDataService.despatchAdvice, so restoring its own keys also
+        // unwinds downstream readers.
+        const snapshot = JSON.parse(JSON.stringify(this.dispatchAdvice));
+        const originalKeys = new Set(Object.keys(this.dispatchAdvice));
+
+        try {
+            // 1. Mutate shipmentStage carrierParty across ALL despatch lines —
+            //    both display name AND party reference, so the UBL is internally
+            //    consistent post-replacement (no orphan "string only" carriers).
+            if (this.dispatchAdvice.despatchLine) {
+                for (const line of this.dispatchAdvice.despatchLine) {
+                    if (!line.shipment) continue;
+                    for (const ship of line.shipment) {
+                        if (!ship.shipmentStage) continue;
+                        for (const stage of ship.shipmentStage) {
+                            if (!stage.carrierParty) continue;
+                            this.applyCarrierMutation(stage.carrierParty, newName, newPartyId, newFedId);
+                        }
                     }
                 }
             }
+
+            // 2. Sync transportServiceProviderParty (top-level) when present
+            const tsp = (this.dispatchAdvice as any).transportServiceProviderParty;
+            if (tsp) {
+                this.applyCarrierMutation(tsp, newName, newPartyId, newFedId);
+            }
+
+            // 3. Append CARRIER_CHANGE audit reference (JSON blob in a BinaryObject)
+            const record: CarrierChangeRecord = {
+                oldProvider: oldName,
+                newProvider: newName,
+                timestamp: new Date().toISOString(),
+                reason: reason,
+                actor: this.cookieService.get('user_email') || 'unknown',
+            };
+            const json = JSON.stringify(record, null, 2);
+            // utf-8 safe base64 (handles non-ASCII reason text)
+            const base64 = btoa(unescape(encodeURIComponent(json)));
+            // fileName encodes old/new/timestamp so the timeline annotation can
+            // reconstruct after a backend round-trip — BPE moves BinaryObject.value
+            // to external content storage on PATCH (uri = "BusinessProcessBinaryContentUri:...")
+            // and returns value=null, but fileName is preserved verbatim.
+            const millis = new Date(record.timestamp).getTime();
+            const fileName = `carrier-change-${millis}-FROM-${encodeURIComponent(oldName)}-TO-${encodeURIComponent(newName)}.json`;
+            const binary = new BinaryObject(base64, 'application/json', fileName, null, null);
+            const attachment = new Attachment(binary);
+            const ref = new DocumentReference(UBLModelUtils.generateUUID(), CARRIER_CHANGE_DOC_TYPE, attachment);
+            if (!this.dispatchAdvice.additionalDocumentReference) {
+                this.dispatchAdvice.additionalDocumentReference = [];
+            }
+            this.dispatchAdvice.additionalDocumentReference.push(ref);
+
+            // 4. PATCH the updated DespatchAdvice (Approach A — see spec §2.3)
+            await this.bpeService.updateDocument(
+                this.dispatchAdvice.id,
+                this.dispatchAdvice,
+                'DESPATCHADVICE',
+            );
+        } catch (err) {
+            // Drop any keys we may have added (e.g. additionalDocumentReference
+            // when it was undefined before), then restore original property
+            // values from the snapshot. Keeps the dispatchAdvice reference
+            // identity stable for any consumers holding it.
+            for (const k of Object.keys(this.dispatchAdvice)) {
+                if (!originalKeys.has(k)) {
+                    delete (this.dispatchAdvice as any)[k];
+                }
+            }
+            for (const k of Object.keys(snapshot)) {
+                (this.dispatchAdvice as any)[k] = snapshot[k];
+            }
+            throw err;
         }
 
-        // 2. Sync transportServiceProviderParty (top-level) when present
-        const tsp = (this.dispatchAdvice as any).transportServiceProviderParty;
-        if (tsp) {
-            this.applyCarrierMutation(tsp, newName, newPartyId, newFedId);
-        }
-
-        // 3. Append CARRIER_CHANGE audit reference (JSON blob in a BinaryObject)
-        const record: CarrierChangeRecord = {
-            oldProvider: oldName,
-            newProvider: newName,
-            timestamp: new Date().toISOString(),
-            reason: reason,
-            actor: this.cookieService.get('user_email') || 'unknown',
-        };
-        const json = JSON.stringify(record, null, 2);
-        // utf-8 safe base64 (handles non-ASCII reason text)
-        const base64 = btoa(unescape(encodeURIComponent(json)));
-        // fileName encodes old/new/timestamp so the timeline annotation can
-        // reconstruct after a backend round-trip — BPE moves BinaryObject.value
-        // to external content storage on PATCH (uri = "BusinessProcessBinaryContentUri:...")
-        // and returns value=null, but fileName is preserved verbatim.
-        const millis = new Date(record.timestamp).getTime();
-        const fileName = `carrier-change-${millis}-FROM-${encodeURIComponent(oldName)}-TO-${encodeURIComponent(newName)}.json`;
-        const binary = new BinaryObject(base64, 'application/json', fileName, null, null);
-        const attachment = new Attachment(binary);
-        const ref = new DocumentReference(UBLModelUtils.generateUUID(), CARRIER_CHANGE_DOC_TYPE, attachment);
-        if (!this.dispatchAdvice.additionalDocumentReference) {
-            this.dispatchAdvice.additionalDocumentReference = [];
-        }
-        this.dispatchAdvice.additionalDocumentReference.push(ref);
-
-        // 4. PATCH the updated DespatchAdvice (Approach A — see spec §2.3)
-        await this.bpeService.updateDocument(
-            this.dispatchAdvice.id,
-            this.dispatchAdvice,
-            'DESPATCHADVICE',
-        );
-
-        // 5. F6 — buyer-side audit-log entry (best-effort; never blocks)
+        // 5. F6 — buyer-side audit-log entry (best-effort; never blocks).
+        //    Outside the try/catch so an audit-log failure doesn't roll back
+        //    a carrier replacement that the BPE has already accepted.
         this.fireCarrierChangedAuditLog(oldName, newName, reason).catch(err =>
             console.warn('CARRIER_CHANGED audit-log notification failed:', err)
         );
