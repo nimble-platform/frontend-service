@@ -606,12 +606,14 @@ export class BPEService {
     }
 
     getRatingsDetails(partyId: string, partyFederationId: string): Promise<any> {
-        let headers = this.getAuthorizedHeaders();
+        // HCDP-01.4 RATE-BUG fix — HttpHeaders is immutable; `.append()` returns
+        // a new instance which was being discarded. Must reassign via `.set()`
+        // so the federationId actually reaches BPE.
+        let headers = this.getAuthorizedHeaders().set("federationId", partyFederationId);
         let url = `${this.url}/ratingsAndReviews?partyId=${partyId}`;
         if (this.delegated) {
             url = `${this.delegate_url}/ratingsAndReviews?partyId=${partyId}`;
         }
-        headers.append("federationId", partyFederationId);
         return this.http
             .get(url, { headers: headers })
             .toPromise()
@@ -626,12 +628,16 @@ export class BPEService {
     }
 
     postRatings(partyId: string, partyFederationId: string, processInstanceId: string, ratings: EvidenceSupplied[], reviews: Comment[], delegateId: string): Promise<any> {
-        let headers = this.getAuthorizedHeaders();
+        // HCDP-01.4 RATE-BUG fix — HttpHeaders is immutable; `.append()` returns
+        // a new instance which was being discarded, so the `federationId`
+        // required by TrustServiceController.createRatingAndReview never
+        // reached BPE and the request fell through with no qualifying party
+        // resolution → 500. Reassign via `.set()` so the header sticks.
+        let headers = this.getAuthorizedHeaders().set("federationId", partyFederationId);
         let url = `${this.url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}`;
         if (this.delegated) {
             url = `${this.delegate_url}/ratingsAndReviews?partyId=${partyId}&processInstanceID=${processInstanceId}&ratings=${encodeURIComponent(JSON.stringify(ratings))}&reviews=${encodeURIComponent(JSON.stringify(reviews))}&delegateId=${delegateId}`;
         }
-        headers.append("federationId", partyFederationId)
         return this.http
             .post(url, null, { headers: headers })
             .toPromise()
