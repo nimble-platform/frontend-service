@@ -192,7 +192,8 @@ export class SimpleSearchService {
         }
 
         let url = null;
-        // when the page reference is catalogue, we retrieve eFactory companies for white/black list
+        // when the page reference is catalogue/network/offering, we retrieve eFactory companies
+        // for white/black list / network groups / offering recipients
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
             let querySettings = {
                 // Use legalNameText (text_general) for partial/full-text search.
@@ -203,7 +204,17 @@ export class SimpleSearchService {
                 'boostingFactors': {}
             };
             let queryRes = this.buildQueryString(query, querySettings, true, true);
-            url = this.eFactoryIndexingEndpoint + `/party/search`;
+            // HCDP-03-01 NETWORK-SEARCH-BUG fix (2026-05-21):
+            // The eFactory federation endpoint is hardcoded to a remote URL that is
+            // unreachable from a local-only HCDP deployment (FEDERATION=OFF). Gate the
+            // eFactory route on `this.delegated`; when federation is off, fall back to
+            // the local indexing service with the same hasRegisteredUser filter so the
+            // company picker still works for adding partners to a Network Group.
+            if (this.delegated) {
+                url = this.eFactoryIndexingEndpoint + `/party/search`;
+            } else {
+                url = this.url + `/party/search`;
+            }
             searchObject.q =  'hasRegisteredUser:true AND ' + queryRes.queryStr;
             searchObject.fq = [];
             // lowercaseLegalName is a sortable string field in our local Solr — keep it as-is
@@ -277,7 +288,18 @@ export class SimpleSearchService {
         searchObject.rows = vatNumbers.length;
         searchObject.start = 0;
         searchObject.sort = [];
-        let url = this.eFactoryIndexingEndpoint + `/party/search`;
+        // HCDP-03-01 NETWORK-SEARCH-BUG fix 2026-05-21 (sibling of getComp/getCompSuggestions
+        // patch): gate the eFactory federation endpoint on `this.delegated`. The party-name
+        // lookup is called by network-settings, white/black-list panel, and offering recipients;
+        // when FEDERATION=OFF the eFactory URL is unreachable and these flows fail with
+        // "Failed to get party names" / 503. Fall back to the local indexing service which
+        // already exposes the same `vatNumber` + `legalName` fields (HCDP-01.2 G2 fix).
+        let url;
+        if (this.delegated) {
+            url = this.eFactoryIndexingEndpoint + `/party/search`;
+        } else {
+            url = this.url + `/party/search`;
+        }
         searchObject.q = 'hasRegisteredUser:true AND (' + vatNumbersParam.join(' OR ') + ')';
         searchObject.fq = [];
         return this.http
@@ -361,9 +383,16 @@ export class SimpleSearchService {
         searchObject.fq = [];
         let url = null;
         let queryRes = this.buildQueryString(query, querySettings, true, true);
-        // when the page reference is catalogue, we retrieve suggestions for eFactory companies
+        // when the page reference is catalogue/network/offering, we retrieve suggestions
+        // for eFactory companies (HCDP-03-01 NETWORK-SEARCH-BUG fix 2026-05-21:
+        // gate the remote eFactory endpoint on `this.delegated`; fall back to local
+        // indexing when FEDERATION=OFF so autocomplete works in standalone HCDP).
         if (pageRef == 'catalogue' || pageRef == 'network' || pageRef == 'offering') {
-            url = this.eFactoryIndexingEndpoint + `/party/search`;
+            if (this.delegated) {
+                url = this.eFactoryIndexingEndpoint + `/party/search`;
+            } else {
+                url = this.url + `/party/search`;
+            }
             searchObject.q = 'hasRegisteredUser:true AND ' + queryRes.queryStr;
         } else {
             url = this.url + `/party/search`;
