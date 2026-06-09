@@ -53,7 +53,11 @@ export class QuotationWrapper {
     }
 
     public get deliveryPeriod(): Quantity {
-        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery[0].requestedDeliveryPeriod.durationMeasure;
+        // HCDP fix: null-safe — a line item without a requested delivery period would otherwise
+        // crash this getter during render of the negotiation/Purchase Order detail panel.
+        const d = this.quotation.quotationLine[this.quotationLineIndex].lineItem.delivery;
+        return d && d[0] && d[0].requestedDeliveryPeriod && d[0].requestedDeliveryPeriod.durationMeasure
+            ? d[0].requestedDeliveryPeriod.durationMeasure : new Quantity();
     }
 
     public get delivery(): Delivery[] {
@@ -65,7 +69,11 @@ export class QuotationWrapper {
     }
 
     public get warranty(): Quantity {
-        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.warrantyValidityPeriod.durationMeasure;
+        // HCDP fix: null-safe — a line item without a warranty validity period would otherwise
+        // crash this getter (via warrantyString → checkEqualForResponse) and blank out the
+        // Producer Response column of the negotiation/Purchase Order detail panel.
+        const w = this.quotation.quotationLine[this.quotationLineIndex].lineItem.warrantyValidityPeriod;
+        return w && w.durationMeasure ? w.durationMeasure : new Quantity();
     }
 
     public get warrantyString(): string {
@@ -89,11 +97,19 @@ export class QuotationWrapper {
     }
 
     public get paymentMeans(): string {
-        return this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value;
+        // HCDP fix: null-safe — a line item created/seeded without payment means would otherwise
+        // crash this getter during render and leave the negotiation/Purchase Order panel empty.
+        const pm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans;
+        return pm && pm.paymentMeansCode ? pm.paymentMeansCode.value : null;
     }
 
     public set paymentMeans(paymentMeans: string) {
-        this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans.paymentMeansCode.value = paymentMeans;
+        // HCDP fix: null-safe — the options-input fires selectedChange on init even in read-only
+        // view; if the line item has no payment means there is nothing to write into, so skip
+        // rather than crashing on `null.paymentMeansCode`.
+        const pm = this.quotation.quotationLine[this.quotationLineIndex].lineItem.paymentMeans;
+        if (!pm || !pm.paymentMeansCode) { return; }
+        pm.paymentMeansCode.value = paymentMeans;
     }
 
     public get frameContractDuration(): Quantity {

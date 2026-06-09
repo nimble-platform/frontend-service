@@ -52,6 +52,14 @@ export class DiscountPriceWrapper {
     ) {
         this.immutableOriginalCatalogueLinePrice = copy(originalCatalogueLinePrice);
         this.itemPrice = new ItemPriceWrapper(price, hiddenPrice);
+        // HCDP fix: a null orderedQuantity (e.g. an RFQ/quotation line created or seeded without an
+        // explicit quantity) bypasses the default parameter above — defaults apply only to undefined,
+        // not null — and then crashes getDiscountedTotalPrice() on `this.orderedQuantity.value`,
+        // which leaves the negotiation and Purchase Order panels empty. Fall back to the same
+        // unit-aware default of 1 so the panels still render.
+        if (!this.orderedQuantity) {
+            this.orderedQuantity = new Quantity(1, this.price && this.price.baseQuantity ? this.price.baseQuantity.unitCode : null);
+        }
         this.getDiscountedTotalPrice(); // to initialize the applied discounts list
     }
 

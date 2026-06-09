@@ -24,7 +24,14 @@ export class PaymentTermsWrapper {
     private selectedPaymentTerm: number;
 
     constructor(private paymentTerms: PaymentTerms) {
-        const index = paymentTerms.tradingTerms.findIndex(term => term.value.value[0].value == "true");
+        // HCDP fix: a line item created/seeded without payment terms yields a null paymentTerms
+        // (or one without tradingTerms), which crashes on `.tradingTerms.findIndex` and leaves the
+        // negotiation/Purchase Order panel empty. Fall back to the platform default terms so the
+        // panel still renders (and the setter below keeps working in editable flows).
+        if (!this.paymentTerms || !this.paymentTerms.tradingTerms) {
+            this.paymentTerms = UBLModelUtils.getDefaultPaymentTerms();
+        }
+        const index = this.paymentTerms.tradingTerms.findIndex(term => term.value.value[0].value == "true");
         this.selectedPaymentTerm = index < 0 ? 0 : index;
     }
 
