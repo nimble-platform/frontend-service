@@ -140,10 +140,12 @@ export class AppComponent implements OnInit, AfterViewInit {
             document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
         }
         else {
-            let langTmp = translate.getBrowserLang();
-            if (LANGUAGES.indexOf(langTmp) == -1) {
-                langTmp = FALLBACK_LANGUAGE;
-            }
+            // HarWasting: default to the configured fallback language (English) instead of
+            // auto-detecting the browser locale, so this English-primary deployment always
+            // opens in English even on non-English machines. Users can still switch to any
+            // available language via the globe selector (the choice persists in the
+            // "language" cookie). All translation files (tr.json, es.json, ...) stay intact.
+            let langTmp = FALLBACK_LANGUAGE;
             this.language = langTmp;
             cookieService.set("language", this.language);
             document.getElementsByTagName('html')[0].setAttribute('lang', this.language);
