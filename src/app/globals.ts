@@ -65,7 +65,7 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 export const config = {
     "federationInstanceId": "staging",
     "platformName": "Development",
-    "platformNameInMail":"NIMBLE",
+    "platformNameInMail":"HarWasting",
     "envName": "dev",
     "addCartBehaviour": "single",
     "catalogExchangeEnabled": false,
@@ -115,7 +115,7 @@ export const config = {
     "enableSubscriptions": false,
     "enableTenderAndBidManagementToolIntegration": false,
     "enableTermsAndConditionsAsFile": false,
-    "faviconPath": "./assets/favicon.ico",
+    "faviconPath": "./assets/harwasting_logo.png",
     "frameContractTabEnabled": true,
     "fundingDisclaimer": {
         "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
