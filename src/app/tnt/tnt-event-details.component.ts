@@ -40,7 +40,7 @@ export class TnTEventDetailsComponent implements OnChanges {
     falsecode = '';
     gateInformation = [];
     bizLocationInformation = [];
-    dashboardURL = 'https://grafana5.ips.biba.uni-bremen.de/d-solo/FhrdyH2Wk/nimble-epcis-iot-testbed';
+    dashboardURL = '';
     dashboardQuery: string;
     selectedBizLocation = '';
 

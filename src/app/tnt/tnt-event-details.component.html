@@ -88,9 +88,7 @@
             <ngb-alert type="success" [dismissible]="false" *ngIf="bcIoTDataIntegrityValidated">
                 <i class="fas fa-check-circle pr-1"></i> <span [innerHTML]="'The Data Integrity with Original Data Source and BlockChain Verified' | translate"></span> <i class="fas fa-project-diagram pl-1"></i>
             </ngb-alert>
-            <div class="row mt-2" *ngIf="dashboardQuery.length">
-                <iframe [src]="dashboardQuery | safe" width="650" height="400" frameborder="0"></iframe>
-            </div>
+            <!-- Grafana sensor dashboard removed for HarWASTing (unused external NIMBLE/BIBA testbed) -->
             <div class="row mt-1" *ngIf="events.length > 1">
                 <ngb-alert type="info" [dismissible]="false">
                     <h5><span [innerHTML]="'Overview' | translate"></span></h5>

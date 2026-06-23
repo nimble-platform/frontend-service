@@ -64,8 +64,8 @@ export const smeClusterCreateOpportunityEndpoint = "https://www.smecluster.com/m
 
 export const config = {
     "federationInstanceId": "staging",
-    "platformName": "Development",
-    "platformNameInMail":"HarWasting",
+    "platformName": "HarWASTing",
+    "platformNameInMail":"HarWASTing",
     "envName": "dev",
     "addCartBehaviour": "single",
     "catalogExchangeEnabled": false,
@@ -107,7 +107,7 @@ export const config = {
     "demandsEnabled": false,
     "displayCategoryCounts":true,
     "displayProductIdInOverview": true,
-    "docLink": "https://www.nimble-project.org/docs/",
+    "docLink": "",
     "emptyImage": "../assets/empty_img.png",
     "enableActionButtonsForTermsAndConditions":false,
     "enableOtherFiltersSearch": false,
@@ -118,9 +118,9 @@ export const config = {
     "faviconPath": "./assets/harwasting_logo.png",
     "frameContractTabEnabled": true,
     "fundingDisclaimer": {
-        "de": "Dieses Projekt wurde mit Mitteln aus dem Forschungs- und Innovationsprogramm Horizont 2020 der Europäischen Union unter der Fördervereinbarung Nr. 723810 gefördert.",
-        "en": "This project has received funding from the European Union's Horizon 2020 research and innovation programme under grant agreement No 723810",
-        "es": "Este proyecto ha recibido financiación del programa de investigación e innovación Horizon 2020 de la Unión Europea en virtud del acuerdo de subvención no 723810",
+        "de": "HarWASTing is funded by the European Union under the Grant Agreement No. 101181393.",
+        "en": "HarWASTing is funded by the European Union under the Grant Agreement No. 101181393.",
+        "es": "HarWASTing is funded by the European Union under the Grant Agreement No. 101181393.",
     },
     "hideContactInformationInCompanyDetails": false,
     "hideLogAnalytics": false,
@@ -128,8 +128,8 @@ export const config = {
     "hideTradeDetailsTab": false,
     "hideVisitStats": false,
     "imprint": {
-        "en": "<u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
-        "es": "<u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
+        "en": "<u>Platform Operator</u><br/><b>SRDC - Software Research & Development Consultancy</b>, Ankara, Türkiye<br/>This platform has been updated for the <b>HarWASTing</b> project (EU Horizon Europe, Grant Agreement No. 101181393).<br/><br/><u>Platform Owner & Provider</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salzburg, Austria<br/>Phone: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>E-Mail: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Managing Director: Siegfried Reich<br/>Registry Number: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Content Officer: Siegfried Reich<br/>Owner: State of Salzburg (100%)",
+        "es": "<u>Platform Operator</u><br/><b>SRDC - Software Research & Development Consultancy</b>, Ankara, Türkiye<br/>This platform has been updated for the <b>HarWASTing</b> project (EU Horizon Europe, Grant Agreement No. 101181393).<br/><br/><u>Propietario de Plataforma y Proveedor</u><br/><b>Salzburg Research Forschungsgesellschaft m.b.H.</b><br/>Jakob Haringer Straße 5/3<br/>5020 Salsburgo, Austria<br/>Teléfono: +43.662.2288.200<br/>Fax: +43.662.2288.222<br/>Correo electrónico: <a href='mailto:info@salzburgresearch.at'>info@salzburgresearch.at</a><br/>Internet: <a href='https://www.salzburgresearch.at' target='_blank'>www.salzburgresearch.at</a><br/>Director Gerente: Siegfried Reich<br/>Numero de Registro: LG Salzburg (FN 149016 t)<br/>UID: ATU 41145408<br/>Oficial de Contenido: Siegfried Reich<br/>Propietario: State of Salzburg (100%)"
     },
     "invitationToPlatformEnabled": false,
     "kibanaConfig": {
@@ -278,10 +278,10 @@ export const config = {
         "purchaser",
         "sales_officer"
     ],
-    "supportMail": "nimble-support@salzburgresearch.at",
+    "supportMail": "okan@srdc.com.tr",
     "supportMailContent": {
-        "en": "Dear NIMBLE support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
-        "es": "Equipo de soporte NIMBLE,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
+        "en": "Dear HarWASTing support team,\n\n\nI have encountered an issue.\n\nDescription of the issue:\n[Please insert a detailed description of the issue here. Add some screenshots as an attachment if they are of use.]",
+        "es": "Equipo de soporte HarWASTing,\n\n\nHe detectado una incidencia.\n\nDescripción:\n[Por favor indique a continuación los detalles de la incidencia. Si es posible incluya alguna captura de pantalla si puede ser de utilidad.]"
     },
     "showLoginFederation": false,
     "unshippedOrdersTabEnabled": true,
