@@ -176,7 +176,7 @@ export class BulkPublishComponent implements OnInit, OnChanges, OnDestroy {
 
     checkMode(mode: string) {
         if (mode == "replace") {
-            alert("Beware: All previously published items having the same categories specified in the template are deleted and only the new ones are added to the catalogue in replace mode!");
+            alert(this.translate.instant("Beware: All previously published items having the same categories specified in the template are deleted and only the new ones are added to the catalogue in replace mode!"));
         }
     }
 

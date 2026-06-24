@@ -1,0 +1,121 @@
+<!-- Dashboard Welcome Redesign — Hybrid project hero + live KPIs -->
+<div class="hw-welcome">
+
+    <!-- (1) Brand hero -->
+    <div class="hw-hero">
+        <div class="hw-hero-brand">
+            <img [src]="config.logoPath" class="hw-hero-logo" alt="HarWASTing">
+            <div>
+                <div class="hw-hero-title">{{ config.platformName }}</div>
+                <div class="hw-hero-tagline" [innerHTML]="'Building a Circular Future through Waste' | translate"></div>
+            </div>
+        </div>
+        <div class="hw-hero-eu">
+            <img src="../../assets/images/eu_flag.png" class="hw-eu-flag" alt="European Union">
+            <div class="hw-eu-text">
+                <span [innerHTML]="'Funded by the European Union' | translate"></span><br>
+                <span class="hw-eu-ga">Grant Agreement No. 101181393</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- (3) Platform tools -->
+    <div class="hw-section-title" [innerHTML]="'Platform tools' | translate"></div>
+    <div class="row hw-tools">
+        <div class="col-lg-4 col-md-4 col-12" *ngFor="let t of tools">
+            <div class="hw-tool-card"
+                 [class.hw-tool-active]="t.status === 'active'"
+                 [class.hw-tool-soon]="t.status === 'soon'"
+                 (click)="onToolClick(t)">
+                <i class="fa {{t.icon}} hw-tool-icon" aria-hidden="true"></i>
+                <div class="hw-tool-title">
+                    {{ t.title }}
+                    <span *ngIf="t.status === 'active'" class="badge badge-success hw-pill"
+                          [innerHTML]="'you are here' | translate"></span>
+                    <span *ngIf="t.status === 'soon'" class="badge badge-secondary hw-pill"
+                          [innerHTML]="'coming soon' | translate"></span>
+                </div>
+                <div class="hw-tool-desc" [innerHTML]="t.desc | translate"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- (4) Live KPI row -->
+    <div class="hw-section-title" [innerHTML]="'Your activity at a glance' | translate"></div>
+    <div class="row hw-kpis">
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="hw-kpi-card">
+                <div class="hw-kpi-top"><i class="fa fa-industry" aria-hidden="true"></i>
+                    <span class="hw-kpi-label" [innerHTML]="'Active companies' | translate"></span></div>
+                <div class="hw-kpi-value">{{ activeCompanies }}<span *ngIf="totalCompanies" class="hw-kpi-sub"> / {{ totalCompanies }}</span></div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="hw-kpi-card">
+                <div class="hw-kpi-top"><i class="fa fa-handshake" aria-hidden="true"></i>
+                    <span class="hw-kpi-label" [innerHTML]="'Negotiation success' | translate"></span></div>
+                <div class="hw-kpi-value hw-kpi-green">{{ successRate }}</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="hw-kpi-card">
+                <div class="hw-kpi-top"><i class="fa fa-clock" aria-hidden="true"></i>
+                    <span class="hw-kpi-label" [innerHTML]="'Avg deal cycle' | translate"></span></div>
+                <div class="hw-kpi-value">{{ dealCycle }}</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="hw-kpi-card">
+                <div class="hw-kpi-top"><i class="fa fa-bell" aria-hidden="true"></i>
+                    <span class="hw-kpi-label" [innerHTML]="'Unread alerts' | translate"></span></div>
+                <div class="hw-kpi-value" [class.hw-kpi-alert]="unreadAlerts !== '0' && unreadAlerts !== '—'">{{ unreadAlerts }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- (5) Process mix + recent activity -->
+    <div class="row">
+        <div class="col-lg-6 col-12">
+            <div class="hw-panel">
+                <div class="hw-panel-title" [innerHTML]="'Process mix' | translate"></div>
+                <div *ngIf="processTotal > 0" class="hw-chart-wrap">
+                    <ngx-charts-pie-chart [view]="[260, 220]"
+                                          [results]="processTypePieData"
+                                          [customColors]="processTypeCustomColors"
+                                          [gradient]="false"
+                                          [legend]="false"
+                                          [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                    <div class="hw-legend">
+                        <span *ngFor="let p of processTypePieData" class="badge badge-pill mr-2 mb-1"
+                              [ngStyle]="{'background': getColorForProcessType(p.name), 'color': '#fff'}">
+                            {{ p.value }} {{ p.name }}</span>
+                    </div>
+                </div>
+                <div *ngIf="processTotal === 0" class="hw-empty">
+                    <i class="fa fa-chart-pie" aria-hidden="true"></i>
+                    <span [innerHTML]="'No process activity yet' | translate"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12">
+            <div class="hw-panel">
+                <div class="hw-panel-title" [innerHTML]="'Recent activity' | translate"></div>
+                <div *ngIf="recentActivity.length > 0">
+                    <div class="hw-activity-row" *ngFor="let n of recentActivity" (click)="onActivityClick(n)">
+                        <i class="fa {{activityIcon(n)}}" [ngStyle]="{'color': activityColor(n)}" aria-hidden="true"></i>
+                        <div class="hw-activity-body">
+                            <div class="hw-activity-title">{{ n.title }}</div>
+                            <div class="hw-activity-time">{{ timeAgo(n.createdAt) }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activityLoaded && recentActivity.length === 0" class="hw-empty">
+                    <i class="fa fa-bell-slash" aria-hidden="true"></i>
+                    <span [innerHTML]="'No recent activity' | translate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -14,13 +14,13 @@
 
 <div class="row">
     <div [class]="labelClass">
-        <input-label [label]="'Country'">
+        <input-label [label]="'Country' | translate">
         </input-label>
     </div>
     <div [class]="valueClass">
         <input type="text" class="form-control" [(ngModel)]="countryName" [disableControl]="readonly"
                [required]="required" [formControl]="control" [ngbTypeahead]="getSuggestions"
-               [ngbTooltip]="getValidationErrorMessage(control)" [placement]="'auto'" placeholder="e.g. United States">
+               [ngbTooltip]="getValidationErrorMessage(control)" [placement]="'auto'" [placeholder]="'e.g. United States' | translate">
     </div>
 </div>
 

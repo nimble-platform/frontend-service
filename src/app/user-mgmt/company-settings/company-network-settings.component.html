@@ -22,8 +22,8 @@
 </div>
 
 <!-- Network Groups -->
-<h4 *ngIf="(networkGroups && networkGroups.length > 0) || (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'Your Network Groups'"></h4>
-<h6 *ngIf="(!networkGroups || networkGroups.length == 0) && (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'No network groups defined.'"></h6>
+<h4 *ngIf="(networkGroups && networkGroups.length > 0) || (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'Your Network Groups' | translate"></h4>
+<h6 *ngIf="(!networkGroups || networkGroups.length == 0) && (settings.negotiationSettings.company.network && settings.negotiationSettings.company.network.length > 0)" class="space-before" [innerHTML]="'No network groups defined.' | translate"></h6>
 <div *ngFor="let network of networkGroups;trackBy:trackByFn; let i = index" class="space-before">
     <!-- Network ID as a button to show network details -->
     <button [ngClass]="'btn btn-primary btn-outline-primary small-button'" (click)="showNetwork[i]=!showNetwork[i]">

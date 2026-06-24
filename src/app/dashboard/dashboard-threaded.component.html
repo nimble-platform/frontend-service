@@ -45,7 +45,7 @@
                     <li class="nav-item " [ngClass]="{'welcome-tab' : !config.permanentWelcomeTab}">
                         <a href id="WELCOME" [ngClass]="{'nav-link': true, active: selectedTab === TABS.WELCOME}" (click)="onChangeTab($event,'WELCOME')">
                             <span [innerHTML]="'Welcome' | translate"></span>
-                            <button *ngIf="!config.permanentWelcomeTab" type="button" class="close space-left" aria-label="Close" (click)="onCloseWelcomeTab($event)">
+                            <button *ngIf="!config.permanentWelcomeTab" type="button" class="close space-left" [attr.aria-label]="'Close' | translate" (click)="onCloseWelcomeTab($event)">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </a>

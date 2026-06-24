@@ -23,21 +23,21 @@
             <div *ngFor="let goodsItem of request.consignment[0].consolidatedShipment[0].goodsItem">
 
                 <!-- Goods Item -->
-                <text-input label="Goods Item" definition="The goods item included in this shipment" [rows]="1" [presentationMode]="'view'" [(text)]="goodsItem.item.name[0].value" [disabled]="true" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
+                <text-input [label]="'Goods Item' | translate" [definition]="'The goods item included in this shipment' | translate" [rows]="1" [presentationMode]="'view'" [(text)]="goodsItem.item.name[0].value" [disabled]="true" labelClass="col-2" valueClass="col-10" rowClass="space-before" [required]="true">
                 </text-input>
 
                 <!-- Quantity -->
-                <quantity-input label="Quantity" definition="The quantity to transport." [quantity]="goodsItem.quantity" [disabled]="true" [presentationMode]="'view'" rowClass="space-before" labelClass="col-2"
+                <quantity-input [label]="'Quantity' | translate" [definition]="'The quantity to transport.' | translate" [quantity]="goodsItem.quantity" [disabled]="true" [presentationMode]="'view'" rowClass="space-before" labelClass="col-2"
                                 valueQuantityClass="col-10" [required]="true">
                 </quantity-input>
 
                 <!-- Gross Volume -->
-                <quantity-input label="Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="goodsItem.grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2"
+                <quantity-input [label]="'Gross Volume' | translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L' | translate" [quantity]="goodsItem.grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2"
                                 valueQuantityClass="col-10" presentationMode="view">
                 </quantity-input>
 
                 <!-- Gross Weight -->
-                <quantity-input label="Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="goodsItem.grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2"
+                <quantity-input [label]="'Gross Weight' | translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg' | translate" [quantity]="goodsItem.grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2"
                                 valueQuantityClass="col-10" presentationMode="view">
                 </quantity-input>
 
@@ -45,17 +45,17 @@
             </div>
 
             <!-- Gross Volume -->
-            <quantity-input label="Total Gross Volume" definition="The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L" [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2"
+            <quantity-input [label]="'Total Gross Volume' | translate" [definition]="'The total volume of the goods in this shipment, including packaging, e.g.: Quantity: 78, Unit: L' | translate" [quantity]="request.consignment[0].grossVolumeMeasure" quantityType="volume_quantity" rowClass="space-before" labelClass="col-2"
                             valueQuantityClass="col-10" presentationMode="view">
             </quantity-input>
 
             <!-- Gross Weight -->
-            <quantity-input label="Total Gross Weight" definition="The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg" [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2"
+            <quantity-input [label]="'Total Gross Weight' | translate" [definition]="'The total gross weight of a shipment; the weight of the goods plus packaging plus transport equipment,e.g. Quantity: 12, Unit: kg' | translate" [quantity]="request.consignment[0].grossWeightMeasure" quantityType="weight_quantity" rowClass="space-before" labelClass="col-2"
                             valueQuantityClass="col-10" presentationMode="view">
             </quantity-input>
 
             <!-- Handling Instructions -->
-            <text-input label="Handling Instructions" definition="The handling required for this shipment" [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <text-input [label]="'Handling Instructions' | translate" [definition]="'The handling required for this shipment' | translate" [(text)]="request.consignment[0].consolidatedShipment[0].handlingInstructions" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </text-input>
         </div>
     </div>
@@ -65,11 +65,11 @@
         <div class="col-12">
             <h3><span [innerHTML]="'Pick-up Dates' | translate"></span></h3>
             <!-- Service Start Date -->
-            <date-input label="Pick-Up Date" definition="The period within which the services referred to in the Transport Execution Plan Request must begin." [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <date-input [label]="'Pick-Up Date' | translate" [definition]="'The period within which the services referred to in the Transport Execution Plan Request must begin.' | translate" [(date)]="request.serviceStartTimePeriod.startDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </date-input>
 
             <!-- Service End Date -->
-            <date-input label="Drop-Off Date" definition="The period during which the services referred to in the Transport Execution Plan Request must be completed." [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
+            <date-input [label]="'Drop-Off Date' | translate" [definition]="'The period during which the services referred to in the Transport Execution Plan Request must be completed.' | translate" [(date)]="request.serviceStartTimePeriod.endDate" rowClass="space-before" labelClass="col-2" valueClass="col-10" presentationMode="view">
             </date-input>
         </div>
     </div>

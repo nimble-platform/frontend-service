@@ -257,7 +257,7 @@
     <ng-template #addInvoiceModal let-d="dismiss">
         <div class="modal-header">
             <h5 class="modal-title"><span [innerHTML]="'Enter the identifier of invoice generated for this payment, if any' | translate"></span></h5>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

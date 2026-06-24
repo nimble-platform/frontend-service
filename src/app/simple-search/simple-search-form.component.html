@@ -97,7 +97,7 @@
             <div class="row">
                 <div *ngIf="pageRef === 'catalogue'" class="offset-4 col-6 d-flex align-items-center flex-wrap">
                     <small *ngIf="whiteBlackListService.getSelectedCompanies().length > 0"
-                           class="text-muted mr-2 mb-2"><b>Selected:</b></small>
+                           class="text-muted mr-2 mb-2"><b>{{ 'Selected:' | translate }}</b></small>
                     <span *ngFor="let selectedCompany of whiteBlackListService.getSelectedCompanies()">
                         <span class="badge badge-primary mr-1 mb-2 pointer"
                               style="font-size:0.85em;padding:5px 8px;"
@@ -550,7 +550,7 @@
                                                     <input class="form-control form-control-sm"
                                                            [(ngModel)]="facet.selectedMin"
                                                            [ngModelOptions]="{standalone: true}" type="number"
-                                                           [placeholder]="facet.numericMin != null ? facet.numericMin : 'Min'">
+                                                           [placeholder]="facet.numericMin != null ? facet.numericMin : ('Min' | translate)">
                                                 </div>
                                                 <div class="col-1">
                                                     -
@@ -559,7 +559,7 @@
                                                     <input class="form-control form-control-sm"
                                                            [(ngModel)]="facet.selectedMax"
                                                            [ngModelOptions]="{standalone: true}" type="number"
-                                                           [placeholder]="facet.numericMax != null ? facet.numericMax : 'Max'">
+                                                           [placeholder]="facet.numericMax != null ? facet.numericMax : ('Max' | translate)">
                                                 </div>
                                                 <div class="col-3 my-auto small text-muted">
                                                     {{ facet.selectedUnit }}
@@ -814,7 +814,7 @@
                                                         <input class="form-control form-control-sm"
                                                                [(ngModel)]="facet.selectedMin"
                                                                [ngModelOptions]="{standalone: true}" type="number"
-                                                               [placeholder]="facet.numericMin != null ? facet.numericMin : 'Min'">
+                                                               [placeholder]="facet.numericMin != null ? facet.numericMin : ('Min' | translate)">
                                                     </div>
                                                     <div class="col-1">
                                                         -
@@ -823,7 +823,7 @@
                                                         <input class="form-control form-control-sm"
                                                                [(ngModel)]="facet.selectedMax"
                                                                [ngModelOptions]="{standalone: true}" type="number"
-                                                               [placeholder]="facet.numericMax != null ? facet.numericMax : 'Max'">
+                                                               [placeholder]="facet.numericMax != null ? facet.numericMax : ('Max' | translate)">
                                                     </div>
                                                     <div class="col-3 my-auto small text-muted">
                                                         {{ facet.selectedUnit }}
@@ -1271,7 +1271,7 @@
                                     <a href="#" class="small text-primary"
                                        (click)="toggleScorecard(result.id, $event)">
                                         <i class="fa" [ngClass]="isScorecardExpanded(result.id) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                                        {{isScorecardExpanded(result.id) ? 'Hide' : 'View'}} Supplier Scorecard
+                                        {{(isScorecardExpanded(result.id) ? 'Hide' : 'View') | translate}} {{ 'Supplier Scorecard' | translate }}
                                     </a>
                                 </div>
                                 <supplier-scorecard *ngIf="isScorecardExpanded(result.id)"
@@ -1306,7 +1306,7 @@
 <ng-template #tooltip let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

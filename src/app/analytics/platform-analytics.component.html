@@ -104,27 +104,27 @@
                         <b>{{activeCompanyCount}}</b>
                         <small class="text-muted"> / {{registered_company_count >= 0 ? registered_company_count : '?'}}</small>
                     </h4>
-                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Active Companies</h6>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem"><span [innerHTML]="'Active Companies' | translate"></span></h6>
                     <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-industry" style="color:var(--primary-color)"></i></p>
-                    <small class="text-muted">with published products</small>
+                    <small class="text-muted"><span [innerHTML]="'with published products' | translate"></span></small>
                 </div>
             </div>
             <!-- Avg Products/Company -->
             <div class="card col-2 mx-2">
                 <div class="card-body text-center p-3">
                     <h4 class="card-title mb-1"><b>{{avgProductsPerCompany}}</b></h4>
-                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Avg. Products / Company</h6>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem"><span [innerHTML]="'Avg. Products / Company' | translate"></span></h6>
                     <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-boxes" style="color:var(--primary-color)"></i></p>
-                    <small class="text-muted">catalogue coverage</small>
+                    <small class="text-muted"><span [innerHTML]="'catalogue coverage' | translate"></span></small>
                 </div>
             </div>
             <!-- Negotiation Success Rate -->
             <div class="card col-2 mx-2">
                 <div class="card-body text-center p-3">
                     <h4 class="card-title mb-1"><b>{{negotiationSuccessRate}}</b></h4>
-                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Negotiation Success Rate</h6>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem"><span [innerHTML]="'Negotiation Success Rate' | translate"></span></h6>
                     <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-handshake" style="color:var(--primary-color)"></i></p>
-                    <small class="text-muted">approved negotiations</small>
+                    <small class="text-muted"><span [innerHTML]="'approved negotiations' | translate"></span></small>
                 </div>
             </div>
             <!-- Recent Activity -->
@@ -134,9 +134,9 @@
                         <b *ngIf="recentActivity30 >= 0">{{recentActivity30}}</b>
                         <b *ngIf="recentActivity30 < 0">…</b>
                     </h4>
-                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem">Last 30 Days Activity</h6>
+                    <h6 class="card-subtitle mb-2 text-muted" style="font-size:0.75rem"><span [innerHTML]="'Last 30 Days Activity' | translate"></span></h6>
                     <p class="card-text mb-0" style="font-size:24px"><i class="fa fa-chart-line" style="color:var(--primary-color)"></i></p>
-                    <small class="text-muted">new negotiations</small>
+                    <small class="text-muted"><span [innerHTML]="'new negotiations' | translate"></span></small>
                 </div>
             </div>
         </div>
@@ -167,9 +167,9 @@
                         [doughnut]="true">
                     </ngx-charts-pie-chart>
                     <div class="text-center mt-1">
-                        <span *ngIf="green > 0" class="badge badge-pill mr-2" style="background:#2e7d32;color:#fff">{{green}} Approved</span>
-                        <span *ngIf="yellow > 0" class="badge badge-pill mr-2" style="background:#f9a825;color:#fff">{{yellow}} Waiting</span>
-                        <span *ngIf="red > 0" class="badge badge-pill" style="background:#c62828;color:#fff">{{red}} Rejected</span>
+                        <span *ngIf="green > 0" class="badge badge-pill mr-2" style="background:#2e7d32;color:#fff">{{green}} <span [innerHTML]="'Approved' | translate"></span></span>
+                        <span *ngIf="yellow > 0" class="badge badge-pill mr-2" style="background:#f9a825;color:#fff">{{yellow}} <span [innerHTML]="'Waiting' | translate"></span></span>
+                        <span *ngIf="red > 0" class="badge badge-pill" style="background:#c62828;color:#fff">{{red}} <span [innerHTML]="'Rejected' | translate"></span></span>
                     </div>
                 </div>
             </div>
@@ -204,8 +204,8 @@
                 </div>
                 <div *ngIf="trade_count===0" class="text-center text-muted">
                     <i class="fa fa-chart-bar fa-3x mb-2" style="color:#d0d0d0"></i>
-                    <p class="mb-0">No completed transactions yet.</p>
-                    <small>Trading volume will appear here once negotiations are finalized.</small>
+                    <p class="mb-0"><span [innerHTML]="'No completed transactions yet.' | translate"></span></p>
+                    <small><span [innerHTML]="'Trading volume will appear here once negotiations are finalized.' | translate"></span></small>
                 </div>
             </div>
         </div>
@@ -331,7 +331,7 @@
         <!-- Country Distribution -->
         <div *ngIf="loadedCountry" class="row justify-content-center space-before" style="overflow-x:hidden">
             <div class="col-12 text-center mb-2">
-                <h5>Company Distribution by Country</h5>
+                <h5><span [innerHTML]="'Company Distribution by Country' | translate"></span></h5>
             </div>
             <div class="col-12 d-flex justify-content-center">
                 <ngx-charts-bar-horizontal
@@ -342,7 +342,7 @@
                     [yAxis]="true"
                     [legend]="false"
                     [showXAxisLabel]="true"
-                    [xAxisLabel]="'Number of Companies'"
+                    [xAxisLabel]="'Number of Companies' | translate"
                     [showDataLabel]="true">
                 </ngx-charts-bar-horizontal>
             </div>
@@ -352,7 +352,7 @@
         <!-- Category Distribution -->
         <div *ngIf="loadedCategory" class="row justify-content-center space-before" style="overflow-x:hidden">
             <div class="col-12 text-center mb-2">
-                <h5>Product Distribution by Category</h5>
+                <h5><span [innerHTML]="'Product Distribution by Category' | translate"></span></h5>
             </div>
             <div class="col-12 d-flex justify-content-center">
                 <ngx-charts-bar-horizontal
@@ -363,7 +363,7 @@
                     [yAxis]="true"
                     [legend]="false"
                     [showXAxisLabel]="true"
-                    [xAxisLabel]="'Number of Products'"
+                    [xAxisLabel]="'Number of Products' | translate"
                     [showDataLabel]="true">
                 </ngx-charts-bar-horizontal>
             </div>
@@ -373,7 +373,7 @@
         <!-- Top Active Companies -->
         <div *ngIf="loadedTopCompanies && topCompaniesData.length > 0" class="row justify-content-center space-before" style="overflow-x:hidden">
             <div class="col-12 text-center mb-2">
-                <h5>Most Active Companies</h5>
+                <h5><span [innerHTML]="'Most Active Companies' | translate"></span></h5>
             </div>
             <div class="col-12 d-flex justify-content-center">
                 <ngx-charts-bar-horizontal
@@ -384,7 +384,7 @@
                     [yAxis]="true"
                     [legend]="false"
                     [showXAxisLabel]="true"
-                    [xAxisLabel]="'Business Processes'"
+                    [xAxisLabel]="'Business Processes' | translate"
                     [showDataLabel]="true">
                 </ngx-charts-bar-horizontal>
             </div>
@@ -403,7 +403,7 @@
 <ng-template #tooltip let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

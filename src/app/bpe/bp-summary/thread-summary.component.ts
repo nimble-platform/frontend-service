@@ -872,6 +872,6 @@ export class ThreadSummaryComponent implements OnInit, OnDestroy {
     }
 
     alertWait() {
-        alert('Waiting for trading partner... try again later.');
+        alert(this.translate.instant('Waiting for trading partner... try again later.'));
     }
 }

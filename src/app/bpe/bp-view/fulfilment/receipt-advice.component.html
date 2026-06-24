@@ -28,7 +28,7 @@
     <div class="content-row bg-light">
         <div class="row">
             <div class="col-12">
-                <h5><span>Dispatched &amp; Received Quantities</span></h5>
+                <h5><span [innerHTML]="'Dispatched & Received Quantities' | translate"></span></h5>
             </div>
         </div>
         <!-- HCDP-05-02 F1+F2 — per-line layout: Item | Delivered | Accepted | Rejected | Issue Category + Reject Reason -->
@@ -44,14 +44,14 @@
                 <div class="col-3">
                     <!-- HCDP-05-02 F2 — Accepted Quantity (UI helper; rejected derived) -->
                     <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-                        label="Accepted" [quantity]="acceptedQuantities[i]"
+                        [label]="'Accepted' | translate" [quantity]="acceptedQuantities[i]"
                         (onQuantityValueChange)="onAcceptedChange(i)">
                     </quantity-input>
                 </div>
                 <div class="col-3">
                     <!-- Rejected Quantity (canonical UBL field) -->
                     <quantity-input [disabled]="isLoading() || isReadOnly()" [disableQuantityUnit]="true"
-                        label="Rejected" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity"
+                        [label]="'Rejected' | translate" [quantity]="receiptAdvice.receiptLine[i].rejectedQuantity"
                         (onQuantityValueChange)="onRejectedChange(i)">
                     </quantity-input>
                 </div>
@@ -73,7 +73,7 @@
                     </select>
                 </div>
                 <div class="col-8">
-                    <text-input label="Reject Reason" [disabled]="isLoading() || isReadOnly()"
+                    <text-input [label]="'Reject Reason' | translate" [disabled]="isLoading() || isReadOnly()"
                         [(text)]="receiptAdvice.receiptLine[i].rejectReason[0]" rows="2">
                     </text-input>
                 </div>

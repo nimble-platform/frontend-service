@@ -201,8 +201,9 @@ export class CompanyRegistrationComponent implements OnInit {
                     this.vatValidated = true;
                     this.onAddressMapSizeChanged();
                 } else {
+                    let translate = this.translate;
                     setTimeout(function() {
-                        alert("The VAT is invalid.");
+                        alert(translate.instant("The VAT is invalid."));
                     }, 50);
                 }
             })
@@ -298,7 +299,7 @@ export class CompanyRegistrationComponent implements OnInit {
                         .catch(error => {
                             //this.submitCallStatus.error("Error while submitting company", error);
                             this.submitCallStatus.callback("Registration submitted", true);
-                            alert("Your registration was successful but an error occurred while uploading your logo.\nYou will now get redirected to your 'Company Settings' page.\nPlease retry uploading your logo in the 'Company Details' tab there later.");
+                            alert(this.translate.instant("Your registration was successful but an error occurred while uploading your logo.\nYou will now get redirected to your 'Company Settings' page.\nPlease retry uploading your logo in the 'Company Details' tab there later."));
                             this.appComponent.checkLogin("/user-mgmt/company-settings");
                         });
                 } else {
@@ -330,9 +331,9 @@ export class CompanyRegistrationComponent implements OnInit {
                     });
 
                     if (filesize > 2) {
-                        alert("Maximum allowed filesize: 2 MB");
+                        alert(this.translate.instant("Maximum allowed filesize: 2 MB"));
                     } else if (!isAllowedExtension) {
-                        alert("Supported file extensions: " + ALLOWED_EXTENSIONS.join());
+                        alert(this.translate.instant("Supported file extensions:") + " " + ALLOWED_EXTENSIONS.join());
                     }
                 }
             }

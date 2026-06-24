@@ -97,7 +97,7 @@
                     </div>
                     <div class="pl-0 col-9">
                         <div class="thead-light-equivalent">
-                            <button *ngIf="categories" class="btn btn-secondary float-right my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()">Back to Search Results</button>
+                            <button *ngIf="categories" class="btn btn-secondary float-right my-2 mr-1" (click)="toggleTreeView()" [disabled]="getCategoryDetailsStatus.isDisplayed()"><span [innerHTML]="'Back to Search Results' | translate"></span></button>
                         </div>
                     </div>
                 </div>

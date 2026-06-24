@@ -67,6 +67,7 @@ import 'rxjs/add/operator/takeUntil';
 import {NonPublicInformation} from '../model/publish/non-public-information';
 import {MultiTypeValue} from '../model/publish/multi-type-value';
 import {NonPublicInformationUi} from '../model/publish/non-public-information-ui';
+import {TranslateService} from '@ngx-translate/core';
 
 interface SelectedProperties {
     [key: string]: SelectedProperty;
@@ -180,6 +181,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
                 private cookieService: CookieService,
                 private unitService: UnitService,
                 private modalService: NgbModal,
+                private translate: TranslateService,
                 private appComponent: AppComponent) {
     }
 
@@ -459,7 +461,7 @@ export class SinglePublishComponent implements OnInit , OnDestroy{
 
         if (this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value != null) {
             if (!isValidPrice(this.catalogueLine.requiredItemLocationQuantity.price.priceAmount.value)) {
-                alert("Price cannot have more than 2 decimal places");
+                alert(this.translate.instant("Price cannot have more than 2 decimal places"));
                 return false;
             }
         }

@@ -29,7 +29,7 @@
     <div class="col-12">
         <div *ngIf="!alertClosed" class="alert alert-danger" role="alert">
             <span [innerHTML]="'To be able to update the workflow, all processes should be finished.' | translate"></span>
-            <button type="button" class="close" aria-label="Close" (click)="alertClosed = true">
+            <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="alertClosed = true">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -188,19 +188,19 @@
 
             <!-- machine description -->
             <div class="col-3">
-                <text-input label="machine" [(text)]="negotiationSettings.sensors[i].machine" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+                <text-input [label]="'machine' | translate" [(text)]="negotiationSettings.sensors[i].machine" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
                 </text-input>
             </div>
 
             <!-- sensor description -->
             <div class="col-3">
-                <text-input label="sensor" [(text)]="negotiationSettings.sensors[i].sensor" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+                <text-input [label]="'sensor' | translate" [(text)]="negotiationSettings.sensors[i].sensor" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
                 </text-input>
             </div>
 
             <!-- data format -->
             <div class="col-3">
-                <text-input label="format" [(text)]="negotiationSettings.sensors[i].format" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
+                <text-input [label]="'format' | translate" [(text)]="negotiationSettings.sensors[i].format" [disabled]="true" labelClass="col-4" valueClass="col-8" [rows]="1" [required]="true">
                 </text-input>
             </div>
 
@@ -219,19 +219,19 @@
 
                 <div class="col-3">
                     <!-- machine name-->
-                    <text-input label="machine" [(text)]="newSensor.machine" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+                    <text-input [label]="'machine' | translate" [(text)]="newSensor.machine" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
                     </text-input>
                 </div>
 
                 <div class="col-3">
                     <!-- sensor name -->
-                    <text-input label="sensor" [(text)]="newSensor.sensor" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+                    <text-input [label]="'sensor' | translate" [(text)]="newSensor.sensor" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
                     </text-input>
                 </div>
 
                 <div class="col-3">
                     <!-- data format -->
-                    <text-input label="format" [(text)]="newSensor.format" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
+                    <text-input [label]="'format' | translate" [(text)]="newSensor.format" labelClass="col-3" valueClass="col-8" [rows]="1" [required]="true">
                     </text-input>
                 </div>
 

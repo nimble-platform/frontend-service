@@ -31,7 +31,7 @@
                     <input [(ngModel)]="lcpaInputDetail.name.value" class="form-control" type="text" name="{{lcpaInputDetail.name.value}}" [disabled]="presentationMode === 'view'" />
                 </div>
             </div>
-            <options-input label="Data Type" [presentationMode]="presentationMode" [options]="valueQualifiers" [(selected)]="lcpaInputDetail.valueQualifier" rowClass="space-before">
+            <options-input [label]="'Data Type' | translate" [presentationMode]="presentationMode" [options]="valueQualifiers" [(selected)]="lcpaInputDetail.valueQualifier" rowClass="space-before">
             </options-input>
             <div class="row space-before">
                 <div class="offset-3 col-9">

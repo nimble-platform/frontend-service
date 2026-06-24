@@ -178,15 +178,16 @@ export class CompanyDetailsComponent implements OnInit {
         this.userService.validateVAT(this.details.details.vatNumber)
             .then(response => {
                 this.vatCallStatus.callback("VAT checked", true);
+                let translate = this.translate;
                 setTimeout(function() {
                     if (response.IsValid) {
                         if (response.BusinessName && response.BusinessName != "" && response.BusinessName != "---")
-                            alert("The VAT is valid and registered for " + response.BusinessName + ".");
+                            alert(translate.instant("The VAT is valid and registered for") + " " + response.BusinessName + ".");
                         else
-                            alert("The VAT is valid.");
+                            alert(translate.instant("The VAT is valid."));
                     }
                     else {
-                        alert("The VAT is invalid.");
+                        alert(translate.instant("The VAT is invalid."));
                     }
                 }, 50);
             })

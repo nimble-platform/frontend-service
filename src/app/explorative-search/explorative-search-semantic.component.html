@@ -34,7 +34,7 @@
 </ngb-alert>
 <ol class="breadcrumb">
     <li class="breadcrumb-item active" *ngFor="let concept of conceptPaths; let i=index;">
-        <button (click)="check(concept, i)" class="btn btn-link btn-sm" placement="bottom" ngbTooltip="Click to go back to {{concept.concept}}">{{concept.concept}}</button>
+        <button (click)="check(concept, i)" class="btn btn-link btn-sm" placement="bottom" [ngbTooltip]="('Click to go back to' | translate) + ' ' + concept.concept">{{concept.concept}}</button>
     </li>
 </ol>
 
@@ -288,7 +288,7 @@
             <div *ngIf="searchvalue.length" class="d-flex flex-row fixed p-2" [ngClass]="{'fixed-header': searchvalue.length}">
                 <h4 class="font-weight-bold mr-auto"><span [innerHTML]="'Values' | translate"></span></h4>
                 <div>
-                    <button class="btn btn-secondary float-right" placement="right" ngbTooltip="Add Property without Filter Values" (click)="noFilterSelected()" [disabled]="disableAddPropBtn || !disableManualFilters"><span [innerHTML]="'Select Property' | translate"></span></button>
+                    <button class="btn btn-secondary float-right" placement="right" [ngbTooltip]="'Add Property without Filter Values' | translate" (click)="noFilterSelected()" [disabled]="disableAddPropBtn || !disableManualFilters"><span [innerHTML]="'Select Property' | translate"></span></button>
                 </div>
             </div>
             <div class="p-2 mt-2" style="overflow-y: scroll; height: 30vh; overflow-x: hidden" *ngIf="searchvalue.length">
@@ -305,7 +305,7 @@
                 <div class="d-flex flex-row fixed p-2">
                     <h5><span [innerHTML]="'Manual Filter' | translate"></span></h5>
                     <div>
-                        <button class="btn btn-link btn-sm float-right" (click)="disableManualFilters = !disableManualFilters">{{disableManualFilters ? 'Activate' : 'Deactivate'}}
+                        <button class="btn btn-link btn-sm float-right" (click)="disableManualFilters = !disableManualFilters">{{(disableManualFilters ? 'Activate' : 'Deactivate') | translate}}
                         </button>
                     </div>
                 </div>

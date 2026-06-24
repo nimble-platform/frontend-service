@@ -30,6 +30,7 @@ import {
     getSocialMediaClass
 } from '../../common/utils';
 import {DEFAULT_LANGUAGE, LANGUAGES} from '../../catalogue/model/constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "company-description-settings",
@@ -64,6 +65,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
         private modalService: NgbModal,
         private _fb: FormBuilder,
         private cookieService: CookieService,
+        private translate: TranslateService,
         private userService: UserService) {
 
     }
@@ -192,7 +194,7 @@ export class CompanyDescriptionSettingsComponent implements OnInit {
                     model.patchValue({
                         file: null
                     });
-                    alert("Maximum allowed filesize: 2 MB");
+                    alert(this.translate.instant("Maximum allowed filesize: 2 MB"));
                 }
             }
         } else {

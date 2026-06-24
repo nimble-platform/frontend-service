@@ -43,6 +43,7 @@ import { Item } from "../../catalogue/model/publish/item";
 import { AppComponent } from '../../app.component';
 import { DocumentService } from "./document-service";
 import {BpActivityEvent} from '../../catalogue/model/publish/bp-start-event';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: "product-bp-options",
@@ -107,6 +108,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
         private renderer: Renderer2,
         private http: HttpClient,
         private modalService: NgbModal,
+        private translate: TranslateService,
         public appComponent: AppComponent) {
         this.renderer.setStyle(document.body, "background-image", "none");
     }
@@ -143,7 +145,7 @@ export class ProductBpOptionsComponent implements OnInit, OnDestroy {
                 //this.modalService.open(content, {})
             })
             .catch(e => {
-                alert("Error occurred while creating the channel. Please try again later")
+                alert(this.translate.instant("Error occurred while creating the channel. Please try again later"))
             })
     }
 

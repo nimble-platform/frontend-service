@@ -281,7 +281,7 @@ export class OrderComponent implements OnInit {
 
     onOrderUpdate() {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the order details of all products before sending your request!");
+            alert(this.translate.instant("Please, make sure that you view the order details of all products before sending your request!"));
             return;
         }
         this.submitCallStatus.submit();
@@ -303,7 +303,7 @@ export class OrderComponent implements OnInit {
 
     onRespondToOrder(accepted: boolean): void {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the order details of all products before sending your response!");
+            alert(this.translate.instant("Please, make sure that you view the order details of all products before sending your response!"));
             return;
         }
         this.submitCallStatus.submit();

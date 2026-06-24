@@ -73,7 +73,7 @@
     <form novalidate>
         <div class="modal-header">
             <h4 class="modal-title"><span [innerHTML]="'Add Terms and Conditions File' | translate"></span></h4>
-            <button (click)="d('')" aria-label="Close" class="close" type="button">
+            <button (click)="d('')" [attr.aria-label]="'Close' | translate" class="close" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

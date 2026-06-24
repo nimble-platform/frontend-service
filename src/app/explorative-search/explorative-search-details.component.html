@@ -20,7 +20,7 @@
         <div class="col-md-2"><i class="fa fa-6x fa-info-circle"></i></div>
         <div class="col-md-10">
             <p>
-                <strong>Let Us Help You</strong>
+                <strong><span [innerHTML]="'Let Us Help You' | translate"></span></strong>
             </p>
             <ul>
                 <li><span [innerHTML]="'exp-search-details-help-1' | translate"></span></li>
@@ -151,7 +151,7 @@
                             {{column}}
                         </th>
                         <th *ngIf="tableResult?.uuids.length">
-                            More
+                            <span [innerHTML]="'More' | translate"></span>
                         </th>
                     </tr>
                 </thead>

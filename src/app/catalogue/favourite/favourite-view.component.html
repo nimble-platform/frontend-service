@@ -30,7 +30,7 @@
             </label>
             <select class="custom-select col-3 space-right" [(ngModel)]="selectedCategory"
                     (change)="requestCatalogue()">
-                <option value="All">All</option>
+                <option value="All">{{ 'All' | translate }}</option>
                 <option *ngFor="let type of cat_levels[0]" [value]=type.id>{{type.preferredName}}</option>
             </select>
 

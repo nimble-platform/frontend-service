@@ -132,7 +132,7 @@
             <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
         </label>
         <div class="col-10">
-            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" placeholder="Select Business Type" readonly maxlength="255">
+            <input *ngIf="dataForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [placeholder]="'Select Business Type' | translate" readonly maxlength="255">
             <ng-container *ngIf="availableActivitySectorKeys.length>0 && !forceActText">
                 <div class="industry-sector-container">
                     <div *ngFor="let sectorKey of availableActivitySectorKeys" class="form-check industry-sector-item">
@@ -251,7 +251,7 @@
 <ng-template #changeModal let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Request Company Data Change' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -269,7 +269,7 @@
 <ng-template #deleteModal let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Request Company Deletion' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -291,7 +291,7 @@
 <ng-template #tooltip let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Tooltip' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

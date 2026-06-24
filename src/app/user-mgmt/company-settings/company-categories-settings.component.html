@@ -60,7 +60,7 @@
                 <th class="col-3"><span [innerHTML]="'Actions' | translate"></span></th>
             </tr>
             <tr *ngIf="recCats.length==0">
-                <td colspan="3">No recently used categories</td>
+                <td colspan="3" [innerHTML]="'No recently used categories'|translate"></td>
             </tr>
             <tr *ngFor="let recCat of recCats; let i = index">
                 <td>{{recCat.split("::")[2]}}</td>

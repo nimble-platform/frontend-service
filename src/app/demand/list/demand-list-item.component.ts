@@ -144,7 +144,7 @@ export class DemandListItemComponent {
                     this.onDemandDeleted.emit();
                     this.callStatus.callback(null, true);
                 }).catch(e => {
-                    this.callStatus.error('Failed to delete demand', e);
+                    this.callStatus.error(this.translateService.instant('Failed to delete demand'), e);
                 })
             }
         })
@@ -210,7 +210,7 @@ export class DemandListItemComponent {
                 this.supplierProducts = (res && res.catalogueLines) ? res.catalogueLines : [];
                 this.loadProductsCallStatus.callback(null, true);
             }).catch(e => {
-                this.loadProductsCallStatus.error('Failed to load products', e);
+                this.loadProductsCallStatus.error(this.translateService.instant('Failed to load products'), e);
             });
         }
     }

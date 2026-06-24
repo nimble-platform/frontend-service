@@ -92,7 +92,7 @@ export class FileInputComponent implements OnInit {
                 reader.readAsDataURL(file);
             }
             else {
-                alert("Maximum allowed filesize: " + this.maxSize + " MB");
+                alert(this.translate.instant("Maximum allowed filesize:") + " " + this.maxSize + " MB");
             }
         }
     }

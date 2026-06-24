@@ -56,7 +56,7 @@
                         <strong><span [innerHTML]="'Data Monitoring Service' | translate"></span>:</strong>
                     </div>
                     <div class="col-8">
-                        <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ dataMonitoringDemanded ? "Yes" : "No" }}</span>
+                        <span *ngIf="!fetchDataMonitoringStatus.isDisplayed()">{{ (dataMonitoringDemanded ? "Yes" : "No") | translate }}</span>
                         <call-status [callStatus]="fetchDataMonitoringStatus"></call-status>
                     </div>
                 </div>

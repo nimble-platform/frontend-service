@@ -19,15 +19,15 @@
     <form novalidate>
         <div class="modal-header">
             <h4 class="modal-title"><span [innerHTML]="'Business Processes by Company' | translate"></span></h4>
-            <button (click)="d('')" aria-label="Close" class="close" type="button">
+            <button (click)="d('')" [attr.aria-label]="'Close' | translate" class="close" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div *ngIf="platformCompanyProductCount && partyMap" class="modal-body">
             <div style="display: flex;justify-content: space-between">
-                <span [innerHTML]="'Filter on date'" style="align-self: center; font-weight: bold"></span>
+                <span [innerHTML]="'Filter on date' | translate" style="align-self: center; font-weight: bold"></span>
                 <date-input [(date)]="startDate"></date-input>
-                <span [innerHTML]="'between'" style="align-self: center"></span>
+                <span [innerHTML]="'between' | translate" style="align-self: center"></span>
                 <date-input [(date)]="endDate"></date-input>
             </div>
             <div class="d-flex justify-content-end space-before">

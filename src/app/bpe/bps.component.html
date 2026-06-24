@@ -15,21 +15,21 @@
  -->
 
 <div class="input-group form-group">
-    <button class="btn btn-outline-secondary" (click)="create();"><span class="fa fa-plus pr-1"></span> <span>Add New Business Process</span></button>
+    <button class="btn btn-outline-secondary" (click)="create();"><span class="fa fa-plus pr-1"></span> <span [innerHTML]="'Add New Business Process' | translate"></span></button>
 </div>
 <div class="input-group form-group">
     <table class="table table-striped">
         <tr>
             <th><span>Process ID</span></th>
-            <th><span>Process Name</span></th>
-            <th><span>Controls</span></th>
+            <th><span [innerHTML]="'Process Name' | translate"></span></th>
+            <th><span [innerHTML]="'Controls' | translate"></span></th>
         </tr>
         <tr *ngFor="let bp of bps">
             <th scope="row"><span>{{bp.processID}}</span></th>
             <td><span>{{bp.processName}}</span></td>
-            <td><button class="btn btn-outline-secondary" (click)="delete(bp); $event.stopPropagation()"><span class="fa fa-trash pr-1"></span> <span>Delete</span></button>
-                <button class="btn btn-outline-secondary" (click)="edit(bp)"><span class="fa fa-pencil pr-1"></span> <span>Edit</span></button>
-                <button class="btn btn-outline-secondary" (click)="configure(bp)"><span class="fa fa-plug pr-1"></span> <span>Configure</span></button></td>
+            <td><button class="btn btn-outline-secondary" (click)="delete(bp); $event.stopPropagation()"><span class="fa fa-trash pr-1"></span> <span [innerHTML]="'Delete' | translate"></span></button>
+                <button class="btn btn-outline-secondary" (click)="edit(bp)"><span class="fa fa-pencil pr-1"></span> <span [innerHTML]="'Edit' | translate"></span></button>
+                <button class="btn btn-outline-secondary" (click)="configure(bp)"><span class="fa fa-plug pr-1"></span> <span [innerHTML]="'Configure' | translate"></span></button></td>
         </tr>
     </table>
 </div>

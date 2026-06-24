@@ -204,7 +204,7 @@
                         </ng-container>
                     </datalist>
                     -->
-                    <input type="text" class="form-control" name="Country" [formControl]="countryFormControl" [ngbTypeahead]="getSuggestions" placeholder="e.g. United States"
+                    <input type="text" class="form-control" name="Country" [formControl]="countryFormControl" [ngbTypeahead]="getSuggestions" [placeholder]="'e.g. United States' | translate"
                            (selectItem)="onCountrySelected($event)">
                 </div>
             </div>

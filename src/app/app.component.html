@@ -275,7 +275,7 @@
 <ng-template #support let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title" [innerHTML]="'Help' | translate">Help</h4>
-        <button type="button" class="close" aria-label="Close" (click)="d('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

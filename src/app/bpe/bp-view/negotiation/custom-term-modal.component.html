@@ -17,7 +17,7 @@
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Add Custom Term' | translate"></span></h5>
-        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -39,7 +39,7 @@
                     <input [(ngModel)]="termDescription" class="form-control" type="text" />
                 </div>
             </div>
-            <options-input #dataTypeOption label="Data Type" [presentationMode]="'edit'" [options]="['TEXT', 'NUMBER', 'QUANTITY']" [selectedIndex]="0" (selectedOptionChange)="selectedDataType = $event" rowClass="space-before" large="true">
+            <options-input #dataTypeOption [label]="'Data Type' | translate" [presentationMode]="'edit'" [options]="['TEXT', 'NUMBER', 'QUANTITY']" [selectedIndex]="0" (selectedOptionChange)="selectedDataType = $event" rowClass="space-before" large="true">
             </options-input>
             <div class="row space-before">
                 <div class="col-3">

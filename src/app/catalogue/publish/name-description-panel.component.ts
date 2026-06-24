@@ -21,6 +21,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BinaryObject } from '../model/publish/binary-object';
 import * as myGlobals from '../../globals';
 import { EmptyFormBase } from '../../common/validation/empty-form-base';
+import { TranslateService } from '@ngx-translate/core';
 const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 @Component({
     selector: "name-description-panel",
@@ -29,7 +30,8 @@ const BASIC_PRODUCT_DETAILS = 'basic_product_details';
 })
 export class NameDescriptionPanelComponent extends EmptyFormBase implements OnInit {
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal,
+        private translate: TranslateService) {
         super(BASIC_PRODUCT_DETAILS);
     }
 
@@ -104,7 +106,7 @@ export class NameDescriptionPanelComponent extends EmptyFormBase implements OnIn
                     reader.readAsDataURL(file);
                 }
                 else {
-                    alert("Maximum allowed filesize: 5 MB");
+                    alert(this.translate.instant("Maximum allowed filesize:") + " 5 MB");
                 }
             }
         }

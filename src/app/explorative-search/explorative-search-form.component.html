@@ -77,7 +77,7 @@
             <div class="col-sm-2">
                 <label class="col-form-label-lg">
                     <b> <span [innerHTML]="'Results' | translate"></span> </b>
-                    <sup><i class="fas fa-question-circle" placement="top" ngbTooltip="Click Product For More Info."></i>
+                    <sup><i class="fas fa-question-circle" placement="top" [ngbTooltip]="'Click Product For More Info.' | translate"></i>
                     </sup>
                 </label>
             </div>
@@ -85,13 +85,13 @@
                 <!--<ul>-->
                 <div *ngFor="let eachOutput of Output; let outerIndex = index" style="margin-top: 5px; margin-bottom: 5px;">
                     <div [hidden]="showParticularKeyword[outerIndex]">
-                        <div class="btn-group" role="group" aria-label="available keywords" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
+                        <div class="btn-group" role="group" [attr.aria-label]="'available keywords' | translate" *ngFor="let each of eachOutput.resp.conceptOverview; let innerIndex = index">
                             <button type="button" class="btn btn-primary" *ngIf="innerIndex === 0 || showMore[outerIndex]" (click)="getQuery(each.url, each.translatedURL)">{{each.translatedURL}}
                             </button>
                         </div>
                         <div style="display: inline">
                             <button type="button" class="btn btn-link btn-sm" *ngIf="eachOutput.resp.conceptOverview.length > 1" (click)="showMore[outerIndex]=!showMore[outerIndex]">
-                                {{showMore[outerIndex] ? 'Hide': 'Show More'}} <span [innerHTML]="'Results' | translate"></span></button>
+                                {{(showMore[outerIndex] ? 'Hide': 'Show More') | translate}} <span [innerHTML]="'Results' | translate"></span></button>
                         </div>
                     </div>
                 </div>
@@ -106,13 +106,13 @@
             <div class="col-sm-2">
                 <label class="col-form-label-sm">
                     <b> <span [innerHTML]="'Search History' | translate"></span> </b>
-                    <sup><i class="fas fa-question-circle" placement="bottom" ngbTooltip="Hide/Remove Results"></i>
+                    <sup><i class="fas fa-question-circle" placement="bottom" [ngbTooltip]="'Hide/Remove Results' | translate"></i>
                     </sup>
                 </label>
             </div>
             <div class="col-sm-10 w-auto">
                 <div class="btn-group btn-group-toggle" *ngFor="let keyword of Output; let cbIndex = index" data-toggle="buttons">
-                    <label class="btn d-flex align-items-center btn-outline-dark px-3 mb-0 btn-sm" ngbButtonLabel placement="bottom" ngbTooltip="{{(kwCheck.checked) ? 'Show' : 'Hide'}} Results for {{keyword.kw}}">
+                    <label class="btn d-flex align-items-center btn-outline-dark px-3 mb-0 btn-sm" ngbButtonLabel placement="bottom" [ngbTooltip]="((kwCheck.checked ? 'Show' : 'Hide') | translate) + ' ' + ('Results for' | translate) + ' ' + keyword.kw">
                         <input type="checkbox" ngbButton #kwCheck (change)="kwCheck.checked; hideKW(cbIndex)" /> <span class="px-1 mb-0" style="font-size: small">{{keyword.kw}}</span>
                     </label>
                     <button class="btn btn-sm btn-danger" (click)="deleteKW(keyword.kw); $event.stopPropagation()" [disabled]=kwCheck.checked [hidden]="kwCheck.checked">
@@ -132,12 +132,12 @@
 <!-- Tabs for two distinct search options -->
 <div>
     <ngb-tabset (tabChange)="activeTab($event)" [destroyOnHide]="true">
-        <ngb-tab title="Semantic Query" id="sqp" [disabled]="!SQPConfig">
+        <ngb-tab [title]="'Semantic Query' | translate" id="sqp" [disabled]="!SQPConfig">
             <ng-template ngbTabContent>
                 <explore-search-semantic [configSPQ]="SQPConfig" [lang]="language"></explore-search-semantic>
             </ng-template>
         </ngb-tab>
-        <ngb-tab title="Graph Navigation" id="graphNav" [disabled]="!visData">
+        <ngb-tab [title]="'Graph Navigation' | translate" id="graphNav" [disabled]="!visData">
             <ng-template ngbTabContent>
                 <explore-search-details [config]="visData" [lang]="language"></explore-search-details>
                 <div [hidden]="!_error_detected_query">

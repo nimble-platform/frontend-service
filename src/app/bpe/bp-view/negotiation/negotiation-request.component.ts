@@ -173,7 +173,7 @@ export class NegotiationRequestComponent implements OnInit {
             if (wrapper.rfqDiscountPriceWrapper.itemPrice.hasPrice()) {
                 if (!isValidPrice(wrapper.rfqDiscountPriceWrapper.itemPrice.price.priceAmount.value)) {
                     this.callStatus.callback("Terms aborted", true);
-                    alert("Price cannot have more than 2 decimal places");
+                    alert(this.translate.instant("Price cannot have more than 2 decimal places"));
                     return;
                 }
             }
@@ -226,7 +226,7 @@ export class NegotiationRequestComponent implements OnInit {
 
     onUpdateRequest(): void {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the negotiation details of all products before sending your request!");
+            alert(this.translate.instant("Please, make sure that you view the negotiation details of all products before sending your request!"));
             return;
         }
         this.callStatus.submit();

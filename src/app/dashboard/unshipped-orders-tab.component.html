@@ -50,7 +50,7 @@
                     <div *ngIf="pa.status === 'CANCELLED'">
                         <div class="py-1 alert-dark" style="text-align: center">
                             <strong><span [innerHTML]="'Cancelled' | translate"></span></strong>
-                            <button type="button" class="close" aria-label="Close" (click)="pa.processInstanceId=null">
+                            <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="pa.processInstanceId=null">
                                 <span aria-hidden="true">&times;
                                 </span>
                             </button>

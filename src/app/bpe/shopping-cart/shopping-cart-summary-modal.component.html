@@ -15,7 +15,7 @@
 <ng-template #modal let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h5 class="modal-title" id="modal-basic-title"><span [innerHTML]="'Shopping Cart Summary' | translate"></span></h5>
-        <button type="button" class="close" aria-label="Close" (click)="d('cross')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('cross')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

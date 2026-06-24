@@ -18,7 +18,7 @@
     <!-- Dispatched Quantities -->
     <div class="row space-before">
         <div [class]="'col-2'">
-            <input-label [label]="'Dispatched Quantities'">
+            <input-label [label]="'Dispatched Quantities' | translate">
             </input-label>
         </div>
         <div [class]="'col-10'">
@@ -58,7 +58,7 @@
             <call-status [callStatus]="callStatus"></call-status>
         </div>
         <div class="col-2">
-            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()">Back</button>
+            <button class="btn btn-secondary action" [disabled]="isLoading()" (click)="onBack()"><span [innerHTML]="'Back' | translate"></span></button>
         </div>
         <div *ngIf="!isReadOnly()" class="col-2">
             <button *ngIf="!(processMetadata && processMetadata.isBeingUpdated)" class="btn btn-primary action" [disabled]="isLoading() || isReadOnly() || (dispatchAdvice.despatchLine.length > 1 && !isAtLeastOneProductSelected())" (click)="onSendDispatchAdvice()" singleClick>

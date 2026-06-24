@@ -322,7 +322,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                         this.checkLogin("/dashboard");
 
                 }).catch((e) => {
-                    this.submitCallStatus.error("Login failed", e);
+                    this.submitCallStatus.error(this.translate.instant("Login failed"), e);
                 })
         }
 

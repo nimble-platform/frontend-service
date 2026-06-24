@@ -170,7 +170,7 @@
             <div *ngIf="addCatalogue" class="input-group form-group"
                  style="background-color:#F2F2F2;padding-left: 25px;padding-top: 20px;padding-bottom: 20px;">
                 <input class="form-control col-3" style="padding-left: 25px" type="text" [(ngModel)]="catalogueText"
-                       placeholder="Catalogue Title">
+                       [placeholder]="'Catalogue Title' | translate">
                 <div class="col-2">
                     <button type="button" class="btn btn-primary" (click)="onAddCatalogue()">
                         <span [innerHTML]="'Add' | translate"></span>
@@ -348,7 +348,7 @@
                         </label>
                         <select class="custom-select col-8 space-right" [(ngModel)]="selectedCatalogue"
                                 (change)="changeCat()">
-                            <option value="all">All</option>
+                            <option value="all"><span [innerHTML]="'All' | translate"></span></option>
                             <option *ngFor="let catalogue of cataloguesIds ; let i = index" [value]=catalogueUuids[i]
                                     [innerHtml]="catalogue == 'default'? ('Main Catalogue'|translate): catalogue"></option>
                         </select>
@@ -431,7 +431,7 @@
             <!-- Description -->
             <text-input [label]="'Offer Details' | translate" [(text)]="productOfferingDetails.description" [rows]="6"
                         [maxLength]="2047" [rowClass]="'m-0 space-before'" [valueClass]="'col-8'"
-                        [placeholder]="'Please, explain the details of your offer here.'" [required]="true">
+                        [placeholder]="'Please, explain the details of your offer here.' | translate" [required]="true">
             </text-input>
         </div>
         <!-- Companies in the Network -->

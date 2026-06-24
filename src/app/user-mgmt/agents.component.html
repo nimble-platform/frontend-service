@@ -165,7 +165,7 @@
 <ng-template #buyingAgentModal let-d="dismiss" let-modal>
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Buying Agent' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="closeModal('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="closeModal('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -195,7 +195,7 @@
 
                     <div class="col-3">
                         <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Currency</option>
+                            <option value="" class="selected">{{ 'Currency' | translate }}</option>
                             <option value="euro">euro</option>
                         </select>
                     </div>
@@ -211,7 +211,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
                             <option value="week">weeks(s)</option>
@@ -229,7 +229,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
                             <option value="week">weeks(s)</option>
@@ -269,7 +269,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
                             <option value="week">week</option>
@@ -287,7 +287,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
                             <option value="week">week</option>
@@ -315,7 +315,7 @@
                             <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
                             <div *ngIf="i>0" (click)="deleteProductName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
                             <div *ngIf="submitted && productName.errors" class="invalid-feedback">
-                                <div *ngIf="productName.errors.required">Product Name is required.</div>
+                                <div *ngIf="productName.errors.required">{{ 'Product Name is required.' | translate }}</div>
                             </div>
                         </div>
 
@@ -334,7 +334,7 @@
                             <input type="text" class="form-control" formControlName="{{i}}" required maxlength="255">
                             <div *ngIf="i>0" (click)="deleteCategoryName(i)" class="btn-delete-icon"><i class="fa fa-trash" aria-hidden="true"></i></div>
                             <div *ngIf="submitted && categoryName.errors" class="invalid-feedback">
-                                <div *ngIf="categoryName.errors.required">Category name is required.</div>
+                                <div *ngIf="categoryName.errors.required">{{ 'Category name is required.' | translate }}</div>
                             </div>
                         </div>
 
@@ -360,7 +360,7 @@
 <ng-template #sellingAgentModal let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title"><span [innerHTML]="'Selling Agent' | translate"></span></h4>
-        <button type="button" class="close" aria-label="Close" (click)="closeModal('')">
+        <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="closeModal('')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -390,7 +390,7 @@
 
                     <div class="col-3">
                         <select formControlName="maxContractAmountUnit" id="maxContractAmountUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Currency</option>
+                            <option value="" class="selected">{{ 'Currency' | translate }}</option>
                             <option value="euro">euro</option>
                         </select>
                     </div>
@@ -406,7 +406,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="minFulfillmentTimeUnit" id="minFulfillmentTimeUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
                             <option value="week">weeks(s)</option>
@@ -424,7 +424,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxFulfillmentTimeUnit" id="maxFulfillmentTime-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hours(s)</option>
                             <option value="day">days(s)</option>
                             <option value="week">weeks(s)</option>
@@ -452,7 +452,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxVolumeUnit" id="maxVolumeUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
                             <option value="week">week</option>
@@ -470,7 +470,7 @@
                     </div>
                     <div class="col-3">
                         <select formControlName="maxNoOneToOneUnit" id="maxNoOneToOneUnit-type" name="type" class="form-control custom-select">
-                            <option value="" class="selected">Time Unit</option>
+                            <option value="" class="selected">{{ 'Time Unit' | translate }}</option>
                             <option value="hour">hour</option>
                             <option value="day">day</option>
                             <option value="week">week</option>
@@ -509,7 +509,7 @@
 <div *ngIf="showTransactions">
     <div class="col-12 mx-auto space-before space-after ">
         <span>
-            <h3>Orders of: {{selectedAgent}} </h3>(Total: {{orders.length}})
+            <h3>{{ 'Orders of:' | translate }} {{selectedAgent}} </h3>({{ 'Total:' | translate }} {{orders.length}})
         </span>
         <!--<div class="d-flex justify-content-end">-->
         <!--<call-status [callStatus]="exportCallStatus"></call-status>-->
@@ -529,7 +529,7 @@
                                 <div class="row w-100 m-0">
                                     <div class="col d-flex collaboration-group-header">
                                         <div class="header-label mr-auto d-flex">
-                                            Product/Service: <span class="clickable">{{order.productName}}</span>
+                                            {{ 'Product/Service:' | translate }} <span class="clickable">{{order.productName}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -561,7 +561,7 @@
                                                 </div>
                                                 <div class="col pl-1">
                                                     <strong><span [innerHTML]="'Actions' | translate"></span>:</strong><br />
-                                                    <span class="clickable" (click)="navigateToProcess(order.processInstanceID)">View Order Details</span>
+                                                    <span class="clickable" (click)="navigateToProcess(order.processInstanceID)">{{ 'View Order Details' | translate }}</span>
                                                 </div>
                                             </div>
                                         </div>

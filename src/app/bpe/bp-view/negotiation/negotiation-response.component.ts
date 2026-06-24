@@ -149,7 +149,7 @@ export class NegotiationResponseComponent implements OnInit {
     }
     onRespondToQuotation(accepted: boolean) {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the negotiation details of all products before sending your response!");
+            alert(this.translate.instant("Please, make sure that you view the negotiation details of all products before sending your response!"));
             return;
         }
         this.callStatus.submit();
@@ -157,7 +157,7 @@ export class NegotiationResponseComponent implements OnInit {
         for (let wrapper of this.wrappers) {
             if (!isValidPrice(wrapper.quotationDiscountPriceWrapper.totalPrice)) {
                 this.callStatus.callback("Quotation aborted", true);
-                alert("Price cannot have more than 2 decimal places");
+                alert(this.translate.instant("Price cannot have more than 2 decimal places"));
                 return false;
             }
         }
@@ -186,7 +186,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     onRequestNewQuotation() {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the negotiation details of all products before creating a new one!");
+            alert(this.translate.instant("Please, make sure that you view the negotiation details of all products before creating a new one!"));
             return;
         }
         this.bpDataService.setCopyDocuments(true, true, false, false);
@@ -195,7 +195,7 @@ export class NegotiationResponseComponent implements OnInit {
 
     onAcceptAndOrder() {
         if (!this.areProcessDetailsViewedForAllProducts) {
-            alert("Please, make sure that you view the negotiation details of all products before accepting the quotation!");
+            alert(this.translate.instant("Please, make sure that you view the negotiation details of all products before accepting the quotation!"));
             return;
         }
         this.bpDataService.setCopyDocuments(true, true, false, false);

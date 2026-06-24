@@ -258,7 +258,7 @@
     <form [formGroup]="addEventForm" novalidate>
         <div class="modal-header">
             <h4 class="modal-title"><span [innerHTML]="'Dashboard' | translate"></span></h4>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -298,7 +298,7 @@
     <form [formGroup]="addImageForm" novalidate>
         <div class="modal-header">
             <h4 class="modal-title"><span [innerHTML]="'Add Image' | translate"></span></h4>
-            <button type="button" class="close" aria-label="Close" (click)="d('')">
+            <button type="button" class="close" [attr.aria-label]="'Close' | translate" (click)="d('')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

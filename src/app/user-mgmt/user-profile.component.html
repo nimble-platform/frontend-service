@@ -42,7 +42,7 @@
                 <tr>
                     <th><span><span [innerHTML]="'Phone Number' | translate"></span></span></th>
                     <td *ngIf="userProfile.contact.telephone">{{ userProfile.contact.telephone}}</td>
-                    <td *ngIf="!userProfile.contact.telephone">n/A</td>
+                    <td *ngIf="!userProfile.contact.telephone"><span [innerHTML]="'n/A' | translate"></span></td>
                 </tr>
                 <tr *ngIf="userProfile.role">
                     <th><span><span [innerHTML]="'Platform Roles' | translate"></span></span></th>
