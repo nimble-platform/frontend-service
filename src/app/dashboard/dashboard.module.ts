@@ -20,8 +20,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from "@angular/common";
 import { AppCommonModule } from "../common/common.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { DashboardRoutingModule } from "./dashboard-routing.module";
 import { DashboardThreadedComponent } from "./dashboard-threaded.component";
+import { WelcomeDashboardComponent } from "./welcome-dashboard.component";
 import { FacetComponent } from "./facet-component";
 import { CatalogueModule } from "../catalogue/catalogue.module";
 import { BPEModule } from "../bpe/bpe.module";
@@ -52,10 +54,12 @@ import {RouterModule} from '@angular/router';
         BPEModule,
         DemandModule,
         RouterModule,
+        NgxChartsModule,
         NgbModule
     ],
     declarations: [
         DashboardThreadedComponent,
+        WelcomeDashboardComponent,
         CollaborationGroupsTabComponent,
         ProcessInstanceGroupsTabComponent,
         ProjectTimeline,
