@@ -196,8 +196,13 @@ export class CompanyRegistrationComponent implements OnInit {
                         this.companyNameArr[0].text = response.BusinessName;
                     }
                     this.registrationForm.controls['vatNumber'].setValue(this.vat);
-                    if (response.CountryCode)
-                        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", CountryUtil.getCountryByISO(response.CountryCode)));
+                    // Address.country keeps an ISO code, not a country name. The VAT prefix is only
+                    // usable as one when it really is an ISO code (Greece reports EL, ISO is GR;
+                    // Northern Ireland reports XI), otherwise leave it blank for the user to pick.
+                    if (response.CountryCode) {
+                        let countryISOCode = CountryUtil.COUNTRY_CODES.indexOf(response.CountryCode) != -1 ? response.CountryCode : "";
+                        AddressSubForm.update(this.registrationForm.controls['address'] as FormGroup, new Address("", "", "", "", "", countryISOCode));
+                    }
                     this.vatValidated = true;
                     this.onAddressMapSizeChanged();
                 } else {

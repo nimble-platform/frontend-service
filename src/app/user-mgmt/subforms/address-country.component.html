@@ -14,6 +14,7 @@
 
 <div [formGroup]="countryFormGroup" class="country-form">
     <input type="text" class="form-control" name="country" formControlName="country"
-           [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag" (change)="onCountrySelected($event)"
+           [required]="!disabledFlag && requiredFlag" [readonly]="disabledFlag"
+           (blur)="onCountrySelected($event)" (selectItem)="onCountryPickedFromList($event)"
            [ngbTypeahead]="getSuggestions" [placeholder]="'e.g. United States' | translate">
 </div>

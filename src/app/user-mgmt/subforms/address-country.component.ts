@@ -61,7 +61,16 @@ export class AddressCountryComponent {
             map(term => CountryUtil.getCountrySuggestions(term))
         );
 
+    // Bound to (blur) rather than (change): the browser only raises change when the value differs
+    // from the one the field had on focus, so re-entering the same country name never reached the
+    // parent form and left it holding a stale, invalid value.
     onCountrySelected(event) {
         this.onCountryISOCodeChange.emit(CountryUtil.getISObyCountry(event.target.value))
+    }
+
+    // Picking a suggestion writes the input value programmatically, which raises no user-driven
+    // change/blur, so the selected country has to be emitted explicitly.
+    onCountryPickedFromList(event) {
+        this.onCountryISOCodeChange.emit(CountryUtil.getISObyCountry(event.item))
     }
 }
