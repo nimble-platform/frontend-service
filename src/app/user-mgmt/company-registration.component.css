@@ -27,3 +27,13 @@
 .industry-sector-item{
     flex-basis: 25%;
 }
+
+.required-legend {
+    color: #6c757d;
+    font-size: .9rem;
+}
+
+.missing-fields-hint {
+    color: var(--invalid-border);
+    margin-bottom: .5rem;
+}

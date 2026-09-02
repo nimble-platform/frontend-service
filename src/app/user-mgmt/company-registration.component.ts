@@ -230,6 +230,41 @@ export class CompanyRegistrationComponent implements OnInit {
         return Object.keys(createTextObjectFromArray(this.customIndustrySectors)).length == 0 && this.selectedIndustrySectorKeys.length == 0;
     }
 
+    /**
+     * Labels of the mandatory fields that are still empty or invalid, shown next to the Register
+     * button. Some required controls (the address country in particular) are not bound to any
+     * visible input, so a greyed-out button on its own leaves the user with nothing to act on.
+     */
+    getMissingFields(): string[] {
+        let missing = [];
+        if (!this.vatSkipped && !this.vatValidated)
+            return missing;
+        let values = this.registrationForm.getRawValue();
+        if (Object.keys(createTextObjectFromArray(this.companyNameArr)).length == 0)
+            missing.push(this.translate.instant("Company Name"));
+        if (values['vatNumber'] == "")
+            missing.push(this.translate.instant("VAT Number"));
+        if (this.config.logoRequired && this.imgFile == null)
+            missing.push(this.translate.instant("Logo"));
+        if (values['businessType'] == "")
+            missing.push(this.translate.instant("Business Type"));
+        if (this.isActivitySectorRequired())
+            missing.push(this.translate.instant("Activity Sectors"));
+        let address = this.registrationForm.controls['address'] as FormGroup;
+        let addressFields = [
+            { control: "streetName", label: "Street Name" },
+            { control: "buildingNumber", label: "Building Number" },
+            { control: "cityName", label: "City / Town" },
+            { control: "postalCode", label: "Postal code" },
+            { control: "country", label: "Country" }
+        ];
+        for (let addressField of addressFields) {
+            if (address.controls[addressField.control].invalid)
+                missing.push(this.translate.instant(addressField.label));
+        }
+        return missing;
+    }
+
     save(model: FormGroup) {
         // retrieve the translations of each selected industry sector
         // so that we can index the selected industry sectors for all available languages

@@ -53,10 +53,12 @@
 
     <div [hidden]="!vatSkipped && !vatValidated">
 
+        <p class="required-legend"><span [innerHTML]="'Fields marked with * are required.' | translate"></span></p>
+
         <!-- Legal Name -->
         <div class="form-group row">
             <label class="col-2 col-form-label">
-                <strong><span [innerHTML]="'Company Name:' | translate"></span></strong>
+                <strong><span [innerHTML]="'Company Name:' | translate"></span></strong><span class="required-mark">*</span>
             </label>
             <div class="col-10">
                 <ng-container *ngFor="let companyNameEntry of companyNameArr; let i = index; trackBy:trackFn">
@@ -120,7 +122,7 @@
         <!-- VAT Number -->
         <div class="form-group row">
             <label class="col-2 col-form-label">
-                <strong><span [innerHTML]="'VAT Number:' | translate"></span></strong>
+                <strong><span [innerHTML]="'VAT Number:' | translate"></span></strong><span class="required-mark">*</span>
             </label>
             <div class="col-10">
                 <input type="text" class="form-control" [formControl]="registrationForm.controls['vatNumber']" required [readonly]="vatValidated" maxlength="255">
@@ -130,7 +132,7 @@
         <!-- Logo -->
         <div *ngIf="config.logoRequired" class="form-group row">
             <label class="col-2 col-form-label">
-                <strong><span [innerHTML]="'Logo:' | translate"></span></strong>
+                <strong><span [innerHTML]="'Logo:' | translate"></span></strong><span class="required-mark">*</span>
                 <span class="tooltip-icon" (click)="showLogoTT(tooltip)"><i class="fa fa-question-circle"></i></span>
             </label>
             <div class="col-10">
@@ -154,7 +156,7 @@
         <!-- Business Type -->
         <div class="form-group row">
             <label class="col-2 col-form-label">
-                <strong><span [innerHTML]="'Business Type:' | translate"></span></strong>
+                <strong><span [innerHTML]="'Business Type:' | translate"></span></strong><span class="required-mark">*</span>
             </label>
             <div class="col-10">
                 <select class="form-control" [formControl]="registrationForm.controls['businessType']" (change)="onBusinessTypeChanged();" required>
@@ -166,7 +168,7 @@
         <!-- Industry Sectors -->
         <div class="form-group row">
             <label class="col-2">
-                <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong>
+                <strong><span [innerHTML]="'Activity Sectors:' | translate"></span></strong><span class="required-mark">*</span>
             </label>
             <div class="col-10">
                 <input *ngIf="registrationForm.getRawValue()['businessType'] == ''" type="text" class="form-control" [placeholder]="'Select Business Type' | translate" readonly maxlength="255">
@@ -255,6 +257,15 @@
         <address-form [group]="registrationForm.controls.address" mapView="true"></address-form>
 
         <!-- Submit -->
+        <ng-container *ngIf="getMissingFields() as missingFields">
+            <div *ngIf="missingFields.length > 0" class="row">
+                <div class="col-12 missing-fields-hint">
+                    <strong><span [innerHTML]="'Please complete the required fields:' | translate"></span></strong>
+                    {{ missingFields.join(', ') }}
+                </div>
+            </div>
+        </ng-container>
+
         <div class="row actions-row pr-0">
             <div class="col-8 call-status-col">
                 <call-status [callStatus]="submitCallStatus" [large]="true"></call-status>

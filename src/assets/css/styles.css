@@ -277,6 +277,14 @@ textarea {
     border-right: 5px solid var(--invalid-border);
 }
 
+/* Marks a mandatory field in a form label. Shared by the registration form and the address
+   subform, so it has to live here rather than in a component stylesheet. */
+.required-mark {
+    color: var(--invalid-border);
+    font-weight: 700;
+    margin-left: 2px;
+}
+
 .align-center {
     text-align: center;
 }
